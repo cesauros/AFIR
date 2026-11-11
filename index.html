@@ -3,59 +3,279 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ARIF - Rifa Online</title>
+<title>AFIR - Rifa Online</title>
+
 <style>
-body{font-family:Arial;background:#101827;color:white;text-align:center;padding:20px}
-h1{color:#38d9a9}
-.grid{display:grid;grid-template-columns:repeat(10,1fr);gap:9px;max-width:500px;margin:25px auto}
-button.numero{padding:15px 5px;border:0;border-radius:8px;background:#263449;color:white;font-size:17px;cursor:pointer}
-button.numero.seleccionado{background:#38d9a9;color:#101827}
-button.numero.vendido{background:#e05252;color:white;cursor:not-allowed}
-#enviar{background:#25d366;color:white;border:0;padding:15px 25px;border-radius:8px;font-size:17px;cursor:pointer}
+body {
+  font-family: Arial, sans-serif;
+  background: #101827;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+h1 { color: #38d9a9; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 9px;
+  max-width: 500px;
+  margin: 25px auto;
+}
+
+button.numero {
+  padding: 15px 5px;
+  border: 0;
+  border-radius: 8px;
+  background: #263449;
+  color: white;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+button.numero.seleccionado {
+  background: #38d9a9;
+  color: #101827;
+}
+
+button.numero.reservado,
+button.numero.vendido {
+  background: #e05252;
+  color: white;
+  cursor: not-allowed;
+}
+
+button.numero:disabled {
+  opacity: 1;
+}
+
+input {
+  display: block;
+  width: 90%;
+  max-width: 350px;
+  margin: 12px auto;
+  padding: 13px;
+  border-radius: 7px;
+  border: 0;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+#reservar {
+  background: #25d366;
+  color: white;
+  border: 0;
+  padding: 15px 25px;
+  border-radius: 8px;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+#reservar:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+#mensaje {
+  margin: 18px auto;
+  max-width: 450px;
+}
+
+.estado {
+  margin: 15px;
+  color: #b8c5d6;
+  font-size: 14px;
+}
 </style>
 </head>
+
 <body>
-<h1>ARIF</h1>
+
+<h1>AFIR</h1>
 <h2>Rifa de 100 puestos</h2>
+
 <p>Selecciona tus números</p>
+
+<div class="estado" id="estado">
+  Conectando con AFIR...
+</div>
+
 <div class="grid" id="grid"></div>
+
 <p id="total">Números seleccionados: 0</p>
-<button id="enviar" onclick="enviarWhatsApp()">Reservar por WhatsApp</button>
+
+<input
+  id="nombre"
+  type="text"
+  placeholder="Nombre y apellido"
+  autocomplete="name"
+>
+
+<input
+  id="telefono"
+  type="text"
+  placeholder="Teléfono o nombre de usuario de WhatsApp"
+  autocomplete="off"
+>
+
+<button id="reservar">
+  Confirmar reserva
+</button>
+
+<p id="mensaje"></p>
 
 <script>
-let seleccionados=[];
-let vendidos=[];
-const grid=document.getElementById('grid');
+const API = "https://blue-poetry-7c73.cesauro.workers.dev";
 
-for(let i=0;i<100;i++){
- let n=String(i).padStart(2,'0');
- let b=document.createElement('button');
- b.textContent=n;
- b.className='numero';
- b.onclick=()=>{
-  if(vendidos.includes(n))return;
-  if(seleccionados.includes(n)){
-   seleccionados=seleccionados.filter(x=>x!==n);
-  }else{
-   seleccionados.push(n);
+let seleccionados = [];
+let numeros = [];
+
+const grid = document.getElementById("grid");
+const estado = document.getElementById("estado");
+const total = document.getElementById("total");
+const mensaje = document.getElementById("mensaje");
+const reservar = document.getElementById("reservar");
+
+async function cargarNumeros() {
+  estado.textContent = "Actualizando tablero...";
+
+  try {
+    const respuesta = await fetch(API + "/api/numbers", {
+      cache: "no-store"
+    });
+
+    if (!respuesta.ok) {
+      throw new Error("No se pudo consultar la base de datos");
+    }
+
+    numeros = await respuesta.json();
+
+    seleccionados = seleccionados.filter(n => {
+      const item = numeros.find(x => x.number === n);
+      return item && item.status === "available";
+    });
+
+    dibujarTablero();
+
+    estado.textContent = "Tablero conectado correctamente";
+
+  } catch (error) {
+    estado.textContent = "No se pudo conectar con AFIR. Intenta actualizar.";
+    console.error(error);
   }
-  actualizar();
- };
- grid.appendChild(b);
 }
 
-function actualizar(){
- [...grid.children].forEach(b=>{
-  b.classList.toggle('seleccionado',seleccionados.includes(b.textContent));
- });
- document.getElementById('total').textContent='Números seleccionados: '+seleccionados.length;
+function dibujarTablero() {
+  grid.innerHTML = "";
+
+  for (let i = 0; i < 100; i++) {
+    const n = String(i).padStart(2, "0");
+
+    const item = numeros.find(x => x.number === n);
+    const status = item ? item.status : "available";
+
+    const b = document.createElement("button");
+
+    b.textContent = n;
+    b.className = "numero";
+
+    if (status === "reserved") {
+      b.classList.add("reservado");
+      b.disabled = true;
+    }
+
+    if (status === "sold") {
+      b.classList.add("vendido");
+      b.disabled = true;
+    }
+
+    if (seleccionados.includes(n)) {
+      b.classList.add("seleccionado");
+    }
+
+    b.onclick = () => {
+      if (status !== "available") return;
+
+      if (seleccionados.includes(n)) {
+        seleccionados = seleccionados.filter(x => x !== n);
+      } else {
+        seleccionados.push(n);
+      }
+
+      dibujarTablero();
+    };
+
+    grid.appendChild(b);
+  }
+
+  total.textContent =
+    "Números seleccionados: " + seleccionados.length;
 }
 
-function enviarWhatsApp(){
- if(!seleccionados.length){alert('Selecciona al menos un número');return;}
- let mensaje='Hola, quiero reservar estos números: '+seleccionados.join(', ');
- window.open('https://wa.me/?text='+encodeURIComponent(mensaje),'_blank');
-}
+reservar.onclick = async () => {
+  const nombre = document.getElementById("nombre").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
+  const contactType = /[a-zA-Z@_]/.test(telefono)
+      ? "username"
+      : "phone";
+
+  mensaje.textContent = "";
+
+  if (!seleccionados.length) {
+    mensaje.textContent = "Selecciona al menos un número.";
+    return;
+  }
+
+  if (!nombre || !telefono) {
+    mensaje.textContent = "Completa tu nombre y WhatsApp.";
+    return;
+  }
+
+  reservar.disabled = true;
+  reservar.textContent = "Procesando reserva...";
+
+  try {
+    const respuesta = await fetch(API + "/api/reservations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: nombre,
+        phone: telefono,
+        contactType: contactType,
+        numbers: seleccionados
+      })
+    });
+
+    const resultado = await respuesta.json();
+
+    if (!respuesta.ok) {
+      throw new Error(resultado.error || "No se pudo completar la reserva");
+    }
+
+    mensaje.textContent =
+      "¡Reserva creada! Código: " +
+      resultado.reservation.reservation_code +
+      ". Tienes 72 horas para realizar el pago.";
+
+    seleccionados = [];
+
+    await cargarNumeros();
+
+  } catch (error) {
+    mensaje.textContent = error.message;
+    await cargarNumeros();
+
+  } finally {
+    reservar.disabled = false;
+    reservar.textContent = "Confirmar reserva";
+  }
+};
+
+cargarNumeros();
 </script>
+
 </body>
 </html>
