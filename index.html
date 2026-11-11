@@ -2,12 +2,60 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ARIF - Rifa Online</title>
+<style>
+body{font-family:Arial;background:#101827;color:white;text-align:center;padding:20px}
+h1{color:#38d9a9}
+.grid{display:grid;grid-template-columns:repeat(10,1fr);gap:9px;max-width:500px;margin:25px auto}
+button.numero{padding:15px 5px;border:0;border-radius:8px;background:#263449;color:white;font-size:17px;cursor:pointer}
+button.numero.seleccionado{background:#38d9a9;color:#101827}
+button.numero.vendido{background:#e05252;color:white;cursor:not-allowed}
+#enviar{background:#25d366;color:white;border:0;padding:15px 25px;border-radius:8px;font-size:17px;cursor:pointer}
+</style>
 </head>
 <body>
 <h1>ARIF</h1>
 <h2>Rifa de 100 puestos</h2>
-<p>Próximamente podrás participar aquí.</p>
+<p>Selecciona tus números</p>
+<div class="grid" id="grid"></div>
+<p id="total">Números seleccionados: 0</p>
+<button id="enviar" onclick="enviarWhatsApp()">Reservar por WhatsApp</button>
+
+<script>
+let seleccionados=[];
+let vendidos=[];
+const grid=document.getElementById('grid');
+
+for(let i=0;i<100;i++){
+ let n=String(i).padStart(2,'0');
+ let b=document.createElement('button');
+ b.textContent=n;
+ b.className='numero';
+ b.onclick=()=>{
+  if(vendidos.includes(n))return;
+  if(seleccionados.includes(n)){
+   seleccionados=seleccionados.filter(x=>x!==n);
+  }else{
+   seleccionados.push(n);
+  }
+  actualizar();
+ };
+ grid.appendChild(b);
+}
+
+function actualizar(){
+ [...grid.children].forEach(b=>{
+  b.classList.toggle('seleccionado',seleccionados.includes(b.textContent));
+ });
+ document.getElementById('total').textContent='Números seleccionados: '+seleccionados.length;
+}
+
+function enviarWhatsApp(){
+ if(!seleccionados.length){alert('Selecciona al menos un número');return;}
+ let mensaje='Hola, quiero reservar estos números: '+seleccionados.join(', ');
+ window.open('https://wa.me/?text='+encodeURIComponent(mensaje),'_blank');
+}
+</script>
 </body>
 </html>
