@@ -6,15 +6,90 @@
 <title>AFIR - Rifa Online</title>
 
 <style>
+* { box-sizing: border-box; }
+
 body {
   font-family: Arial, sans-serif;
   background: #101827;
   color: white;
   text-align: center;
   padding: 20px;
+  margin: 0;
 }
 
 h1 { color: #38d9a9; }
+
+h2 { margin-bottom: 12px; }
+
+.estado {
+  margin: 15px;
+  color: #b8c5d6;
+  font-size: 14px;
+}
+
+#datosRifa {
+  color: #b8c5d6;
+  line-height: 1.7;
+}
+
+#puzzleSection {
+  max-width: 550px;
+  margin: 25px auto;
+}
+
+#puzzleContainer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #263449;
+  border-radius: 10px;
+  line-height: 0;
+}
+
+#puzzleImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+#puzzleGrid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+}
+
+.pieza {
+  background: #172438;
+  border: 1px solid #34445a;
+}
+
+.pieza.revelada {
+  visibility: hidden;
+}
+
+#progreso {
+  margin: 15px auto;
+  font-size: 17px;
+  color: #38d9a9;
+}
+
+#barraFondo {
+  background: #263449;
+  height: 12px;
+  border-radius: 10px;
+  overflow: hidden;
+  max-width: 450px;
+  margin: 12px auto;
+}
+
+#barra {
+  background: #38d9a9;
+  height: 100%;
+  width: 0%;
+  transition: width .5s;
+}
 
 .grid {
   display: grid;
@@ -59,7 +134,6 @@ input {
   border-radius: 7px;
   border: 0;
   font-size: 16px;
-  box-sizing: border-box;
 }
 
 #reservar {
@@ -80,12 +154,18 @@ input {
 #mensaje {
   margin: 18px auto;
   max-width: 450px;
+  line-height: 1.5;
 }
 
-.estado {
-  margin: 15px;
-  color: #b8c5d6;
-  font-size: 14px;
+@media(max-width:450px) {
+  .grid {
+    gap: 5px;
+  }
+
+  button.numero {
+    padding: 12px 2px;
+    font-size: 14px;
+  }
 }
 </style>
 </head>
@@ -93,13 +173,31 @@ input {
 <body>
 
 <h1>AFIR</h1>
-<h2>Rifa de 100 puestos</h2>
 
-<p>Selecciona tus números</p>
+<h2 id="nombreRifa">Cargando rifa...</h2>
+
+<div id="datosRifa"></div>
 
 <div class="estado" id="estado">
   Conectando con AFIR...
 </div>
+
+<section id="puzzleSection">
+  <h2>Descubre el premio</h2>
+
+  <div id="puzzleContainer">
+    <img id="puzzleImage" alt="Imagen del puzzle" hidden>
+    <div id="puzzleGrid"></div>
+  </div>
+
+  <div id="progreso">0 de 100 números vendidos</div>
+
+  <div id="barraFondo">
+    <div id="barra"></div>
+  </div>
+</section>
+
+<h2>Selecciona tus números</h2>
 
 <div class="grid" id="grid"></div>
 
@@ -130,12 +228,104 @@ const API = "https://blue-poetry-7c73.cesauro.workers.dev";
 
 let seleccionados = [];
 let numeros = [];
+let piezas = [];
 
 const grid = document.getElementById("grid");
 const estado = document.getElementById("estado");
 const total = document.getElementById("total");
 const mensaje = document.getElementById("mensaje");
 const reservar = document.getElementById("reservar");
+
+const puzzleGrid = document.getElementById("puzzleGrid");
+const puzzleImage = document.getElementById("puzzleImage");
+
+async function cargarRifa() {
+  try {
+    const respuesta = await fetch(API + "/api/raffle", {
+      cache: "no-store"
+    });
+
+    if (!respuesta.ok) throw new Error("No hay una rifa disponible.");
+
+    const rifa = await respuesta.json();
+
+    document.getElementById("nombreRifa").textContent = rifa.name;
+
+    let datos = [];
+
+    if (rifa.draw_date) {
+      datos.push("Sorteo: " + rifa.draw_date);
+    }
+
+    if (rifa.ticket_price !== null) {
+      datos.push("Precio por número: " + rifa.ticket_price);
+    }
+
+    document.getElementById("datosRifa").textContent =
+      datos.join(" | ");
+
+  } catch(error) {
+    document.getElementById("nombreRifa").textContent =
+      "AFIR - Rifa Online";
+
+    console.error(error);
+  }
+}
+
+function crearPuzzle() {
+  puzzleGrid.innerHTML = "";
+  piezas = [];
+
+  for (let i = 0; i < 100; i++) {
+    const pieza = document.createElement("div");
+    pieza.className = "pieza";
+
+    piezas.push(pieza);
+    puzzleGrid.appendChild(pieza);
+  }
+}
+
+async function actualizarPuzzle() {
+  try {
+    const respuesta = await fetch(API + "/api/puzzle", {
+      cache: "no-store"
+    });
+
+    if (!respuesta.ok) return;
+
+    const datos = await respuesta.json();
+
+    const imagen = datos.puzzle_image || datos.prize_image;
+
+    if (imagen && puzzleImage.src !== imagen) {
+      puzzleImage.src = imagen;
+      puzzleImage.hidden = false;
+    }
+
+    const vendidos = Math.min(
+      100,
+      Math.max(0, Number(datos.sold) || 0)
+    );
+
+    piezas.forEach((pieza, i) => {
+      pieza.classList.toggle("revelada", i < vendidos);
+    });
+
+    document.getElementById("progreso").textContent =
+      vendidos + " de 100 números vendidos (" + vendidos + "%)";
+
+    document.getElementById("barra").style.width =
+      vendidos + "%";
+
+    if (vendidos === 100) {
+      document.getElementById("progreso").textContent =
+        "¡Puzzle completamente descubierto!";
+    }
+
+  } catch(error) {
+    console.error("Error actualizando puzzle:", error);
+  }
+}
 
 async function cargarNumeros() {
   estado.textContent = "Actualizando tablero...";
@@ -160,8 +350,10 @@ async function cargarNumeros() {
 
     estado.textContent = "Tablero conectado correctamente";
 
-  } catch (error) {
-    estado.textContent = "No se pudo conectar con AFIR. Intenta actualizar.";
+  } catch(error) {
+    estado.textContent =
+      "No se pudo conectar con AFIR. Intenta actualizar.";
+
     console.error(error);
   }
 }
@@ -216,9 +408,10 @@ function dibujarTablero() {
 reservar.onclick = async () => {
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
+
   const contactType = /[a-zA-Z@_]/.test(telefono)
-      ? "username"
-      : "phone";
+    ? "username"
+    : "phone";
 
   mensaje.textContent = "";
 
@@ -252,7 +445,9 @@ reservar.onclick = async () => {
     const resultado = await respuesta.json();
 
     if (!respuesta.ok) {
-      throw new Error(resultado.error || "No se pudo completar la reserva");
+      throw new Error(
+        resultado.error || "No se pudo completar la reserva"
+      );
     }
 
     mensaje.textContent =
@@ -263,8 +458,9 @@ reservar.onclick = async () => {
     seleccionados = [];
 
     await cargarNumeros();
+    await actualizarPuzzle();
 
-  } catch (error) {
+  } catch(error) {
     mensaje.textContent = error.message;
     await cargarNumeros();
 
@@ -274,8 +470,16 @@ reservar.onclick = async () => {
   }
 };
 
+crearPuzzle();
+cargarRifa();
 cargarNumeros();
-</script>
+actualizarPuzzle();
 
+setInterval(() => {
+  cargarNumeros();
+  actualizarPuzzle();
+}, 20000);
+
+</script>
 </body>
 </html>
