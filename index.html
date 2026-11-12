@@ -391,9 +391,6 @@ async function cargarRifa() {
   document.getElementById("datosRifa").textContent =
     datos.join(" | ");
 
-  grid.style.backgroundImage = imagenPuzzle
-    ? 'url("' + imagenPuzzle + '")'
-    : "none";
 }
 
 // CAMBIAR RIFA
@@ -550,6 +547,10 @@ function dibujarTablero() {
 
     grid.appendChild(b);
   }
+
+    grid.style.backgroundImage = imagenPuzzle
+    ? 'url("' + imagenPuzzle + '")'
+    : "none";
 }
 
 // RESERVAR NÚMEROS
