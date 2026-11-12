@@ -179,29 +179,6 @@ input {
 @media(max-width:450px) {
   body { padding: 12px; }
 }
-  .grid {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  background-image: none !important;
-}
-
-.grid::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: var(--puzzle);
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: blur(5px) brightness(0.5);
-  transform: scale(1.05);
-  z-index: -1;
-}
-
-.grid.completado::before {
-  filter: none;
-}
 </style>
 </head>
 
@@ -627,19 +604,9 @@ function dibujarTablero() {
 
   /* APLICAR EL PUZZLE SOLO DESPUÉS DE CREAR LOS 100 BOTONES */
 
-  grid.style.setProperty(
-    "--puzzle",
-    imagenPuzzle ? 'url("' + imagenPuzzle + '")' : "none"
-  );
-  
-  const vendidos = numeros.filter(
-    x => x.status === "sold"
-  ).length;
-  
-  grid.classList.toggle(
-    "completado",
-    vendidos === 100
-  );
+  grid.style.backgroundImage = imagenPuzzle
+    ? 'url("' + imagenPuzzle + '")'
+    : "none";
 }
 
 // RESERVAR NÚMEROS
