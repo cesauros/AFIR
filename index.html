@@ -45,6 +45,19 @@ h1 { color: #38d9a9; }
   border-radius: 12px;
 }
 
+#selectorRifa {
+  display: block;
+  width: 90%;
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 13px;
+  border-radius: 7px;
+  border: 0;
+  font-size: 16px;
+  background: #263449;
+  color: white;
+}
+
 #participar {
   background: #25d366;
   color: white;
@@ -171,7 +184,11 @@ input {
 
 <section id="portada">
 
-  <h2 id="nombreRifa">Cargando rifa...</h2>
+  <h2 id="nombreRifa">Cargando rifas...</h2>
+
+  <select id="selectorRifa" disabled>
+    <option value="">Cargando rifas...</option>
+  </select>
 
   <img
     id="imagenPremio"
@@ -185,7 +202,7 @@ input {
     Conectando con AFIR...
   </p>
 
-  <button id="participar">
+  <button id="participar" disabled>
     PARTICIPAR
   </button>
 
@@ -236,11 +253,13 @@ input {
 </section>
 
 <script>
+
 const API = "https://blue-poetry-7c73.cesauro.workers.dev";
 
 let seleccionados = [];
 let numeros = [];
 let imagenPuzzle = "";
+let raffleId = null;
 
 const grid = document.getElementById("grid");
 const estado = document.getElementById("estado");
@@ -249,6 +268,9 @@ const reservar = document.getElementById("reservar");
 
 const portada = document.getElementById("portada");
 const tablero = document.getElementById("tablero");
+const selectorRifa = document.getElementById("selectorRifa");
+
+// NORMALIZAR IMÁGENES
 
 function normalizarImagen(valor) {
   if (!valor) return "";
@@ -266,87 +288,186 @@ function normalizarImagen(valor) {
   return "data:image/jpeg;base64," + imagen;
 }
 
+// CARGAR TODAS LAS RIFAS ACTIVAS
+
+async function cargarRifas() {
+  try {
+    const respuesta = await fetch(API + "/api/raffles", {
+      cache: "no-store"
+    });
+
+    if (!respuesta.ok) {
+      throw new Error("No se pudieron cargar las rifas.");
+    }
+
+    const rifas = await respuesta.json();
+
+    selectorRifa.replaceChildren();
+
+    if (!rifas.length) {
+      throw new Error("No hay rifas activas.");
+    }
+
+    rifas.forEach(rifa => {
+      const option = document.createElement("option");
+
+      option.value = rifa.id;
+      option.textContent = rifa.name;
+
+      selectorRifa.appendChild(option);
+    });
+
+    selectorRifa.disabled = false;
+    document.getElementById("participar").disabled = false;
+
+    raffleId = Number(rifas[0].id);
+
+    selectorRifa.value = String(raffleId);
+
+    await cargarRifa();
+
+    document.getElementById("estadoPortada").textContent =
+      "¡Participa y descubre el premio!";
+
+  } catch(error) {
+
+    console.error(error);
+
+    document.getElementById("nombreRifa").textContent =
+      "AFIR";
+
+    document.getElementById("estadoPortada").textContent =
+      error.message;
+
+    selectorRifa.disabled = true;
+    document.getElementById("participar").disabled = true;
+  }
+}
+
+// CARGAR UNA RIFA ESPECÍFICA
+
+async function cargarRifa() {
+
+  if (!raffleId) return;
+
+  const respuesta = await fetch(
+    API + "/api/raffle?raffle_id=" + raffleId,
+    { cache: "no-store" }
+  );
+
+  if (!respuesta.ok) {
+    throw new Error("No se pudo cargar la rifa.");
+  }
+
+  const rifa = await respuesta.json();
+
+  document.getElementById("nombreRifa").textContent =
+    rifa.name;
+
+  const imagenPremio = normalizarImagen(rifa.prize_image);
+
+  imagenPuzzle = normalizarImagen(rifa.puzzle_image);
+
+  const img = document.getElementById("imagenPremio");
+
+  if (imagenPremio) {
+    img.src = imagenPremio;
+    img.hidden = false;
+  } else {
+    img.removeAttribute("src");
+    img.hidden = true;
+  }
+
+  let datos = [];
+
+  if (rifa.draw_date) {
+    datos.push("Sorteo: " + rifa.draw_date);
+  }
+
+  if (rifa.ticket_price != null) {
+    datos.push("Precio por número: " + rifa.ticket_price);
+  }
+
+  document.getElementById("datosRifa").textContent =
+    datos.join(" | ");
+
+  grid.style.backgroundImage = imagenPuzzle
+    ? 'url("' + imagenPuzzle + '")'
+    : "none";
+}
+
+// CAMBIAR RIFA
+
+selectorRifa.onchange = async () => {
+
+  const nuevoId = Number(selectorRifa.value);
+
+  if (!Number.isSafeInteger(nuevoId) || nuevoId < 1) return;
+
+  raffleId = nuevoId;
+  seleccionados = [];
+  numeros = [];
+
+  mensaje.textContent = "";
+
+  grid.replaceChildren();
+
+  document.getElementById("progreso").textContent =
+    "0 de 100 números vendidos";
+
+  try {
+
+    await cargarRifa();
+
+    if (!tablero.classList.contains("oculto")) {
+      await cargarNumeros();
+    }
+
+  } catch(error) {
+
+    console.error(error);
+
+    document.getElementById("estadoPortada").textContent =
+      error.message;
+  }
+};
+
 // CAMBIO DE PANTALLA
 
-document.getElementById("participar").onclick = () => {
+document.getElementById("participar").onclick = async () => {
+
+  if (!raffleId) return;
+
   portada.classList.add("oculto");
   tablero.classList.remove("oculto");
 
-  cargarNumeros();
-
   window.scrollTo(0, 0);
+
+  await cargarNumeros();
 };
 
 document.getElementById("volver").onclick = () => {
+
   tablero.classList.add("oculto");
   portada.classList.remove("oculto");
 
   window.scrollTo(0, 0);
 };
 
-// CARGAR DATOS E IMÁGENES
-
-async function cargarRifa() {
-  try {
-    const respuesta = await fetch(API + "/api/raffle", {
-      cache: "no-store"
-    });
-
-    if (!respuesta.ok) {
-      throw new Error("No hay una rifa disponible.");
-    }
-
-    const rifa = await respuesta.json();
-
-    document.getElementById("nombreRifa").textContent =
-      rifa.name;
-
-    const imagenPremio = normalizarImagen(rifa.prize_image);
-
-    imagenPuzzle = normalizarImagen(rifa.puzzle_image);
-
-    if (imagenPremio) {
-      const img = document.getElementById("imagenPremio");
-      img.src = imagenPremio;
-      img.hidden = false;
-    }
-
-    let datos = [];
-
-    if (rifa.draw_date) {
-      datos.push("Sorteo: " + rifa.draw_date);
-    }
-
-    if (rifa.ticket_price != null) {
-      datos.push("Precio por número: " + rifa.ticket_price);
-    }
-
-    document.getElementById("datosRifa").textContent =
-      datos.join(" | ");
-
-    if (imagenPuzzle) {
-      grid.style.backgroundImage =
-        'url("' + imagenPuzzle + '")';
-    }
-
-    document.getElementById("estadoPortada").textContent =
-      "¡Participa y descubre el premio!";
-
-  } catch(error) {
-    console.error(error);
-
-    document.getElementById("estadoPortada").textContent =
-      error.message;
-  }
-}
-
-// CARGAR NÚMEROS
+// CARGAR NÚMEROS DE LA RIFA SELECCIONADA
 
 async function cargarNumeros() {
+
+  if (!raffleId) return;
+
   try {
-    const respuesta = await fetch(API + "/api/numbers", {
-      cache: "no-store"
-    });
+
+    estado.textContent = "Actualizando tablero...";
+
+    const respuesta = await fetch(
+      API + "/api/numbers?raffle_id=" + raffleId,
+      { cache: "no-store" }
+    );
 
     if (!respuesta.ok) {
       throw new Error("Error consultando los números.");
@@ -356,6 +477,7 @@ async function cargarNumeros() {
 
     seleccionados = seleccionados.filter(n => {
       const item = numeros.find(x => x.number === n);
+
       return item && item.status === "available";
     });
 
@@ -372,6 +494,7 @@ async function cargarNumeros() {
       "Tablero conectado correctamente";
 
   } catch(error) {
+
     estado.textContent =
       "Error al actualizar el tablero.";
 
@@ -382,6 +505,7 @@ async function cargarNumeros() {
 // DIBUJAR TABLERO
 
 function dibujarTablero() {
+
   grid.innerHTML = "";
 
   for (let i = 0; i < 100; i++) {
@@ -444,6 +568,11 @@ reservar.onclick = async () => {
 
   mensaje.textContent = "";
 
+  if (!raffleId) {
+    mensaje.textContent = "Selecciona una rifa.";
+    return;
+  }
+
   if (!seleccionados.length) {
     mensaje.textContent =
       "Selecciona al menos un número.";
@@ -469,6 +598,7 @@ reservar.onclick = async () => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
+          raffle_id: raffleId,
           name: nombre,
           phone: telefono,
           contactType: contactType,
@@ -509,11 +639,14 @@ reservar.onclick = async () => {
 
 // INICIO
 
-cargarRifa();
-cargarNumeros();
+cargarRifas();
 
 setInterval(() => {
-  cargarNumeros();
+
+  if (!tablero.classList.contains("oculto") && raffleId) {
+    cargarNumeros();
+  }
+
 }, 20000);
 
 </script>
