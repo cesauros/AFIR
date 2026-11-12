@@ -98,6 +98,12 @@ h1 { color: #38d9a9; }
   border: 1px solid #526078;
 }
 
+/* OCULTAR EL TABLERO DURANTE LA CARGA */
+
+.grid.cargando {
+  visibility: hidden;
+}
+
 button.numero {
   min-width: 0;
   aspect-ratio: 1 / 1;
@@ -222,7 +228,7 @@ input {
     Actualizando tablero...
   </div>
 
-  <div class="grid" id="grid"></div>
+  <div class="grid cargando" id="grid"></div>
 
   <div id="progreso">0 de 100 números vendidos</div>
 
@@ -260,6 +266,10 @@ let seleccionados = [];
 let numeros = [];
 let imagenPuzzle = "";
 let raffleId = null;
+
+/* IDENTIFICADOR PARA EVITAR CARGAS ANTIGUAS */
+
+let cargaNumerosId = 0;
 
 const grid = document.getElementById("grid");
 const estado = document.getElementById("estado");
@@ -390,7 +400,6 @@ async function cargarRifa() {
 
   document.getElementById("datosRifa").textContent =
     datos.join(" | ");
-
 }
 
 // CAMBIAR RIFA
@@ -402,11 +411,18 @@ selectorRifa.onchange = async () => {
   if (!Number.isSafeInteger(nuevoId) || nuevoId < 1) return;
 
   raffleId = nuevoId;
+
+  cargaNumerosId++;
+
   seleccionados = [];
   numeros = [];
 
   mensaje.textContent = "";
 
+  /* OCULTAR IMAGEN INMEDIATAMENTE */
+
+  grid.classList.add("cargando");
+  grid.style.backgroundImage = "none";
   grid.replaceChildren();
 
   document.getElementById("progreso").textContent =
@@ -438,6 +454,11 @@ document.getElementById("participar").onclick = async () => {
   portada.classList.add("oculto");
   tablero.classList.remove("oculto");
 
+  /* MANTENER OCULTO HASTA RECIBIR LOS NÚMEROS */
+
+  grid.classList.add("cargando");
+  grid.style.backgroundImage = "none";
+
   window.scrollTo(0, 0);
 
   await cargarNumeros();
@@ -457,12 +478,20 @@ async function cargarNumeros() {
 
   if (!raffleId) return;
 
+  const idSolicitado = raffleId;
+  const solicitud = ++cargaNumerosId;
+
   try {
+
+    /* OCULTAR EL TABLERO ANTES DE CARGAR */
+
+    grid.classList.add("cargando");
+    grid.style.backgroundImage = "none";
 
     estado.textContent = "Actualizando tablero...";
 
     const respuesta = await fetch(
-      API + "/api/numbers?raffle_id=" + raffleId,
+      API + "/api/numbers?raffle_id=" + idSolicitado,
       { cache: "no-store" }
     );
 
@@ -470,7 +499,18 @@ async function cargarNumeros() {
       throw new Error("Error consultando los números.");
     }
 
-    numeros = await respuesta.json();
+    const datos = await respuesta.json();
+
+    /* IGNORAR RESPUESTAS DE OTRAS CARGAS O RIFAS */
+
+    if (
+      solicitud !== cargaNumerosId ||
+      idSolicitado !== raffleId
+    ) {
+      return;
+    }
+
+    numeros = datos;
 
     seleccionados = seleccionados.filter(n => {
       const item = numeros.find(x => x.number === n);
@@ -490,10 +530,23 @@ async function cargarNumeros() {
     estado.textContent =
       "Tablero conectado correctamente";
 
+    /* MOSTRAR SOLO DESPUÉS DE DIBUJAR LOS 100 NÚMEROS */
+
+    grid.classList.remove("cargando");
+
   } catch(error) {
+
+    if (
+      solicitud !== cargaNumerosId ||
+      idSolicitado !== raffleId
+    ) {
+      return;
+    }
 
     estado.textContent =
       "Error al actualizar el tablero.";
+
+    grid.style.backgroundImage = "none";
 
     console.error(error);
   }
@@ -503,7 +556,8 @@ async function cargarNumeros() {
 
 function dibujarTablero() {
 
-  grid.innerHTML = "";
+  grid.style.backgroundImage = "none";
+  grid.replaceChildren();
 
   for (let i = 0; i < 100; i++) {
 
@@ -548,7 +602,9 @@ function dibujarTablero() {
     grid.appendChild(b);
   }
 
-    grid.style.backgroundImage = imagenPuzzle
+  /* APLICAR EL PUZZLE SOLO DESPUÉS DE CREAR LOS 100 BOTONES */
+
+  grid.style.backgroundImage = imagenPuzzle
     ? 'url("' + imagenPuzzle + '")'
     : "none";
 }
