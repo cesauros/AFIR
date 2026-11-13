@@ -645,13 +645,18 @@ function dibujarTablero() {
 
 // RESERVAR NÚMEROS
 
+let reservaCreada = null;
+
 reservar.onclick = async () => {
 
-  const nombre =
-    document.getElementById("nombre").value.trim();
+  // SEGUNDO CLIC: ABRIR WHATSAPP
+  if (reservaCreada) {
+    window.open(reservaCreada, "_blank");
+    return;
+  }
 
-  const telefono =
-    document.getElementById("telefono").value.trim();
+  const nombre = document.getElementById("nombre").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
 
   const contactType = /[a-zA-Z@_]/.test(telefono)
     ? "username"
@@ -659,18 +664,8 @@ reservar.onclick = async () => {
 
   mensaje.textContent = "";
 
-  if (!raffleId) {
-    mensaje.textContent = "Selecciona una rifa.";
-    return;
-  }
-
-  if (!seleccionados.length) {
-    mensaje.textContent = "Selecciona al menos un número.";
-    return;
-  }
-
-  if (!nombre || !telefono) {
-    mensaje.textContent = "Completa tu nombre y WhatsApp.";
+  if (!raffleId || !seleccionados.length || !nombre || !telefono) {
+    mensaje.textContent = "Completa tus datos y selecciona números.";
     return;
   }
 
@@ -678,75 +673,43 @@ reservar.onclick = async () => {
   reservar.textContent = "Procesando reserva...";
 
   try {
-
-    const respuesta = await fetch(
-      API + "/api/reservations",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          raffle_id: raffleId,
-          name: nombre,
-          phone: telefono,
-          contactType: contactType,
-          numbers: seleccionados
-        })
-      }
-    );
+    const respuesta = await fetch(API + "/api/reservations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        raffle_id: raffleId,
+        name: nombre,
+        phone: telefono,
+        contactType,
+        numbers: seleccionados
+      })
+    });
 
     const resultado = await respuesta.json();
 
     if (!respuesta.ok) {
-      throw new Error(
-        resultado.error || "No se pudo completar la reserva"
-      );
+      throw new Error(resultado.error || "No se pudo completar la reserva.");
     }
 
-    mensaje.replaceChildren();
+    reservaCreada = resultado.admin_whatsapp_url;
 
-    const confirmacion = document.createElement("p");
-
-    confirmacion.textContent =
+    mensaje.textContent =
       "¡Reserva creada! Código: " +
       resultado.reservation.reservation_code +
-      ". Tienes 72 horas para realizar el pago.";
-
-    mensaje.appendChild(confirmacion);
-
-    if (resultado.admin_whatsapp_url) {
-      window.open(
-        resultado.admin_whatsapp_url,
-        "_blank"
-      );
-
-      const aviso = document.createElement("p");
-      aviso.textContent =
-        "Envía el mensaje por WhatsApp para notificar al administrador.";
-      mensaje.appendChild(aviso);
-
-    } else {
-      const aviso = document.createElement("p");
-      aviso.textContent =
-        "Reserva registrada. Puedes continuar reservando más números.";
-      mensaje.appendChild(aviso);
-    }
+      ". Tienes 72 horas para pagar.";
 
     seleccionados = [];
 
+    reservar.textContent = "Enviar notificación por WhatsApp";
+    reservar.disabled = !reservaCreada;
+
     await cargarNumeros();
 
-  } catch(error) {
-
+  } catch (error) {
     mensaje.textContent = error.message;
-    await cargarNumeros();
-
-  } finally {
-
+    reservar.textContent = "Confirmar reserva";
     reservar.disabled = false;
-    reservar.textContent =
-      "📲 Confirmar y Notificar Wpp";
+
   }
 };
 
