@@ -293,6 +293,7 @@ let raffleId = null;
 /* IDENTIFICADOR PARA EVITAR CARGAS ANTIGUAS */
 
 let cargaNumerosId = 0;
+let enlaceNotificacion = null;
 
 const grid = document.getElementById("grid");
 const estado = document.getElementById("estado");
@@ -646,6 +647,13 @@ function dibujarTablero() {
 
 reservar.onclick = async () => {
 
+  // SEGUNDO PASO: ABRIR WHATSAPP
+
+  if (enlaceNotificacion) {
+    window.open(enlaceNotificacion, "_blank");
+    return;
+  }
+
   const nombre =
     document.getElementById("nombre").value.trim();
 
@@ -716,28 +724,20 @@ reservar.onclick = async () => {
 
     mensaje.appendChild(confirmacion);
 
-    if (resultado.admin_whatsapp_url) {
-      const enlace = document.createElement("a");
-
-      enlace.href = resultado.admin_whatsapp_url;
-      enlace.target = "_blank";
-      enlace.rel = "noopener noreferrer";
-      enlace.textContent =
-        "📲 AVISAR AL ADMINISTRADOR POR WHATSAPP";
-
-      enlace.style.display = "inline-block";
-      enlace.style.background = "#25d366";
-      enlace.style.color = "#ffffff";
-      enlace.style.padding = "14px 20px";
-      enlace.style.borderRadius = "8px";
-      enlace.style.margin = "12px";
-      enlace.style.fontWeight = "bold";
-      enlace.style.textDecoration = "none";
-
-      mensaje.appendChild(enlace);
-    }
-
     seleccionados = [];
+
+    if (resultado.admin_whatsapp_url) {
+
+      enlaceNotificacion = resultado.admin_whatsapp_url;
+
+      reservar.textContent = "📲 Notificar al administrador";
+
+    } else {
+
+      reservar.textContent = "Reserva confirmada";
+      reservar.disabled = true;
+
+    }
 
     await cargarNumeros();
 
@@ -747,10 +747,17 @@ reservar.onclick = async () => {
 
     await cargarNumeros();
 
+    reservar.textContent = "Confirmar reserva";
+
   } finally {
 
-    reservar.disabled = false;
-    reservar.textContent = "Confirmar reserva";
+    if (enlaceNotificacion) {
+      reservar.disabled = false;
+    } else if (reservar.textContent !== "Reserva confirmada") {
+      reservar.disabled = false;
+      reservar.textContent = "Confirmar reserva";
+    }
+
   }
 };
 
