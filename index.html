@@ -274,7 +274,7 @@ input {
   >
 
   <button id="reservar">
-    Confirmar reserva
+    Confirmar y Notificar Wpp
   </button>
 
   <p id="mensaje"></p>
@@ -647,13 +647,6 @@ function dibujarTablero() {
 
 reservar.onclick = async () => {
 
-  // SEGUNDO PASO: ABRIR WHATSAPP
-
-  if (enlaceNotificacion) {
-    window.open(enlaceNotificacion, "_blank");
-    return;
-  }
-
   const nombre =
     document.getElementById("nombre").value.trim();
 
@@ -672,14 +665,12 @@ reservar.onclick = async () => {
   }
 
   if (!seleccionados.length) {
-    mensaje.textContent =
-      "Selecciona al menos un número.";
+    mensaje.textContent = "Selecciona al menos un número.";
     return;
   }
 
   if (!nombre || !telefono) {
-    mensaje.textContent =
-      "Completa tu nombre y WhatsApp.";
+    mensaje.textContent = "Completa tu nombre y WhatsApp.";
     return;
   }
 
@@ -724,40 +715,38 @@ reservar.onclick = async () => {
 
     mensaje.appendChild(confirmacion);
 
-    seleccionados = [];
-
     if (resultado.admin_whatsapp_url) {
+      window.open(
+        resultado.admin_whatsapp_url,
+        "_blank"
+      );
 
-      enlaceNotificacion = resultado.admin_whatsapp_url;
-
-      reservar.textContent = "📲 Notificar al administrador";
+      const aviso = document.createElement("p");
+      aviso.textContent =
+        "Envía el mensaje por WhatsApp para notificar al administrador.";
+      mensaje.appendChild(aviso);
 
     } else {
-
-      reservar.textContent = "Reserva confirmada";
-      reservar.disabled = true;
-
+      const aviso = document.createElement("p");
+      aviso.textContent =
+        "Reserva registrada. Puedes continuar reservando más números.";
+      mensaje.appendChild(aviso);
     }
+
+    seleccionados = [];
 
     await cargarNumeros();
 
   } catch(error) {
 
     mensaje.textContent = error.message;
-
     await cargarNumeros();
-
-    reservar.textContent = "Confirmar reserva";
 
   } finally {
 
-    if (enlaceNotificacion) {
-      reservar.disabled = false;
-    } else if (reservar.textContent !== "Reserva confirmada") {
-      reservar.disabled = false;
-      reservar.textContent = "Confirmar reserva";
-    }
-
+    reservar.disabled = false;
+    reservar.textContent =
+      "📲 CONFIRMAR RESERVA Y NOTIFICAR AL ADMIN";
   }
 };
 
