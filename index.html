@@ -648,11 +648,11 @@ function dibujarTablero() {
 
 reservar.onclick = async () => {
 
-  // SEGUNDO PASO: ABRIR WHATSAPP
-  if (reservaCreada) {
-    if (enlaceNotificacion) {
-      window.open(enlaceNotificacion, "_blank");
-    }
+  // SEGUNDO CLIC: ABRIR WHATSAPP
+  if (enlaceNotificacion) {
+    window.open(enlaceNotificacion, "_blank");
+    enlaceNotificacion = null;
+    reservar.textContent = "Confirmar reserva";
     return;
   }
 
@@ -713,9 +713,6 @@ reservar.onclick = async () => {
       );
     }
 
-    enlaceNotificacion = resultado.admin_whatsapp_url;
-    reservaCreada = true;
-
     mensaje.replaceChildren();
 
     const confirmacion = document.createElement("p");
@@ -727,12 +724,24 @@ reservar.onclick = async () => {
 
     mensaje.appendChild(confirmacion);
 
+    enlaceNotificacion = resultado.admin_whatsapp_url;
+
     seleccionados = [];
 
-    reservar.textContent = "Notificar por WhatsApp";
-    reservar.disabled = !enlaceNotificacion;
-
     await cargarNumeros();
+
+    if (enlaceNotificacion) {
+      reservar.textContent = "Notificar por WhatsApp";
+      reservar.disabled = false;
+    } else {
+      reservar.textContent = "Confirmar reserva";
+      reservar.disabled = false;
+      mensaje.appendChild(
+        document.createTextNode(
+          " No se pudo generar el enlace de WhatsApp."
+        )
+      );
+    }
 
   } catch(error) {
 
@@ -740,6 +749,7 @@ reservar.onclick = async () => {
     reservar.textContent = "Confirmar reserva";
     reservar.disabled = false;
 
+    await cargarNumeros();
   }
 };
 
