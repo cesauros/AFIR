@@ -460,16 +460,9 @@ async function cargarRifas() {
         info.appendChild(fecha);
       }
 
-      const accion = document.createElement("span");
-      accion.className = "abrir-rifa";
-      accion.textContent = "VER TABLERO";
-
       tarjeta.appendChild(img);
       tarjeta.appendChild(info);
-      tarjeta.appendChild(accion);
-
       tarjeta.onclick = () => abrirRifa(rifa.id);
-
       galeria.appendChild(tarjeta);
     });
 
