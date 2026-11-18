@@ -279,17 +279,11 @@ input {
 
 <section id="portada">
 
-  <h2 id="nombreRifa">Cargando rifas...</h2>
+  <h2>Selecciona tu premio</h2>
 
   <div id="galeriaRifas" class="galeria-rifas">
     <p>Cargando rifas...</p>
   </div>
-
-  <div id="datosRifa"></div>
-
-  <p id="estadoPortada" class="estado">
-    Conectando con AFIR...
-  </p>
 
 </section>
 
@@ -504,9 +498,6 @@ async function abrirRifa(id) {
 
     tablero.classList.add("oculto");
     portada.classList.remove("oculto");
-
-    document.getElementById("estadoPortada").textContent =
-      error.message;
   }
 }
   
@@ -527,23 +518,7 @@ async function cargarRifa() {
 
   const rifa = await respuesta.json();
 
-  document.getElementById("nombreRifa").textContent =
-    rifa.name;
-
-imagenPuzzle = normalizarImagen(rifa.puzzle_image);
-
-  let datos = [];
-
-  if (rifa.draw_date) {
-    datos.push("Sorteo: " + rifa.draw_date);
-  }
-
-  if (rifa.ticket_price != null) {
-    datos.push("Precio por número: " + rifa.ticket_price);
-  }
-
-  document.getElementById("datosRifa").textContent =
-    datos.join(" | ");
+  imagenPuzzle = normalizarImagen(rifa.puzzle_image);
 }
 
 document.getElementById("volver").onclick = () => {
