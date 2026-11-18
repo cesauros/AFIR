@@ -571,25 +571,6 @@ async function cargarRifa() {
     datos.join(" | ");
 }
 
-// CAMBIO DE PANTALLA
-
-document.getElementById("participar").onclick = async () => {
-
-  if (!raffleId) return;
-
-  portada.classList.add("oculto");
-  tablero.classList.remove("oculto");
-
-  /* MANTENER OCULTO HASTA RECIBIR LOS NÚMEROS */
-
-  grid.classList.add("cargando");
-  grid.style.backgroundImage = "none";
-
-  window.scrollTo(0, 0);
-
-  await cargarNumeros();
-};
-
 document.getElementById("volver").onclick = () => {
 
   tablero.classList.add("oculto");
