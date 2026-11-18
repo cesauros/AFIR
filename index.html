@@ -464,6 +464,142 @@ button.numero:disabled {
     transition: none;
   }
 }
+
+/* =========================================
+   AFIR - FICHAS 3D PREMIUM
+========================================= */
+
+button.numero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-width: 0;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 1px solid rgba(115,235,255,.65);
+  border-radius: 7px;
+
+  background:
+    linear-gradient(145deg,
+      rgba(76,173,220,.45),
+      transparent 40%),
+    linear-gradient(145deg,#17415c,#071625 75%);
+
+  color: #eaffff;
+  font-size: clamp(10px,3.2vw,17px);
+  font-weight: 800;
+
+  text-shadow: 0 1px 4px rgba(0,0,0,.8);
+
+  box-shadow:
+    inset 0 2px 2px rgba(255,255,255,.35),
+    inset 0 -4px 5px rgba(0,0,0,.6),
+    0 3px 0 #03101b,
+    0 5px 9px rgba(0,0,0,.65);
+
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    background .22s ease,
+    border-color .22s ease;
+}
+
+/* REFLEJO DE CRISTAL */
+
+button.numero::before {
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:5px;
+  pointer-events:none;
+  background:linear-gradient(
+    135deg,
+    rgba(255,255,255,.28),
+    transparent 30%,
+    transparent 70%,
+    rgba(0,225,255,.12)
+  );
+  z-index:-1;
+}
+
+/* FICHA AL PRESIONAR */
+
+button.numero:active:not(:disabled) {
+  transform:translateY(3px) scale(.94);
+  box-shadow:
+    inset 0 3px 8px rgba(0,0,0,.7),
+    0 1px 0 #03101b;
+}
+
+/* SELECCIONADA */
+
+button.numero.seleccionado {
+  transform:translateY(-3px);
+  border-color:#bafff5;
+
+  background:linear-gradient(
+    145deg,#80fff0,#00d9bd 45%,#007f82
+  );
+
+  color:#003b3b;
+  text-shadow:0 1px 2px rgba(255,255,255,.5);
+
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.8),
+    inset 0 -4px 7px rgba(0,70,80,.5),
+    0 4px 0 #00645f,
+    0 0 12px #00ffe0,
+    0 0 25px rgba(0,255,224,.65);
+}
+
+/* RESERVADA */
+
+button.numero.reservado {
+  border-color:#ffaaa9;
+  background:linear-gradient(
+    145deg,#ff7777,#bd263d 55%,#671323
+  );
+  color:white;
+  box-shadow:
+    inset 0 2px 3px rgba(255,255,255,.4),
+    inset 0 -4px 5px rgba(0,0,0,.5),
+    0 3px 0 #54101d,
+    0 0 12px rgba(255,50,70,.5);
+  cursor:not-allowed;
+}
+
+/* VENDIDA */
+
+button.numero.vendido {
+  background:transparent;
+  color:transparent;
+  border-color:transparent;
+  box-shadow:none;
+  text-shadow:none;
+  cursor:default;
+}
+
+/* REFLEJO AL PASAR EL RATÓN */
+
+@media (hover:hover) {
+  button.numero:not(:disabled):hover {
+    transform:translateY(-4px) scale(1.03);
+    border-color:#a5faff;
+    box-shadow:
+      inset 0 2px 3px rgba(255,255,255,.5),
+      0 5px 0 #03101b,
+      0 0 15px #00eaff,
+      0 0 25px rgba(0,234,255,.5);
+  }
+}
+
+/* ACCESIBILIDAD */
+
+@media (prefers-reduced-motion:reduce) {
+  button.numero {
+    transition:none;
+  }
+}
   
 </style>
 </head>
