@@ -196,275 +196,6 @@ input {
   border-color: #38d9a9;
 }
 
-/* =====================================
-   AFIR - TABLERO CASINO ESPECTACULAR
-===================================== */
-
-.grid {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 1px;
-  width: 100%;
-  max-width: 500px;
-  aspect-ratio: 1 / 1;
-  margin: 30px auto;
-  padding: 6px;
-  overflow: hidden;
-  isolation: isolate;
-  border: 2px solid #00eaff;
-  border-radius: 12px;
-  background: #071322;
-  box-shadow:
-    0 0 12px #00eaff,
-    0 0 30px rgba(0,234,255,.35),
-    inset 0 0 25px rgba(0,234,255,.15);
-}
-
-/* IMAGEN DEL PREMIO */
-
-.grid::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: var(--puzzle);
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: blur(5px) brightness(.5);
-  transform: scale(1.05);
-  z-index: -2;
-}
-
-/* ILUMINACIÓN MÓVIL INTENSA */
-
-.grid::after {
-  content: "";
-  position: absolute;
-  inset: -50%;
-  z-index: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    110deg,
-    transparent 35%,
-    rgba(0,234,255,.18) 45%,
-    rgba(255,215,0,.45) 50%,
-    rgba(0,234,255,.25) 55%,
-    transparent 65%
-  );
-  animation: luzAfirm 4s linear infinite;
-}
-
-@keyframes luzAfirm {
-  from { transform: translateX(-35%); }
-  to { transform: translateX(35%); }
-}
-
-/* PULSO LUMINOSO DEL TABLERO */
-
-.grid {
-  animation: pulsoTablero 3s ease-in-out infinite alternate;
-}
-
-@keyframes pulsoTablero {
-  from {
-    box-shadow: 0 0 12px #00eaff,
-                0 0 25px rgba(0,234,255,.3);
-  }
-  to {
-    box-shadow: 0 0 20px #00eaff,
-                0 0 45px rgba(0,234,255,.65),
-                0 0 65px rgba(255,215,0,.18);
-  }
-}
-
-/* BRILLO EN LAS TECLAS */
-
-button.numero:not(:disabled) {
-  animation: brilloTecla 2.5s ease-in-out infinite alternate;
-}
-
-@keyframes brilloTecla {
-  from {
-    filter: brightness(.9);
-  }
-  to {
-    filter: brightness(1.3);
-  }
-}
-
-button.numero.seleccionado {
-  animation: ninguna;
-  filter: brightness(1.4);
-}
-
-/* IMAGEN COMPLETAMENTE DESCUBIERTA */
-
-.grid.completado::before {
-  filter: none;
-}
-
-/* TECLAS 3D */
-
-button.numero {
-  position: relative;
-  z-index: 1;
-  min-width: 0;
-  aspect-ratio: 1 / 1;
-  padding: 0;
-  border: 1px solid rgba(0,234,255,.4);
-  border-radius: 6px;
-  background: linear-gradient(
-    145deg,
-    #173550,
-    #091727
-  );
-  color: white;
-  font-size: clamp(10px, 3.2vw, 17px);
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow:
-    0 3px 0 #03101c,
-    0 5px 8px rgba(0,0,0,.5),
-    inset 0 1px 2px rgba(255,255,255,.2);
-  transition:
-    transform .18s ease,
-    box-shadow .18s ease,
-    background .18s ease,
-    border-color .18s ease;
-}
-
-/* REFLEJO LUMINOSO EN LOS BORDES */
-
-button.numero {
-  overflow: hidden;
-  isolation: isolate;
-}
-
-/* DESTELLOS RIPPLE ALEATORIOS */
-
-button.numero {
-  overflow: hidden;
-  isolation: isolate;
-}
-
-button.numero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  background:
-    linear-gradient(120deg,
-      transparent 25%,
-      #00ffff 50%,
-      transparent 75%) border-box;
-  opacity: 0;
-  pointer-events: none;
-  animation: rippleTecla 5s ease-in-out infinite;
-  animation-delay: var(--retardo, 0s);
-}
-
-@keyframes rippleTecla {
-  0%, 65%, 100% {
-    opacity: 0;
-    filter: brightness(1);
-  }
-  72% {
-    opacity: .9;
-    filter: brightness(2);
-  }
-  82% {
-    opacity: .25;
-    filter: brightness(1.5);
-  }
-}
-
-/* LOS NÚMEROS SELECCIONADOS CONSERVAN SU BRILLO */
-
-button.numero.seleccionado {
-  z-index: 3;
-}
-  
-/* EFECTO AL TOCAR */
-
-button.numero:active {
-  transform: translateY(2px) scale(.96);
-}
-
-/* SELECCIONADO */
-
-button.numero.seleccionado {
-  transform: translateY(-3px);
-  background: linear-gradient(
-    145deg,
-    #00ffd0,
-    #00a88c
-  );
-  color: #031c20;
-  border: 1px solid #aafff0;
-  box-shadow:
-    0 0 8px #00ffd0,
-    0 0 20px rgba(0,255,208,.8),
-    0 4px 0 #006b60;
-}
-
-/* RESERVADO */
-
-button.numero.reservado {
-  background: linear-gradient(
-    145deg,
-    #ff6868,
-    #a51e35
-  );
-  color: white;
-  border-color: #ff9999;
-  box-shadow:
-    0 0 10px rgba(255,50,70,.6),
-    0 3px 0 #641321;
-  cursor: not-allowed;
-}
-
-/* VENDIDO */
-
-button.numero.vendido {
-  background: transparent;
-  color: transparent;
-  border-color: transparent;
-  box-shadow: none;
-  cursor: default;
-}
-
-/* ESTADOS DESHABILITADOS */
-
-button.numero:disabled {
-  opacity: 1;
-}
-
-/* MOVIMIENTO SUTIL */
-
-@media (hover: hover) {
-  button.numero:not(:disabled):hover {
-    transform: translateY(-2px);
-    border-color: #00ffff;
-    box-shadow:
-      0 0 12px rgba(0,234,255,.7),
-      0 4px 0 #03101c;
-  }
-}
-
-/* REDUCIR MOVIMIENTO SI EL USUARIO LO PREFIERE */
-
-@media (prefers-reduced-motion: reduce) {
-  .grid::after {
-    animation: none;
-  }
-
-  button.numero {
-    transition: none;
-  }
-}
-
 /* =========================================
    AFIR - PASTILLAS DE CRISTAL 3D
 ========================================= */
@@ -477,61 +208,59 @@ button.numero {
   width: 100%;
   min-width: 0;
   aspect-ratio: 1;
-
   padding: 0;
-  border: 1px solid rgba(180,245,255,.75);
+
+  border: 2px solid rgba(190,245,255,.9);
   border-radius: 9px;
 
   background:
-    linear-gradient(145deg,
-      #65cfff 0%,
-      #17618e 35%,
-      #092b49 75%,
-      #031626 100%);
+    linear-gradient(135deg,
+      #a5ecff 0%,
+      #328fca 20%,
+      #075080 55%,
+      #021b36 100%);
 
-  color: #ffffff;
+  color: white;
   font-size: clamp(10px,3.2vw,17px);
   font-weight: 900;
 
-  text-shadow: 0 1px 4px #001827;
+  text-shadow: 0 1px 3px #001827;
 
   box-shadow:
-    inset 0 2px 3px rgba(255,255,255,.8),
-    inset 0 -5px 8px rgba(0,0,0,.55),
-    0 3px 0 #03101c,
-    0 5px 9px rgba(0,0,0,.7);
+    inset 0 2px 4px rgba(255,255,255,.9),
+    inset 0 -5px 8px rgba(0,0,0,.65),
+    0 2px 0 #03101c,
+    0 4px 7px rgba(0,0,0,.65);
 
   transition: transform .2s, box-shadow .2s;
 }
 
-/* CÍRCULO CENTRAL DE CRISTAL */
+/* CÍRCULO CENTRAL: 80% */
 
 button.numero::before {
   content: "";
   position: absolute;
-
   width: 80%;
   height: 80%;
-
   left: 50%;
   top: 50%;
   transform: translate(-50%,-50%);
-
   border-radius: 50%;
-  border: 2px solid rgba(210,250,255,.95);
+  border: 2px solid rgba(225,250,255,.95);
 
   background:
     radial-gradient(
-      circle at 32% 25%,
-      rgba(255,255,255,.65),
-      rgba(110,220,255,.22) 35%,
-      rgba(0,35,75,.55) 100%
+      circle at 30% 22%,
+      rgba(255,255,255,.95),
+      rgba(160,235,255,.7) 18%,
+      rgba(25,115,175,.8) 55%,
+      rgba(0,30,65,.95) 100%
     );
 
   box-shadow:
-    inset 0 2px 5px rgba(255,255,255,.65),
-    inset 0 -3px 6px rgba(0,0,0,.5),
-    0 0 7px rgba(100,235,255,.7);
+    inset 0 3px 5px rgba(255,255,255,.8),
+    inset 0 -4px 7px rgba(0,0,0,.7),
+    0 0 5px rgba(120,235,255,.8);
 
   pointer-events: none;
   z-index: -1;
@@ -541,62 +270,51 @@ button.numero::before {
 
 button.numero.seleccionado {
   background: linear-gradient(
-    145deg,#a1fff4,#00d9bd 50%,#007b83
+    135deg,#c5fff8,#00d9bd 50%,#006b75
   );
-
   color: #003b3b;
-  border-color: #d4fff9;
-
+  border-color: white;
   box-shadow:
     inset 0 2px 5px white,
     0 3px 0 #00645f,
-    0 0 15px #00ffe0;
+    0 0 14px #00ffe0;
 }
-
-/* CÍRCULO DE LA FICHA SELECCIONADA */
 
 button.numero.seleccionado::before {
   background: radial-gradient(
-    circle at 30% 25%,
-    #ffffff,
+    circle at 30% 22%,
+    white,
     #a4fff4 45%,
-    #00a99a
+    #008c91
   );
-
-  border-color: white;
 }
 
-/* RESERVADOS */
+/* RESERVADO */
 
 button.numero.reservado {
   background: linear-gradient(
-    145deg,#ff8585,#c32142,#681326
+    135deg,#ffb0b0,#e43d59 50%,#751329
   );
-
-  border-color: #ffc1c1;
+  border-color: #ffd0d0;
   color: white;
 }
 
 button.numero.reservado::before {
   background: radial-gradient(
-    circle at 30% 25%,
-    #ffd0d0,
-    #f15b70 50%,
-    #8c142e
+    circle at 30% 22%,
+    white,
+    #ff9ca8 45%,
+    #9c1734
   );
-
-  border-color: #ffe0e0;
 }
 
-/* VENDIDOS: COMPLETAMENTE INVISIBLES */
+/* VENDIDO: SIN NINGÚN ELEMENTO VISIBLE */
 
 button.numero.vendido {
+  visibility: hidden !important;
   background: transparent !important;
-  border: none !important;
+  border: 0 !important;
   box-shadow: none !important;
-  color: transparent !important;
-  text-shadow: none !important;
-  visibility: hidden;
 }
 
 button.numero.vendido::before,
@@ -609,16 +327,16 @@ button.numero.vendido::after {
 
 @media (hover:hover) {
   button.numero:not(:disabled):not(.vendido):hover {
-    transform: translateY(-3px) scale(1.04);
+    transform: translateY(-2px) scale(1.03);
     box-shadow:
       inset 0 2px 5px white,
-      0 4px 0 #03101c,
-      0 0 18px #00eaff;
+      0 3px 0 #03101c,
+      0 0 15px #00eaff;
   }
 }
 
 button.numero:active:not(:disabled) {
-  transform: scale(.94);
+  transform: scale(.95);
 }
 
 @media (prefers-reduced-motion: reduce) {
