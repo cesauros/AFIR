@@ -285,12 +285,6 @@ input {
     <p>Cargando rifas...</p>
   </div>
 
-  <img
-    id="imagenPremio"
-    alt="Premio de la rifa"
-    hidden
-  >
-
   <div id="datosRifa"></div>
 
   <p id="estadoPortada" class="estado">
@@ -543,19 +537,7 @@ async function cargarRifa() {
   document.getElementById("nombreRifa").textContent =
     rifa.name;
 
-  const imagenPremio = normalizarImagen(rifa.prize_image);
-
-  imagenPuzzle = normalizarImagen(rifa.puzzle_image);
-
-  const img = document.getElementById("imagenPremio");
-
-  if (imagenPremio) {
-    img.src = imagenPremio;
-    img.hidden = false;
-  } else {
-    img.removeAttribute("src");
-    img.hidden = true;
-  }
+imagenPuzzle = normalizarImagen(rifa.puzzle_image);
 
   let datos = [];
 
