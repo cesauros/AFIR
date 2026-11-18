@@ -236,28 +236,67 @@ input {
   z-index: -2;
 }
 
-/* ILUMINACIÓN MÓVIL */
+/* ILUMINACIÓN MÓVIL INTENSA */
 
 .grid::after {
   content: "";
   position: absolute;
-  inset: -50%;
-  z-index: -1;
+  inset: -100%;
+  z-index: 2;
   pointer-events: none;
   background: linear-gradient(
     110deg,
     transparent 35%,
-    rgba(0,234,255,.12) 45%,
-    rgba(255,215,0,.20) 50%,
-    rgba(0,234,255,.12) 55%,
-    transparent 65%
+    rgba(0,234,255,.12) 42%,
+    rgba(0,234,255,.45) 47%,
+    rgba(255,215,0,.38) 50%,
+    rgba(0,234,255,.45) 53%,
+    transparent 62%
   );
-  animation: luzAfirm 7s linear infinite;
+  animation: luzAfirm 4s ease-in-out infinite alternate;
 }
 
 @keyframes luzAfirm {
   from { transform: translateX(-35%); }
   to { transform: translateX(35%); }
+}
+
+/* PULSO LUMINOSO DEL TABLERO */
+
+.grid {
+  animation: pulsoTablero 3s ease-in-out infinite alternate;
+}
+
+@keyframes pulsoTablero {
+  from {
+    box-shadow: 0 0 12px #00eaff,
+                0 0 25px rgba(0,234,255,.3);
+  }
+  to {
+    box-shadow: 0 0 20px #00eaff,
+                0 0 45px rgba(0,234,255,.65),
+                0 0 65px rgba(255,215,0,.18);
+  }
+}
+
+/* BRILLO EN LAS TECLAS */
+
+button.numero:not(:disabled) {
+  animation: brilloTecla 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes brilloTecla {
+  from {
+    filter: brightness(.9);
+  }
+  to {
+    filter: brightness(1.3);
+  }
+}
+
+button.numero.seleccionado {
+  animation: ninguna;
+  filter: brightness(1.4);
 }
 
 /* IMAGEN COMPLETAMENTE DESCUBIERTA */
