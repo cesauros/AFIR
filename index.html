@@ -202,6 +202,72 @@ input {
 .grid.completado::before {
   filter: none;
 }
+
+.galeria-rifas {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding: 15px 5px 25px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tarjeta-rifa {
+  flex: 0 0 82%;
+  max-width: 340px;
+  background: #192638;
+  border: 1px solid #39485b;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  scroll-snap-align: center;
+}
+
+.tarjeta-rifa img {
+  width: 100%;
+  height: 230px;
+  object-fit: contain;
+  background: #263449;
+}
+
+.tarjeta-rifa .info-rifa {
+  padding: 14px;
+}
+
+.tarjeta-rifa h3 {
+  color: #38d9a9;
+  margin: 5px 0 10px;
+}
+
+.tarjeta-rifa p {
+  color: #b8c5d6;
+  margin: 6px 0;
+}
+
+.tarjeta-rifa button {
+  background: #25d366;
+  color: white;
+  border: 0;
+  padding: 12px;
+  border-radius: 7px;
+  font-weight: bold;
+  width: 100%;
+}
+
+.tarjeta-rifa .abrir-rifa {
+  display: block;
+  background: #25d366;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  border-radius: 7px;
+  font-weight: bold;
+}
+
+.tarjeta-rifa:hover {
+  border-color: #38d9a9;
+}
+  
 </style>
 </head>
 
@@ -215,9 +281,9 @@ input {
 
   <h2 id="nombreRifa">Cargando rifas...</h2>
 
-  <select id="selectorRifa" disabled>
-    <option value="">Cargando rifas...</option>
-  </select>
+  <div id="galeriaRifas" class="galeria-rifas">
+    <p>Cargando rifas...</p>
+  </div>
 
   <img
     id="imagenPremio"
@@ -230,10 +296,6 @@ input {
   <p id="estadoPortada" class="estado">
     Conectando con AFIR...
   </p>
-
-  <button id="participar" disabled>
-    PARTICIPAR
-  </button>
 
 </section>
 
@@ -334,7 +396,6 @@ const reservar = document.getElementById("reservar");
 
 const portada = document.getElementById("portada");
 const tablero = document.getElementById("tablero");
-const selectorRifa = document.getElementById("selectorRifa");
 
 // NORMALIZAR IMÁGENES
 
@@ -367,49 +428,101 @@ async function cargarRifas() {
     }
 
     const rifas = await respuesta.json();
+    const galeria = document.getElementById("galeriaRifas");
 
-    selectorRifa.replaceChildren();
+    galeria.replaceChildren();
 
     if (!rifas.length) {
-      throw new Error("No hay rifas activas.");
+      galeria.textContent = "No hay rifas activas.";
+      return;
     }
 
     rifas.forEach(rifa => {
-      const option = document.createElement("option");
+      const tarjeta = document.createElement("div");
+      tarjeta.className = "tarjeta-rifa";
 
-      option.value = rifa.id;
-      option.textContent = rifa.name;
+      const img = document.createElement("img");
+      img.src = normalizarImagen(rifa.prize_image);
+      img.alt = "Premio de " + rifa.name;
 
-      selectorRifa.appendChild(option);
+      const info = document.createElement("div");
+      info.className = "info-rifa";
+
+      const nombre = document.createElement("h3");
+      nombre.textContent = rifa.name;
+
+      info.appendChild(nombre);
+
+      if (rifa.ticket_price != null) {
+        const precio = document.createElement("p");
+        precio.textContent =
+          "Precio por número: " + rifa.ticket_price;
+        info.appendChild(precio);
+      }
+
+      if (rifa.draw_date) {
+        const fecha = document.createElement("p");
+        fecha.textContent = "Sorteo: " + rifa.draw_date;
+        info.appendChild(fecha);
+      }
+
+      const accion = document.createElement("span");
+      accion.className = "abrir-rifa";
+      accion.textContent = "VER TABLERO";
+
+      tarjeta.appendChild(img);
+      tarjeta.appendChild(info);
+      tarjeta.appendChild(accion);
+
+      tarjeta.onclick = () => abrirRifa(rifa.id);
+
+      galeria.appendChild(tarjeta);
     });
 
-    selectorRifa.disabled = false;
-    document.getElementById("participar").disabled = false;
-
-    raffleId = Number(rifas[0].id);
-
-    selectorRifa.value = String(raffleId);
-
-    await cargarRifa();
-
-    document.getElementById("estadoPortada").textContent =
-      "¡Participa y descubre el premio!";
-
   } catch(error) {
-
     console.error(error);
-
-    document.getElementById("nombreRifa").textContent =
-      "AFIR";
-
-    document.getElementById("estadoPortada").textContent =
+    document.getElementById("galeriaRifas").textContent =
       error.message;
-
-    selectorRifa.disabled = true;
-    document.getElementById("participar").disabled = true;
   }
 }
 
+async function abrirRifa(id) {
+  const nuevoId = Number(id);
+
+  if (!Number.isSafeInteger(nuevoId) || nuevoId < 1) return;
+
+  raffleId = nuevoId;
+
+  cargaNumerosId++;
+  seleccionados = [];
+  numeros = [];
+
+  mensaje.textContent = "";
+
+  grid.classList.add("cargando");
+  grid.style.backgroundImage = "none";
+  grid.replaceChildren();
+
+  portada.classList.add("oculto");
+  tablero.classList.remove("oculto");
+
+  window.scrollTo(0, 0);
+
+  try {
+    await cargarRifa();
+    await cargarNumeros();
+
+  } catch(error) {
+    console.error(error);
+
+    tablero.classList.add("oculto");
+    portada.classList.remove("oculto");
+
+    document.getElementById("estadoPortada").textContent =
+      error.message;
+  }
+}
+  
 // CARGAR UNA RIFA ESPECÍFICA
 
 async function cargarRifa() {
@@ -457,49 +570,6 @@ async function cargarRifa() {
   document.getElementById("datosRifa").textContent =
     datos.join(" | ");
 }
-
-// CAMBIAR RIFA
-
-selectorRifa.onchange = async () => {
-
-  const nuevoId = Number(selectorRifa.value);
-
-  if (!Number.isSafeInteger(nuevoId) || nuevoId < 1) return;
-
-  raffleId = nuevoId;
-
-  cargaNumerosId++;
-
-  seleccionados = [];
-  numeros = [];
-
-  mensaje.textContent = "";
-
-  /* OCULTAR IMAGEN INMEDIATAMENTE */
-
-  grid.classList.add("cargando");
-  grid.style.backgroundImage = "none";
-  grid.replaceChildren();
-
-  document.getElementById("progreso").textContent =
-    "0 de 100 números vendidos";
-
-  try {
-
-    await cargarRifa();
-
-    if (!tablero.classList.contains("oculto")) {
-      await cargarNumeros();
-    }
-
-  } catch(error) {
-
-    console.error(error);
-
-    document.getElementById("estadoPortada").textContent =
-      error.message;
-  }
-};
 
 // CAMBIO DE PANTALLA
 
