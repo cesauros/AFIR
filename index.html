@@ -514,23 +514,29 @@ button.numero::before {
   height: 72%;
   left: 14%;
   top: 14%;
-  border-radius: 50%;
-  z-index: -1;
 
-  background:
-    radial-gradient(
-      circle at 35% 25%,
-      #247eac,
-      #075080 65%,
-      #022b4b 100%
-    );
+  border-radius: 50% !important;
+  z-index: 0;
 
-  border: 2px solid rgba(160,235,255,.8);
+  background: radial-gradient(
+    circle at 35% 30%,
+    #55cfff 0%,
+    #0878b5 55%,
+    #023653 100%
+  );
+
+  border: 2px solid #a4efff;
 
   box-shadow:
-    inset 0 4px 7px rgba(0,0,0,.65),
-    inset 0 -2px 4px rgba(255,255,255,.25),
-    0 1px 3px rgba(255,255,255,.4);
+    inset 0 5px 9px rgba(0,0,0,.65),
+    inset 0 -3px 5px rgba(255,255,255,.3),
+    0 0 8px rgba(0,225,255,.5);
+
+  pointer-events: none;
+}
+
+button.numero {
+  z-index: 1;
 }
 
 /* REFLEJO DE CRISTAL */
