@@ -174,21 +174,16 @@ button.numero.reservado {
 button.numero.vendido {
   background: transparent;
   color: transparent;
-  border-color: transparent;
+  border: none;
   box-shadow: none;
+  opacity: 0;
+  pointer-events: none;
 }
 
 button.numero.reservado {
   background: #e05252;
   color: white;
   cursor: not-allowed;
-}
-
-button.numero.vendido {
-  background: transparent;
-  color: transparent;
-  border-color: transparent;
-  cursor: default;
 }
 
 button.numero:disabled {
