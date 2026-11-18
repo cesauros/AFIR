@@ -466,173 +466,164 @@ button.numero:disabled {
 }
 
 /* =========================================
-   AFIR - FICHAS 3D PREMIUM
+   AFIR - PASTILLAS DE CRISTAL 3D
 ========================================= */
-
-/* FICHAS TIPO PASTILLA HALLS 3D */
 
 button.numero {
   position: relative;
   isolation: isolate;
   overflow: hidden;
 
+  width: 100%;
   min-width: 0;
   aspect-ratio: 1;
-  padding: 0;
 
-  border: 2px solid #83eaff;
-  border-radius: 23%;
+  padding: 0;
+  border: 1px solid rgba(180,245,255,.75);
+  border-radius: 9px;
 
   background:
     linear-gradient(145deg,
-      #70dfff 0%,
-      #1688c5 35%,
-      #075080 75%,
-      #032c50 100%);
+      #65cfff 0%,
+      #17618e 35%,
+      #092b49 75%,
+      #031626 100%);
 
-  color: white;
+  color: #ffffff;
   font-size: clamp(10px,3.2vw,17px);
   font-weight: 900;
 
-  text-shadow: 0 2px 3px rgba(0,0,0,.8);
+  text-shadow: 0 1px 4px #001827;
 
   box-shadow:
-    inset 0 3px 4px rgba(255,255,255,.65),
-    inset 0 -5px 8px rgba(0,0,0,.5),
-    0 4px 0 #032c50,
-    0 6px 10px rgba(0,0,0,.6);
+    inset 0 2px 3px rgba(255,255,255,.8),
+    inset 0 -5px 8px rgba(0,0,0,.55),
+    0 3px 0 #03101c,
+    0 5px 9px rgba(0,0,0,.7);
 
-  transition: transform .2s ease, box-shadow .2s ease;
+  transition: transform .2s, box-shadow .2s;
 }
 
-/* CÍRCULO CENTRAL HUNDIDO */
+/* CÍRCULO CENTRAL DE CRISTAL */
 
 button.numero::before {
   content: "";
   position: absolute;
-  width: 72%;
-  height: 72%;
-  left: 14%;
-  top: 14%;
 
-  border-radius: 50% !important;
-  z-index: 0;
+  width: 68%;
+  height: 68%;
 
-  background: radial-gradient(
-    circle at 35% 30%,
-    #55cfff 0%,
-    #0878b5 55%,
-    #023653 100%
-  );
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
 
-  border: 2px solid #a4efff;
+  border-radius: 50%;
+  border: 2px solid rgba(210,250,255,.95);
+
+  background:
+    radial-gradient(
+      circle at 32% 25%,
+      rgba(255,255,255,.65),
+      rgba(110,220,255,.22) 35%,
+      rgba(0,35,75,.55) 100%
+    );
 
   box-shadow:
-    inset 0 5px 9px rgba(0,0,0,.65),
-    inset 0 -3px 5px rgba(255,255,255,.3),
-    0 0 8px rgba(0,225,255,.5);
+    inset 0 2px 5px rgba(255,255,255,.65),
+    inset 0 -3px 6px rgba(0,0,0,.5),
+    0 0 7px rgba(100,235,255,.7);
 
   pointer-events: none;
+  z-index: -1;
 }
 
-button.numero {
-  z-index: 1;
-}
-
-/* REFLEJO DE CRISTAL */
-
-button.numero::before {
-  content:"";
-  position:absolute;
-  inset:1px;
-  border-radius:5px;
-  pointer-events:none;
-  background:linear-gradient(
-    135deg,
-    rgba(255,255,255,.28),
-    transparent 30%,
-    transparent 70%,
-    rgba(0,225,255,.12)
-  );
-  z-index:-1;
-}
-
-/* FICHA AL PRESIONAR */
-
-button.numero:active:not(:disabled) {
-  transform:translateY(3px) scale(.94);
-  box-shadow:
-    inset 0 3px 8px rgba(0,0,0,.7),
-    0 1px 0 #03101b;
-}
-
-/* SELECCIONADA */
+/* SELECCIONADO */
 
 button.numero.seleccionado {
-  transform:translateY(-3px);
-  border-color:#bafff5;
-
-  background:linear-gradient(
-    145deg,#80fff0,#00d9bd 45%,#007f82
+  background: linear-gradient(
+    145deg,#a1fff4,#00d9bd 50%,#007b83
   );
 
-  color:#003b3b;
-  text-shadow:0 1px 2px rgba(255,255,255,.5);
+  color: #003b3b;
+  border-color: #d4fff9;
 
   box-shadow:
-    inset 0 2px 4px rgba(255,255,255,.8),
-    inset 0 -4px 7px rgba(0,70,80,.5),
-    0 4px 0 #00645f,
-    0 0 12px #00ffe0,
-    0 0 25px rgba(0,255,224,.65);
+    inset 0 2px 5px white,
+    0 3px 0 #00645f,
+    0 0 15px #00ffe0;
 }
 
-/* RESERVADA */
+/* CÍRCULO DE LA FICHA SELECCIONADA */
+
+button.numero.seleccionado::before {
+  background: radial-gradient(
+    circle at 30% 25%,
+    #ffffff,
+    #a4fff4 45%,
+    #00a99a
+  );
+
+  border-color: white;
+}
+
+/* RESERVADOS */
 
 button.numero.reservado {
-  border-color:#ffaaa9;
-  background:linear-gradient(
-    145deg,#ff7777,#bd263d 55%,#671323
+  background: linear-gradient(
+    145deg,#ff8585,#c32142,#681326
   );
-  color:white;
-  box-shadow:
-    inset 0 2px 3px rgba(255,255,255,.4),
-    inset 0 -4px 5px rgba(0,0,0,.5),
-    0 3px 0 #54101d,
-    0 0 12px rgba(255,50,70,.5);
-  cursor:not-allowed;
+
+  border-color: #ffc1c1;
+  color: white;
 }
 
-/* VENDIDA */
+button.numero.reservado::before {
+  background: radial-gradient(
+    circle at 30% 25%,
+    #ffd0d0,
+    #f15b70 50%,
+    #8c142e
+  );
+
+  border-color: #ffe0e0;
+}
+
+/* VENDIDOS: COMPLETAMENTE INVISIBLES */
 
 button.numero.vendido {
-  background:transparent;
-  color:transparent;
-  border-color:transparent;
-  box-shadow:none;
-  text-shadow:none;
-  cursor:default;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  text-shadow: none !important;
+  visibility: hidden;
 }
 
-/* REFLEJO AL PASAR EL RATÓN */
+button.numero.vendido::before,
+button.numero.vendido::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* INTERACCIÓN */
 
 @media (hover:hover) {
-  button.numero:not(:disabled):hover {
-    transform:translateY(-4px) scale(1.03);
-    border-color:#a5faff;
+  button.numero:not(:disabled):not(.vendido):hover {
+    transform: translateY(-3px) scale(1.04);
     box-shadow:
-      inset 0 2px 3px rgba(255,255,255,.5),
-      0 5px 0 #03101b,
-      0 0 15px #00eaff,
-      0 0 25px rgba(0,234,255,.5);
+      inset 0 2px 5px white,
+      0 4px 0 #03101c,
+      0 0 18px #00eaff;
   }
 }
 
-/* ACCESIBILIDAD */
+button.numero:active:not(:disabled) {
+  transform: scale(.94);
+}
 
-@media (prefers-reduced-motion:reduce) {
+@media (prefers-reduced-motion: reduce) {
   button.numero {
-    transition:none;
+    transition: none;
   }
 }
   
