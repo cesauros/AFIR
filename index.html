@@ -335,6 +335,44 @@ button.numero {
     border-color .18s ease;
 }
 
+/* REFLEJO LUMINOSO EN LOS BORDES */
+
+button.numero {
+  overflow: hidden;
+  isolation: isolate;
+}
+
+button.numero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  padding: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent 25%,
+    rgba(0,255,255,.15) 38%,
+    #ffffff 48%,
+    #00ffff 52%,
+    transparent 65%
+  );
+  background-size: 250% 250%;
+  background-position: 100% 100%;
+  animation: reflejoBordes 3s linear infinite;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+@keyframes reflejoBordes {
+  to {
+    background-position: 0% 0%;
+  }
+}
+  
 /* EFECTO AL TOCAR */
 
 button.numero:active {
