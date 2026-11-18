@@ -341,35 +341,49 @@ button.numero {
   isolation: isolate;
 }
 
+/* DESTELLOS RIPPLE ALEATORIOS */
+
+button.numero {
+  overflow: hidden;
+  isolation: isolate;
+}
+
 button.numero::after {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: 6px;
-  padding: 1px;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(120deg,
+      transparent 25%,
+      #00ffff 50%,
+      transparent 75%) border-box;
+  opacity: 0;
   pointer-events: none;
-  background: linear-gradient(
-    110deg,
-    transparent 25%,
-    rgba(0,255,255,.15) 38%,
-    #ffffff 48%,
-    #00ffff 52%,
-    transparent 65%
-  );
-  background-size: 250% 250%;
-  background-position: 100% 100%;
-  animation: reflejoBordes 3s linear infinite;
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
+  animation: rippleTecla 5s ease-in-out infinite;
+  animation-delay: var(--retardo, 0s);
 }
 
-@keyframes reflejoBordes {
-  to {
-    background-position: 0% 0%;
+@keyframes rippleTecla {
+  0%, 65%, 100% {
+    opacity: 0;
+    filter: brightness(1);
   }
+  72% {
+    opacity: .9;
+    filter: brightness(2);
+  }
+  82% {
+    opacity: .25;
+    filter: brightness(1.5);
+  }
+}
+
+/* LOS NÚMEROS SELECCIONADOS CONSERVAN SU BRILLO */
+
+button.numero.seleccionado {
+  z-index: 3;
 }
   
 /* EFECTO AL TOCAR */
@@ -796,6 +810,10 @@ function dibujarTablero() {
 
     b.textContent = n;
     b.className = "numero";
+    b.style.setProperty(
+      "--retardo",
+      (Math.random() * 5).toFixed(2) + "s"
+    );
 
     if (status === "reserved") {
       b.classList.add("reservado");
