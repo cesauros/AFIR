@@ -295,6 +295,37 @@ let raffleId = null;
 let cargaNumerosId = 0;
 let enlaceNotificacion = null;
 let reservaCreada = false;
+let telefonoPendiente = "";
+let comprobandoReserva = false;
+
+async function comprobarReservaPendiente() {
+  const telefono = document.getElementById("telefono").value.trim();
+
+  if (!telefono || !raffleId || comprobandoReserva) return;
+
+  comprobandoReserva = true;
+
+  try {
+    const respuesta = await fetch(
+      API + "/api/reservations/status?raffle_id=" +
+      raffleId + "&phone=" + encodeURIComponent(telefono)
+    );
+
+    const resultado = await respuesta.json();
+
+    if (!respuesta.ok) return;
+
+    reservar.hidden = resultado.pending;
+    mensaje.textContent = resultado.pending
+      ? "Ya tienes una reserva pendiente de pago. Completa el pago para poder reservar nuevamente."
+      : "";
+
+  } catch(error) {
+    console.error(error);
+  } finally {
+    comprobandoReserva = false;
+  }
+}
 
 const grid = document.getElementById("grid");
 const estado = document.getElementById("estado");
@@ -752,6 +783,13 @@ reservar.onclick = async () => {
     await cargarNumeros();
   }
 };
+
+document.getElementById("telefono").addEventListener(
+  "change",
+  comprobarReservaPendiente
+);
+
+setInterval(comprobarReservaPendiente, 10000);
 
 // INICIO
 
