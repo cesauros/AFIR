@@ -469,39 +469,68 @@ button.numero:disabled {
    AFIR - FICHAS 3D PREMIUM
 ========================================= */
 
+/* FICHAS TIPO PASTILLA HALLS 3D */
+
 button.numero {
   position: relative;
   isolation: isolate;
   overflow: hidden;
+
   min-width: 0;
   aspect-ratio: 1;
   padding: 0;
-  border: 1px solid rgba(115,235,255,.65);
-  border-radius: 7px;
+
+  border: 2px solid #83eaff;
+  border-radius: 23%;
 
   background:
     linear-gradient(145deg,
-      rgba(76,173,220,.45),
-      transparent 40%),
-    linear-gradient(145deg,#17415c,#071625 75%);
+      #70dfff 0%,
+      #1688c5 35%,
+      #075080 75%,
+      #032c50 100%);
 
-  color: #eaffff;
+  color: white;
   font-size: clamp(10px,3.2vw,17px);
-  font-weight: 800;
+  font-weight: 900;
 
-  text-shadow: 0 1px 4px rgba(0,0,0,.8);
+  text-shadow: 0 2px 3px rgba(0,0,0,.8);
 
   box-shadow:
-    inset 0 2px 2px rgba(255,255,255,.35),
-    inset 0 -4px 5px rgba(0,0,0,.6),
-    0 3px 0 #03101b,
-    0 5px 9px rgba(0,0,0,.65);
+    inset 0 3px 4px rgba(255,255,255,.65),
+    inset 0 -5px 8px rgba(0,0,0,.5),
+    0 4px 0 #032c50,
+    0 6px 10px rgba(0,0,0,.6);
 
-  transition:
-    transform .22s ease,
-    box-shadow .22s ease,
-    background .22s ease,
-    border-color .22s ease;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+/* CÍRCULO CENTRAL HUNDIDO */
+
+button.numero::before {
+  content: "";
+  position: absolute;
+  width: 72%;
+  height: 72%;
+  left: 14%;
+  top: 14%;
+  border-radius: 50%;
+  z-index: -1;
+
+  background:
+    radial-gradient(
+      circle at 35% 25%,
+      #247eac,
+      #075080 65%,
+      #022b4b 100%
+    );
+
+  border: 2px solid rgba(160,235,255,.8);
+
+  box-shadow:
+    inset 0 4px 7px rgba(0,0,0,.65),
+    inset 0 -2px 4px rgba(255,255,255,.25),
+    0 1px 3px rgba(255,255,255,.4);
 }
 
 /* REFLEJO DE CRISTAL */
