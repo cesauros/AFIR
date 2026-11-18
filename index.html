@@ -291,19 +291,13 @@ input {
     ← Volver a la portada
   </button>
 
-  <h2>Descubre el premio</h2>
-
-  <div class="estado" id="estado">
-    Actualizando tablero...
-  </div>
+  <h2>adivina la imagen</h2>
 
   <div class="grid cargando" id="grid"></div>
 
   <div id="progreso">0 de 100 números vendidos</div>
 
-  <h2>Selecciona tus números</h2>
-
-  <p>Azul: disponible | Rojo: reservado</p>
+  <p>Rojo: reservado</p>
 
   <input
     id="nombre"
@@ -579,9 +573,6 @@ async function cargarNumeros() {
 
     document.getElementById("progreso").textContent =
       vendidos + " de 100 números vendidos";
-
-    estado.textContent =
-      "Tablero conectado correctamente";
 
     /* MOSTRAR SOLO DESPUÉS DE DIBUJAR LOS 100 NÚMEROS */
 
