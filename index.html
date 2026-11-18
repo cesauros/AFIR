@@ -83,59 +83,10 @@ h1 { color: #38d9a9; }
 
 .oculto { display: none !important; }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 0;
-  width: 100%;
-  max-width: 500px;
-  aspect-ratio: 1 / 1;
-  margin: 25px auto;
-  background-color: #263449;
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-  border: 1px solid #526078;
-}
-
 /* OCULTAR EL TABLERO DURANTE LA CARGA */
 
 .grid.cargando {
   visibility: hidden;
-}
-
-button.numero {
-  min-width: 0;
-  aspect-ratio: 1 / 1;
-  padding: 0;
-  border: 1px solid rgba(255,255,255,.18);
-  border-radius: 0;
-  background: #263449;
-  color: white;
-  font-size: clamp(10px, 3.2vw, 17px);
-  cursor: pointer;
-}
-
-button.numero.seleccionado {
-  background: #38d9a9;
-  color: #101827;
-}
-
-button.numero.reservado {
-  background: #e05252;
-  color: white;
-  cursor: not-allowed;
-}
-
-button.numero.vendido {
-  background: transparent;
-  color: transparent;
-  border-color: transparent;
-  cursor: default;
-}
-
-button.numero:disabled {
-  opacity: 1;
 }
 
 input {
@@ -178,29 +129,6 @@ input {
 
 @media(max-width:450px) {
   body { padding: 12px; }
-}
-  .grid {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  background-image: none !important;
-}
-
-.grid::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: var(--puzzle);
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: blur(5px) brightness(0.5);
-  transform: scale(1.05);
-  z-index: -1;
-}
-
-.grid.completado::before {
-  filter: none;
 }
 
 .galeria-rifas {
@@ -266,6 +194,185 @@ input {
 
 .tarjeta-rifa:hover {
   border-color: #38d9a9;
+}
+
+/* =====================================
+   AFIR - TABLERO CASINO ESPECTACULAR
+===================================== */
+
+.grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 4px;
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 1 / 1;
+  margin: 30px auto;
+  padding: 6px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 2px solid #00eaff;
+  border-radius: 12px;
+  background: #071322;
+  box-shadow:
+    0 0 12px #00eaff,
+    0 0 30px rgba(0,234,255,.35),
+    inset 0 0 25px rgba(0,234,255,.15);
+}
+
+/* IMAGEN DEL PREMIO */
+
+.grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--puzzle);
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(5px) brightness(.5);
+  transform: scale(1.05);
+  z-index: -2;
+}
+
+/* ILUMINACIÓN MÓVIL */
+
+.grid::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent 35%,
+    rgba(0,234,255,.12) 45%,
+    rgba(255,215,0,.20) 50%,
+    rgba(0,234,255,.12) 55%,
+    transparent 65%
+  );
+  animation: luzAfirm 7s linear infinite;
+}
+
+@keyframes luzAfirm {
+  from { transform: translateX(-35%); }
+  to { transform: translateX(35%); }
+}
+
+/* IMAGEN COMPLETAMENTE DESCUBIERTA */
+
+.grid.completado::before {
+  filter: none;
+}
+
+/* TECLAS 3D */
+
+button.numero {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: 1px solid rgba(0,234,255,.4);
+  border-radius: 6px;
+  background: linear-gradient(
+    145deg,
+    #173550,
+    #091727
+  );
+  color: white;
+  font-size: clamp(10px, 3.2vw, 17px);
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow:
+    0 3px 0 #03101c,
+    0 5px 8px rgba(0,0,0,.5),
+    inset 0 1px 2px rgba(255,255,255,.2);
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    background .18s ease,
+    border-color .18s ease;
+}
+
+/* EFECTO AL TOCAR */
+
+button.numero:active {
+  transform: translateY(2px) scale(.96);
+}
+
+/* SELECCIONADO */
+
+button.numero.seleccionado {
+  transform: translateY(-3px);
+  background: linear-gradient(
+    145deg,
+    #00ffd0,
+    #00a88c
+  );
+  color: #031c20;
+  border: 1px solid #aafff0;
+  box-shadow:
+    0 0 8px #00ffd0,
+    0 0 20px rgba(0,255,208,.8),
+    0 4px 0 #006b60;
+}
+
+/* RESERVADO */
+
+button.numero.reservado {
+  background: linear-gradient(
+    145deg,
+    #ff6868,
+    #a51e35
+  );
+  color: white;
+  border-color: #ff9999;
+  box-shadow:
+    0 0 10px rgba(255,50,70,.6),
+    0 3px 0 #641321;
+  cursor: not-allowed;
+}
+
+/* VENDIDO */
+
+button.numero.vendido {
+  background: transparent;
+  color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  cursor: default;
+}
+
+/* ESTADOS DESHABILITADOS */
+
+button.numero:disabled {
+  opacity: 1;
+}
+
+/* MOVIMIENTO SUTIL */
+
+@media (hover: hover) {
+  button.numero:not(:disabled):hover {
+    transform: translateY(-2px);
+    border-color: #00ffff;
+    box-shadow:
+      0 0 12px rgba(0,234,255,.7),
+      0 4px 0 #03101c;
+  }
+}
+
+/* REDUCIR MOVIMIENTO SI EL USUARIO LO PREFIERE */
+
+@media (prefers-reduced-motion: reduce) {
+  .grid::after {
+    animation: none;
+  }
+
+  button.numero {
+    transition: none;
+  }
 }
   
 </style>
