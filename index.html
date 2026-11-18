@@ -368,7 +368,6 @@ async function comprobarReservaPendiente() {
 }
 
 const grid = document.getElementById("grid");
-const estado = document.getElementById("estado");
 const mensaje = document.getElementById("mensaje");
 const reservar = document.getElementById("reservar");
 
@@ -535,8 +534,6 @@ async function cargarNumeros() {
     grid.classList.add("cargando");
     grid.style.backgroundImage = "none";
 
-    estado.textContent = "Actualizando tablero...";
-
     const respuesta = await fetch(
       API + "/api/numbers?raffle_id=" + idSolicitado,
       { cache: "no-store" }
@@ -587,11 +584,12 @@ async function cargarNumeros() {
       return;
     }
 
-    estado.textContent =
-      "Error al actualizar el tablero.";
-
     grid.style.backgroundImage = "none";
-
+    
+    grid.classList.add("cargando");
+    
+    mensaje.textContent = "No se pudo cargar el tablero. Intenta nuevamente.";
+    
     console.error(error);
   }
 }
