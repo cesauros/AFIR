@@ -196,29 +196,22 @@ input {
   border-color: #38d9a9;
 }
 
-/* =========================================
-   AFIR - PASTILLAS DE CRISTAL 3D
-========================================= */
-
 button.numero {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-
   width: 100%;
-  min-width: 0;
   aspect-ratio: 1;
   padding: 0;
-
-  border: 2px solid rgba(190,245,255,.9);
-  border-radius: 9px;
+  border: 2px solid #b9f5ff;
+  border-radius: 11px;
 
   background:
-    linear-gradient(135deg,
-      #a5ecff 0%,
-      #328fca 20%,
-      #075080 55%,
-      #021b36 100%);
+    linear-gradient(145deg,
+      #b8f5ff 0%,
+      #48b9ed 18%,
+      #12618f 48%,
+      #031b38 100%);
 
   color: white;
   font-size: clamp(10px,3.2vw,17px);
@@ -227,15 +220,13 @@ button.numero {
   text-shadow: 0 1px 3px #001827;
 
   box-shadow:
-    inset 0 2px 4px rgba(255,255,255,.9),
-    inset 0 -5px 8px rgba(0,0,0,.65),
-    0 2px 0 #03101c,
-    0 4px 7px rgba(0,0,0,.65);
-
-  transition: transform .2s, box-shadow .2s;
+    inset 2px 3px 5px rgba(255,255,255,.95),
+    inset -3px -5px 8px rgba(0,0,0,.65),
+    0 3px 0 #021020,
+    0 5px 8px rgba(0,0,0,.7);
 }
 
-/* CÍRCULO CENTRAL: 80% */
+/* LENTE CIRCULAR DE CRISTAL */
 
 button.numero::before {
   content: "";
@@ -244,71 +235,68 @@ button.numero::before {
   height: 80%;
   left: 50%;
   top: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   border-radius: 50%;
-  border: 2px solid rgba(225,250,255,.95);
+  border: 2px solid rgba(235,255,255,.95);
 
   background:
-    radial-gradient(
-      circle at 30% 22%,
-      rgba(255,255,255,.95),
-      rgba(160,235,255,.7) 18%,
-      rgba(25,115,175,.8) 55%,
-      rgba(0,30,65,.95) 100%
-    );
+    radial-gradient(ellipse at 30% 18%,
+      rgba(255,255,255,.98) 0%,
+      rgba(195,245,255,.8) 12%,
+      rgba(65,175,225,.55) 35%,
+      rgba(5,55,100,.9) 78%,
+      #03172e 100%);
 
   box-shadow:
-    inset 0 3px 5px rgba(255,255,255,.8),
-    inset 0 -4px 7px rgba(0,0,0,.7),
-    0 0 5px rgba(120,235,255,.8);
-
+    inset 0 3px 5px rgba(255,255,255,.9),
+    inset 0 -5px 8px rgba(0,0,0,.75),
+    0 0 5px rgba(180,245,255,.9);
   pointer-events: none;
   z-index: -1;
+}
+
+/* REFLEJO SUPERIOR DEL CRISTAL */
+
+button.numero:not(.vendido)::after {
+  content: "";
+  position: absolute;
+  width: 38%;
+  height: 13%;
+  top: 12%;
+  left: 19%;
+  border-radius: 50%;
+  background: rgba(255,255,255,.65);
+  filter: blur(3px);
+  transform: rotate(-35deg);
+  pointer-events: none;
 }
 
 /* SELECCIONADO */
 
 button.numero.seleccionado {
-  background: linear-gradient(
-    135deg,#c5fff8,#00d9bd 50%,#006b75
-  );
+  background: linear-gradient(145deg,#c5fff8,#00d9bd 50%,#006b75);
   color: #003b3b;
   border-color: white;
   box-shadow:
-    inset 0 2px 5px white,
+    inset 0 3px 5px white,
     0 3px 0 #00645f,
-    0 0 14px #00ffe0;
-}
-
-button.numero.seleccionado::before {
-  background: radial-gradient(
-    circle at 30% 22%,
-    white,
-    #a4fff4 45%,
-    #008c91
-  );
+    0 0 16px #00ffe0;
 }
 
 /* RESERVADO */
 
 button.numero.reservado {
-  background: linear-gradient(
-    135deg,#ffb0b0,#e43d59 50%,#751329
-  );
-  border-color: #ffd0d0;
+  background: linear-gradient(145deg,#ffd0d0,#ed526b 50%,#751329);
+  border-color: #ffe0e0;
   color: white;
 }
 
 button.numero.reservado::before {
-  background: radial-gradient(
-    circle at 30% 22%,
-    white,
-    #ff9ca8 45%,
-    #9c1734
-  );
+  background: radial-gradient(circle at 30% 18%,
+    white,#ff9ca8 40%,#8c142e 100%);
 }
 
-/* VENDIDO: SIN NINGÚN ELEMENTO VISIBLE */
+/* VENDIDO: INVISIBLE */
 
 button.numero.vendido {
   visibility: hidden !important;
@@ -327,11 +315,7 @@ button.numero.vendido::after {
 
 @media (hover:hover) {
   button.numero:not(:disabled):not(.vendido):hover {
-    transform: translateY(-2px) scale(1.03);
-    box-shadow:
-      inset 0 2px 5px white,
-      0 3px 0 #03101c,
-      0 0 15px #00eaff;
+    transform: translateY(-2px) scale(1.04);
   }
 }
 
