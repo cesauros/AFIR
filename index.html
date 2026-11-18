@@ -105,85 +105,33 @@ h1 { color: #38d9a9; }
 }
 
 button.numero {
-  position: relative;
   min-width: 0;
   aspect-ratio: 1 / 1;
   padding: 0;
-  margin: 0;
-  border: 1px solid rgba(255,255,255,.5);
-  border-radius: 22%;
-  background: linear-gradient(
-    145deg,
-    #9ceee1 0%,
-    #438e91 35%,
-    #174c5b 75%,
-    #a0e9e2 100%
-  );
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 0;
+  background: #263449;
   color: white;
   font-size: clamp(10px, 3.2vw, 17px);
-  font-weight: bold;
   cursor: pointer;
-  isolation: isolate;
-  box-shadow:
-    inset 2px 2px 5px rgba(255,255,255,.65),
-    inset -3px -3px 6px rgba(0,0,0,.4),
-    0 3px 5px rgba(0,0,0,.5);
 }
-
-/* CÍRCULO CENTRAL EN RELIEVE */
-
-button.numero::before {
-  content: "";
-  position: absolute;
-  width: 90%;
-  height: 90%;
-  left: 4%;
-  top: 4%;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 35% 28%,
-    rgba(255,255,255,.75),
-    rgba(160,235,230,.35) 35%,
-    rgba(10,55,70,.55) 80%,
-    rgba(255,255,255,.25) 100%
-  );
-  border: 1px solid rgba(255,255,255,.55);
-  box-shadow:
-    inset 2px 2px 5px rgba(255,255,255,.65),
-    inset -3px -3px 5px rgba(0,0,0,.4),
-    0 2px 3px rgba(0,0,0,.3);
-  z-index: -1;
-}
-
-/* SELECCIONADO */
 
 button.numero.seleccionado {
-  background: linear-gradient(145deg,#aaffdf,#20a878,#075c49);
-  color: white;
-}
-
-/* RESERVADO */
-
-button.numero.reservado {
-  background: linear-gradient(145deg,#ffaaaa,#d34c4c,#812323);
-  color: white;
-}
-
-/* VENDIDO */
-
-button.numero.vendido {
-  background: transparent;
-  color: transparent;
-  border: none;
-  box-shadow: none;
-  opacity: 0;
-  pointer-events: none;
+  background: #38d9a9;
+  color: #101827;
 }
 
 button.numero.reservado {
   background: #e05252;
   color: white;
   cursor: not-allowed;
+}
+
+button.numero.vendido {
+  background: transparent;
+  color: transparent;
+  border-color: transparent;
+  cursor: default;
 }
 
 button.numero:disabled {
