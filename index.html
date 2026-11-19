@@ -327,6 +327,41 @@ input {
   filter: none;
 }
 
+/* ESCÁNER VERTICAL */
+.grid::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -20%;
+  width: 100%;
+  height: 50px;
+
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(56,217,169,.12) 20%,
+    rgba(56,217,169,.7) 38%,
+    white 45%,
+    rgba(56,217,169,.7) 48%,
+    white 50%,
+    rgba(56,217,169,.7) 52%,
+    white 55%,
+    rgba(56,217,169,.7) 62%,
+    transparent 100%
+  );
+
+  box-shadow: 0 0 15px rgba(56,217,169,.7);
+  z-index: 1;
+  pointer-events: none;
+
+  animation: escaner 5s linear infinite;
+}
+
+@keyframes escaner {
+  from { top: -20%; }
+  to { top: 120%; }
+}
+
 /* Partículas */
 .particula {
   position: absolute;
@@ -357,112 +392,46 @@ button.numero {
   z-index: 2;
 }
 
-/* =====================================
-   HOLOGRAMA DE PUNTOS ENERGIZADOS
-===================================== */
+/* DESTELLO LUMINOSO */
 
-.grid {
-  --energia: rgba(56,217,169,.8);
-}
-
-/* Pulsación general */
-
-.grid:not(.completado)::before {
-  animation: hologramaPulso 3s ease-in-out infinite alternate;
-}
-
-@keyframes hologramaPulso {
-  0% {
-    filter: brightness(.8) contrast(1.15);
-  }
-  50% {
-    filter: brightness(1.4) contrast(1.3);
-  }
-  100% {
-    filter: brightness(1) contrast(1.2);
-  }
-}
-
-/* Luces individuales */
-
-.punto-luz {
+.grid .destello-escaner {
   position: absolute;
-  z-index: 1;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
+  z-index: 3;
+  left: 50%;
+  top: 0;
+  width: 65px;
+  height: 50px;
   pointer-events: none;
 
-  background: #38d9a9;
+  background: radial-gradient(
+    ellipse at center,
+    white 0%,
+    white 4%,
+    rgba(255,255,255,.9) 9%,
+    rgba(56,217,169,.9) 22%,
+    rgba(56,217,169,.35) 42%,
+    transparent 70%
+  );
 
-  box-shadow:
-    0 0 4px #38d9a9,
-    0 0 9px #38d9a9,
-    0 0 15px white;
+  filter:
+    drop-shadow(0 0 5px white)
+    drop-shadow(0 0 12px #38d9a9);
 
-  animation: puntoTitilante var(--tiempo) ease-in-out infinite;
+  transform: translate(-50%, -50%);
+
+  animation:
+    destelloVertical 5s linear infinite,
+    destelloHorizontal 2.5s ease-in-out infinite alternate;
 }
 
-@keyframes puntoTitilante {
-  0%, 100% {
-    opacity: .08;
-    transform: scale(.4);
-  }
-
-  40% {
-    opacity: .9;
-    transform: scale(1.2);
-  }
-
-  50% {
-    opacity: 1;
-    background: white;
-    box-shadow:
-      0 0 5px white,
-      0 0 12px #38d9a9,
-      0 0 22px #38d9a9;
-  }
-
-  65% {
-    opacity: .2;
-    transform: scale(.6);
-  }
+@keyframes destelloVertical {
+  from { top: -20%; }
+  to { top: 120%; }
 }
 
-/* Destellos ocasionales */
-
-.chispa-imagen {
-  position: absolute;
-  z-index: 1;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: white;
-  pointer-events: none;
-
-  box-shadow:
-    0 0 5px white,
-    0 0 12px #38d9a9,
-    0 0 20px #38d9a9;
-
-  animation: chispaImagen .8s ease-out forwards;
-}
-
-@keyframes chispaImagen {
-  0% {
-    opacity: 0;
-    transform: scale(.2);
-  }
-
-  25% {
-    opacity: 1;
-    transform: scale(3);
-  }
-
-  100% {
-    opacity: 0;
-    transform: scale(.1);
-  }
+@keyframes destelloHorizontal {
+  from { left: 5%; }
+  to { left: 95%; }
 }
   
 </style>
@@ -566,6 +535,9 @@ async function comprobarReservaPendiente() {
 
 const grid = document.getElementById("grid");
   
+const destello = document.createElement("div");
+destello.className = "destello-escaner";
+grid.appendChild(destello);
 const mensaje = document.getElementById("mensaje");
 const reservar = document.getElementById("reservar");
 
@@ -1143,68 +1115,6 @@ function crearParticula() {
 }
 
 setInterval(crearParticula, 0.5);
-
-/* =====================================
-   LUCES HOLOGRÁFICAS DEL TABLERO
-===================================== */
-
-function crearLucesHolograma() {
-
-  if (
-    grid.classList.contains("cargando") ||
-    tablero.classList.contains("oculto") ||
-    grid.classList.contains("completado")
-  ) return;
-
-  // Evitar duplicar luces
-  if (grid.querySelectorAll(".punto-luz").length > 45) return;
-
-  const luz = document.createElement("div");
-
-  luz.className = "punto-luz";
-
-  luz.style.left = Math.random() * 100 + "%";
-  luz.style.top = Math.random() * 100 + "%";
-
-  luz.style.setProperty(
-    "--tiempo",
-    (1 + Math.random() * 3) + "s"
-  );
-
-  grid.appendChild(luz);
-
-  luz.addEventListener("animationend", () => {
-    luz.remove();
-  }, { once: true });
-}
-
-function crearChispaImagen() {
-
-  if (
-    grid.classList.contains("cargando") ||
-    tablero.classList.contains("oculto") ||
-    grid.classList.contains("completado")
-  ) return;
-
-  const chispa = document.createElement("div");
-
-  chispa.className = "chispa-imagen";
-
-  chispa.style.left = Math.random() * 100 + "%";
-  chispa.style.top = Math.random() * 100 + "%";
-
-  grid.appendChild(chispa);
-
-  chispa.addEventListener("animationend", () => {
-    chispa.remove();
-  }, { once: true });
-}
-
-// Luces independientes
-setInterval(crearLucesHolograma, 180);
-
-// Pequeñas descargas luminosas
-setInterval(crearChispaImagen, 350);
 
 // INICIO
 
