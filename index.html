@@ -387,12 +387,23 @@ button.numero {
 
 /* PUNTOS DE IMPRENTA */
 .grid {
+  position: relative;
+}
+
+.grid .halftone {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
   background-image: radial-gradient(
-    rgba(255,255,255,0.22) 1px,
+    circle,
+    rgba(255,255,255,0.45) 1px,
     transparent 1.5px
   );
+
   background-size: 5px 5px;
-  background-position: center;
+  background-repeat: repeat;
 }
   
 </style>
@@ -727,6 +738,9 @@ function dibujarTablero() {
 
   grid.style.backgroundImage = "none";
   grid.replaceChildren();
+  const halftone = document.createElement("div");
+  halftone.className = "halftone";
+  grid.appendChild(halftone);
 
   for (let i = 0; i < 100; i++) {
 
