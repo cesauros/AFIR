@@ -205,6 +205,10 @@ input {
   filter: none;
 }
 
+.grid.agua::before {
+  filter: url(#agua) blur(5px) brightness(0.5);
+}
+
 .galeria-rifas {
   display: flex;
   gap: 15px;
@@ -675,6 +679,7 @@ function dibujarTablero() {
       dibujarTablero();
       const botonRipple = grid.children[Number(n)];
       crearRipple(botonRipple);
+      activarAgua();
     };
 
     grid.appendChild(b);
@@ -724,6 +729,16 @@ function crearRipple(boton) {
   }, { once: true });
 }
 
+function activarAgua() {
+  grid.classList.remove("agua");
+  void grid.offsetWidth;
+  grid.classList.add("agua");
+
+  setTimeout(() => {
+    grid.classList.remove("agua");
+  }, 1300);
+}
+  
 // RESERVAR NÚMEROS
 
 reservar.onclick = async () => {
@@ -854,5 +869,28 @@ setInterval(() => {
 
 </script>
 
+<svg width="0" height="0" style="position:absolute">
+  <filter id="agua">
+    <feTurbulence
+      type="fractalNoise"
+      baseFrequency="0.015"
+      numOctaves="2"
+      seed="2"
+      result="ruido"/>
+    <feDisplacementMap
+      in="SourceGraphic"
+      in2="ruido"
+      scale="0"
+      xChannelSelector="R"
+      yChannelSelector="G">
+      <animate
+        attributeName="scale"
+        values="0;25;45;25;0"
+        dur="1.2s"
+        repeatCount="1"/>
+    </feDisplacementMap>
+  </filter>
+</svg>
+  
 </body>
 </html>
