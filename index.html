@@ -294,7 +294,17 @@ input {
 }
 
 @keyframes rippleExpand {
-  to {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.85;
+  }
+  100% {
     transform: translate(-50%, -50%) scale(1);
     opacity: 0;
   }
@@ -707,16 +717,22 @@ function crearRipple(boton) {
     tableroRect.height
   ) * 2.2;
 
-  const onda = document.createElement("div");
-  onda.className = "ripple-wave";
-  onda.style.width = diametro + "px";
-  onda.style.height = diametro + "px";
-  onda.style.left = x + "px";
-  onda.style.top = y + "px";
+  for (let i = 0; i < 6; i++) {
+    const onda = document.createElement("div");
 
-  grid.appendChild(onda);
+    onda.className = "ripple-wave";
+    onda.style.width = diametro + "px";
+    onda.style.height = diametro + "px";
+    onda.style.left = x + "px";
+    onda.style.top = y + "px";
+    onda.style.animationDelay = (i * 0.22) + "s";
 
-  onda.addEventListener("animationend", () => onda.remove());
+    grid.appendChild(onda);
+
+    onda.addEventListener("animationend", () => {
+      onda.remove();
+    }, { once: true });
+  }
 }
 
 // RESERVAR NÚMEROS
