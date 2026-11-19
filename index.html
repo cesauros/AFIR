@@ -307,8 +307,8 @@ input {
   isolation: isolate;
   overflow: hidden;
 }
-  
-/* FONDO HALFTONE */
+
+/* Fondo */
 .grid::before {
   content: "";
   position: absolute;
@@ -317,7 +317,7 @@ input {
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
-  filter: blur(1px);
+  filter: blur(1px) brightness(.4);
   transform: scale(1.05);
   z-index: 0;
   pointer-events: none;
@@ -325,6 +325,34 @@ input {
 
 .grid.completado::before {
   filter: none;
+}
+
+/* Escáner */
+.grid::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -20%;
+  width: 100%;
+  height: 35px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(56,217,169,.12),
+    rgba(56,217,169,.7),
+    white,
+    rgba(56,217,169,.7),
+    transparent
+  );
+  box-shadow: 0 0 15px rgba(56,217,169,.7);
+  z-index: 1;
+  pointer-events: none;
+  animation: escaner 6s linear infinite;
+}
+
+@keyframes escaner {
+  from { top: -20%; }
+  to { top: 120%; }
 }
 
 /* Partículas */
@@ -555,7 +583,7 @@ function crearHalftone(src) {
 
               const inside = distance <= radius;
 
-              const color = inside ? 255 : 25;
+              const color = inside ? 25 : 255;
 
               output.data[i] = color;
               output.data[i + 1] = color;
@@ -574,66 +602,7 @@ function crearHalftone(src) {
     img.src = src;
   });
 }
-  
-function escanearPuntos() {
-  if (!imagenPuzzle || grid.classList.contains("completado")) return;
 
-  const img = new Image();
-
-  img.onload = () => {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    canvas.width = 600;
-    canvas.height = 600;
-
-    let inicio = null;
-
-    function animar(tiempo) {
-      if (grid.classList.contains("completado")) return;
-
-      if (!inicio) inicio = tiempo;
-
-      const progreso = ((tiempo - inicio) % 4000) / 4000;
-      const posicion = progreso * canvas.height;
-
-      ctx.clearRect(0, 0, 600, 600);
-      ctx.drawImage(img, 0, 0, 600, 600);
-
-      const imagen = ctx.getImageData(0, 0, 600, 600);
-      const datos = imagen.data;
-
-      for (let y = 0; y < 600; y++) {
-        const distancia = Math.abs(y - posicion);
-        const intensidad = Math.max(0, 1 - distancia / 45);
-
-        if (intensidad <= 0) continue;
-
-        for (let x = 0; x < 600; x++) {
-          const i = (y * 600 + x) * 4;
-
-          datos[i] = Math.min(255, datos[i] + intensidad * 180);
-          datos[i + 1] = Math.min(255, datos[i + 1] + intensidad * 180);
-          datos[i + 2] = Math.min(255, datos[i + 2] + intensidad * 180);
-        }
-      }
-
-      ctx.putImageData(imagen, 0, 0);
-
-      grid.style.setProperty(
-        "--puzzle",
-        `url("${canvas.toDataURL("image/png")}")`
-      );
-
-      requestAnimationFrame(animar);
-    }
-
-    requestAnimationFrame(animar);
-  };
-
-  img.src = imagenPuzzle;
-}
-  
 // CARGAR TODAS LAS RIFAS ACTIVAS
 
 async function cargarRifas() {
@@ -751,7 +720,6 @@ async function cargarRifa() {
 
   const imagenOriginal = normalizarImagen(rifa.puzzle_image);
   imagenPuzzle = await crearHalftone(imagenOriginal);
-  escanearPuntos();
 }
 
 document.getElementById("volver").onclick = () => {
