@@ -397,31 +397,72 @@ button.numero {
   position: absolute;
 }
 
-/* Destello móvil */
+/* DESTELLO SOBRE LA LINEA CENTRAL */
+
 .grid .destello-escaner {
   position: absolute;
   z-index: 3;
-  top: 25%;
   left: 0;
-  width: 65px;
-  height: 3px;
-  border-radius: 50%;
-  background: white;
+  top: 25px;
 
-  box-shadow:
-    0 0 5px white,
-    0 0 12px #38d9a9,
-    0 0 25px white;
+  width: 45px;
+  height: 9px;
 
   pointer-events: none;
   transform: translate(-50%, -50%);
 
+  background: linear-gradient(
+    to right,
+    transparent,
+    #38d9a9 30%,
+    white 50%,
+    #38d9a9 70%,
+    transparent
+  );
+
+  filter: brightness(2);
+
+  box-shadow:
+    0 0 5px white,
+    0 0 12px #38d9a9,
+    0 0 25px #38d9a9;
+
   animation: destelloHorizontal 2s ease-in-out infinite alternate;
 }
 
+.grid .destello-escaner::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3px;
+  height: 24px;
+  background: white;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px white, 0 0 15px #38d9a9;
+}
+
+.grid .destello-escaner::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 70px;
+  height: 2px;
+  background: white;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 12px white;
+}
+
 @keyframes destelloHorizontal {
-  from { left: 0%; opacity: .3; }
-  to { left: 100%; opacity: 1; }
+  0% {
+    left: 3%;
+    opacity: .4;
+  }
+  100% {
+    left: 97%;
+    opacity: 1;
+  }
 }
   
 </style>
