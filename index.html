@@ -188,23 +188,6 @@ input {
   background-image: none !important;
 }
 
-.grid::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: var(--puzzle);
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: blur(5px) brightness(0.5);
-  transform: scale(1.05);
-  z-index: -1;
-}
-
-.grid.completado::before {
-  filter: none;
-}
-
 .galeria-rifas {
   display: flex;
   gap: 15px;
@@ -615,7 +598,9 @@ function dibujarHalftone() {
 let animacionHalftone = null;
 
 function iniciarHalftone() {
-  if (animacionHalftone) return;
+  if (animacionHalftone) {
+    cancelAnimationFrame(animacionHalftone);
+  }
 
   function animar() {
     if (
@@ -629,7 +614,7 @@ function iniciarHalftone() {
     animacionHalftone = requestAnimationFrame(animar);
   }
 
-  animar();
+  animacionHalftone = requestAnimationFrame(animar);
 }
   
 // CARGAR TODAS LAS RIFAS ACTIVAS
@@ -757,6 +742,10 @@ document.getElementById("volver").onclick = () => {
 
   tablero.classList.add("oculto");
   portada.classList.remove("oculto");
+  if (animacionHalftone) {
+  cancelAnimationFrame(animacionHalftone);
+  animacionHalftone = null;
+}
 
   window.scrollTo(0, 0);
 };
@@ -843,6 +832,7 @@ function dibujarTablero() {
 
   grid.style.backgroundImage = "none";
   grid.replaceChildren();
+  dibujarHalftone();
 
   for (let i = 0; i < 100; i++) {
 
@@ -890,15 +880,6 @@ function dibujarTablero() {
   }
 
 /* APLICAR IMAGEN DE PUNTOS Y CAPA DE ILUMINACIÓN */
-
-grid.style.setProperty(
-  "--puzzle",
-  imagenPuzzle ? 'url("' + imagenPuzzle + '")' : "none"
-);
-
-const luz = document.createElement("div");
-luz.className = "halftone-luz";
-grid.appendChild(luz);
   
   const vendidos = numeros.filter(
     x => x.status === "sold"
