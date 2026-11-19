@@ -268,46 +268,33 @@ input {
   border-color: #38d9a9;
 }
 
-/* ===== EFECTO RIPPLE LUMINOSO ===== */
+/* RIPPLE LUMINOSO */
+
+.grid {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
 
 .ripple-wave {
   position: absolute;
-  z-index: 5;
+  z-index: 10;
   pointer-events: none;
   border-radius: 50%;
-
   background: radial-gradient(
     circle,
-    rgba(56, 217, 169, 0.05) 0%,
-    rgba(56, 217, 169, 0.12) 38%,
-    rgba(56, 217, 169, 0.45) 46%,
-    rgba(255, 255, 255, 0.9) 49%,
-    rgba(56, 217, 169, 0.65) 52%,
-    rgba(56, 217, 169, 0.15) 58%,
-    transparent 68%
+    transparent 42%,
+    rgba(56,217,169,.5) 47%,
+    white 50%,
+    rgba(56,217,169,.7) 53%,
+    transparent 62%
   );
-
-  box-shadow: 0 0 25px rgba(56, 217, 169, 0.25);
-
   transform: translate(-50%, -50%) scale(0);
   animation: rippleExpand 1.35s ease-out forwards;
 }
 
 @keyframes rippleExpand {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-
-  12% {
-    opacity: 1;
-  }
-
-  75% {
-    opacity: 0.85;
-  }
-
-  100% {
+  to {
     transform: translate(-50%, -50%) scale(1);
     opacity: 0;
   }
@@ -673,21 +660,23 @@ function dibujarTablero() {
       b.classList.add("seleccionado");
     }
 
-b.onclick = () => {
+    b.onclick = () => {
 
-  if (status !== "available") return;
+      if (status !== "available") return;
 
-  if (seleccionados.includes(n)) {
-    seleccionados = seleccionados.filter(x => x !== n);
-  } else {
-    seleccionados.push(n);
+      if (seleccionados.includes(n)) {
+        seleccionados = seleccionados.filter(x => x !== n);
+      } else {
+        seleccionados.push(n);
+      }
+
+      dibujarTablero();
+      const botonRipple = grid.children[Number(n)];
+      crearRipple(botonRipple);
+    };
+
+    grid.appendChild(b);
   }
-
-  dibujarTablero();
-
-  // Generar ripple desde la posición del número pulsado
-  crearRipple(grid.children[Number(n)]);
-}
 
   /* APLICAR EL PUZZLE SOLO DESPUÉS DE CREAR LOS 100 BOTONES */
 
@@ -706,42 +695,30 @@ b.onclick = () => {
   );
 }
 
-// ===== CREAR ONDA RIPPLE =====
-
 function crearRipple(boton) {
-
   const rect = boton.getBoundingClientRect();
   const tableroRect = grid.getBoundingClientRect();
 
-  // Centro exacto del número pulsado
   const x = rect.left + rect.width / 2 - tableroRect.left;
   const y = rect.top + rect.height / 2 - tableroRect.top;
 
-  // Radio suficiente para cubrir y sobrepasar el tablero
-  const radio = Math.sqrt(
-    tableroRect.width ** 2 +
-    tableroRect.height ** 2
-  );
-
-  const diametro = radio * 2.2;
+  const diametro = Math.hypot(
+    tableroRect.width,
+    tableroRect.height
+  ) * 2.2;
 
   const onda = document.createElement("div");
-
   onda.className = "ripple-wave";
-
   onda.style.width = diametro + "px";
   onda.style.height = diametro + "px";
-
   onda.style.left = x + "px";
   onda.style.top = y + "px";
 
   grid.appendChild(onda);
 
-  onda.addEventListener("animationend", () => {
-    onda.remove();
-  }, { once: true });
+  onda.addEventListener("animationend", () => onda.remove());
 }
-  
+
 // RESERVAR NÚMEROS
 
 reservar.onclick = async () => {
