@@ -327,7 +327,7 @@ input {
   filter: none;
 }
 
-/* Escáner */
+/* ESCÁNER VERTICAL */
 .grid::after {
   content: "";
   position: absolute;
@@ -335,6 +335,7 @@ input {
   top: -20%;
   width: 100%;
   height: 50px;
+
   background: linear-gradient(
     to bottom,
     transparent 0%,
@@ -348,9 +349,11 @@ input {
     rgba(56,217,169,.7) 62%,
     transparent 100%
   );
+
   box-shadow: 0 0 15px rgba(56,217,169,.7);
   z-index: 1;
   pointer-events: none;
+
   animation: escaner 5s linear infinite;
 }
 
@@ -387,6 +390,48 @@ input {
 /* Números por encima de los efectos */
 button.numero {
   z-index: 2;
+}
+
+/* DESTELLO LUMINOSO */
+
+.grid .destello-escaner {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: 0;
+  width: 65px;
+  height: 50px;
+  pointer-events: none;
+
+  background: radial-gradient(
+    ellipse at center,
+    white 0%,
+    white 4%,
+    rgba(255,255,255,.9) 9%,
+    rgba(56,217,169,.9) 22%,
+    rgba(56,217,169,.35) 42%,
+    transparent 70%
+  );
+
+  filter:
+    drop-shadow(0 0 5px white)
+    drop-shadow(0 0 12px #38d9a9);
+
+  transform: translate(-50%, -50%);
+
+  animation:
+    destelloVertical 5s linear infinite,
+    destelloHorizontal 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes destelloVertical {
+  from { top: -20%; }
+  to { top: 120%; }
+}
+
+@keyframes destelloHorizontal {
+  from { left: 5%; }
+  to { left: 95%; }
 }
   
 </style>
@@ -489,6 +534,10 @@ async function comprobarReservaPendiente() {
 }
 
 const grid = document.getElementById("grid");
+  
+const destello = document.createElement("div");
+destello.className = "destello-escaner";
+grid.appendChild(destello);
 const mensaje = document.getElementById("mensaje");
 const reservar = document.getElementById("reservar");
 
@@ -686,7 +735,11 @@ async function abrirRifa(id) {
 
   grid.classList.add("cargando");
   grid.style.backgroundImage = "none";
-  grid.replaceChildren();
+  grid.querySelectorAll("*").forEach(elemento => {
+    if (!elemento.classList.contains("destello-escaner")) {
+      elemento.remove();
+    }
+  });
 
   portada.classList.add("oculto");
   tablero.classList.remove("oculto");
@@ -815,7 +868,9 @@ async function cargarNumeros() {
 function dibujarTablero() {
 
   grid.style.backgroundImage = "none";
-  grid.replaceChildren();
+  grid.querySelectorAll(
+    "button.numero, .ripple-wave, .particula"
+  ).forEach(elemento => elemento.remove());
 
   for (let i = 0; i < 100; i++) {
 
