@@ -299,10 +299,10 @@ input {
     opacity: 0;
   }
   10% {
-    opacity: 1;
+    opacity: var(--intensidad);
   }
   50% {
-    opacity: 0.55;
+    opacity: calc(var(--intensidad) * 0.45);
   }
   100% {
     transform: translate(-50%, -50%) scale(1);
@@ -717,15 +717,24 @@ function crearRipple(boton) {
     tableroRect.height
   ) * 2.2;
 
-  for (let i = 0; i < 7; i++) {
+  const cantidad = 8;
+
+  for (let i = 0; i < cantidad; i++) {
     const onda = document.createElement("div");
 
     onda.className = "ripple-wave";
+
     onda.style.width = diametro + "px";
     onda.style.height = diametro + "px";
     onda.style.left = x + "px";
     onda.style.top = y + "px";
-    onda.style.animationDelay = (i * 0.18) + "s";
+
+    onda.style.setProperty(
+      "--intensidad",
+      Math.pow(0.88, i)
+    );
+
+    onda.style.animationDelay = (i * 0.16) + "s";
 
     grid.appendChild(onda);
 
