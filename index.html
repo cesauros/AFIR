@@ -308,7 +308,8 @@ input {
   overflow: hidden;
 }
 
-/* Fondo */
+/* FONDO CON ESCANER DE LUZ SOBRE LOS PUNTOS */
+
 .grid::before {
   content: "";
   position: absolute;
@@ -321,34 +322,52 @@ input {
   transform: scale(1.05);
   z-index: 0;
   pointer-events: none;
-  animation: escanerPuntos 6s linear infinite;
 }
 
-css
+/* BARRIDO DE LUZ */
+
+.grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(56,217,169,0.05) 35%,
+    rgba(56,217,169,0.8) 48%,
+    white 50%,
+    rgba(56,217,169,0.8) 52%,
+    rgba(56,217,169,0.05) 65%,
+    transparent 100%
+  );
+
+  background-size: 100% 200%;
+  background-repeat: no-repeat;
+  mix-blend-mode: screen;
+  animation: escanerPuntos 4s linear infinite;
+}
+
 @keyframes escanerPuntos {
-  0% {
-    clip-path: inset(0 0 100% 0);
-    filter: blur(1px) brightness(0.4);
+  from {
+    background-position: 0 -100%;
   }
 
-  50% {
-    filter: blur(1px) brightness(1.8);
-  }
-
-  100% {
-    clip-path: inset(0 0 0 0);
-    filter: blur(1px) brightness(1);
+  to {
+    background-position: 0 200%;
   }
 }
 
+/* TABLERO COMPLETADO */
+
 .grid.completado::before {
-  animation: none;
-  clip-path: none;
   filter: none;
 }
-  
-.grid.completado::before {
-  filter: none;
+
+.grid.completado::after {
+  display: none;
 }
 
 /* Partículas */
