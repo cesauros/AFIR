@@ -391,6 +391,85 @@ input {
 button.numero {
   z-index: 2;
 }
+
+/* CAPA DE EFECTOS LUMINOSOS */
+.grid .capa-luminosa {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.grid .laser {
+  position: absolute;
+  top: 0;
+  left: -35%;
+  width: 35%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(56,217,169,.12),
+    rgba(56,217,169,.8),
+    white,
+    rgba(56,217,169,.8),
+    transparent
+  );
+  filter: blur(9px);
+  animation: laserHorizontal 3s linear forwards;
+}
+
+@keyframes laserHorizontal {
+  from { left: -35%; }
+  to { left: 110%; }
+}
+
+.grid .onda {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #38d9a9;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 12px #38d9a9;
+  animation: ondaExpandir 2s ease-out forwards;
+}
+
+@keyframes ondaExpandir {
+  to {
+    width: 150%;
+    height: 150%;
+    opacity: 0;
+  }
+}
+
+.grid .destello-punto {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 0 8px white, 0 0 18px #38d9a9;
+  animation: destelloPunto 1.5s ease-out forwards;
+}
+
+@keyframes destelloPunto {
+  0% { opacity: 0; transform: scale(.2); }
+  30% { opacity: 1; transform: scale(1.8); }
+  100% { opacity: 0; transform: scale(.2); }
+}
+
+.grid.respirando::before {
+  animation: respirarImagen 2.5s ease-in-out;
+}
+
+@keyframes respirarImagen {
+  0%, 100% { filter: brightness(1); }
+  50% {
+    filter: brightness(1.8) drop-shadow(0 0 8px #38d9a9);
+  }
+}
   
 </style>
 </head>
@@ -824,9 +903,10 @@ function dibujarTablero() {
 
   grid.style.backgroundImage = "none";
   grid.querySelectorAll(
-    "button.numero, .ripple-wave, .particula"
+    "button.numero, .ripple-wave, .particula, .capa-luminosa"
   ).forEach(elemento => elemento.remove());
-
+  
+  grid.appendChild(capaLuminosa);
   for (let i = 0; i < 100; i++) {
 
     const n = String(i).padStart(2, "0");
@@ -1070,6 +1150,79 @@ function crearParticula() {
 }
 
 setInterval(crearParticula, 0.5);
+
+/* EFECTOS ALEATORIOS DEL FONDO */
+
+const capaLuminosa = document.createElement("div");
+capaLuminosa.className = "capa-luminosa";
+grid.appendChild(capaLuminosa);
+
+const efectos = ["onda", "destellos", "laser", "respiracion"];
+
+let temporizadorEfectos = null;
+
+function ejecutarEfectoAleatorio() {
+
+  if (
+    grid.classList.contains("cargando") ||
+    tablero.classList.contains("oculto") ||
+    grid.classList.contains("completado")
+  ) {
+    temporizadorEfectos = setTimeout(ejecutarEfectoAleatorio, 1000);
+    return;
+  }
+
+  capaLuminosa.replaceChildren();
+  grid.classList.remove("respirando");
+
+  const efecto = efectos[
+    Math.floor(Math.random() * efectos.length)
+  ];
+
+  if (efecto === "laser") {
+    const laser = document.createElement("div");
+    laser.className = "laser";
+    capaLuminosa.appendChild(laser);
+  }
+
+  if (efecto === "onda") {
+    const onda = document.createElement("div");
+    onda.className = "onda";
+    onda.style.left = "50%";
+    onda.style.top = "50%";
+    capaLuminosa.appendChild(onda);
+  }
+
+  if (efecto === "destellos") {
+    for (let i = 0; i < 30; i++) {
+      const punto = document.createElement("div");
+      punto.className = "destello-punto";
+      punto.style.left = Math.random() * 100 + "%";
+      punto.style.top = Math.random() * 100 + "%";
+      punto.style.animationDelay = Math.random() * 1.5 + "s";
+      capaLuminosa.appendChild(punto);
+    }
+  }
+
+  if (efecto === "respiracion") {
+    grid.classList.add("respirando");
+  }
+
+  const duracion = 3500 + Math.random() * 2000;
+
+  temporizadorEfectos = setTimeout(() => {
+    capaLuminosa.replaceChildren();
+    grid.classList.remove("respirando");
+
+    temporizadorEfectos = setTimeout(
+      ejecutarEfectoAleatorio,
+      1000 + Math.random() * 1500
+    );
+
+  }, duracion);
+}
+
+ejecutarEfectoAleatorio();
 
 // INICIO
 
