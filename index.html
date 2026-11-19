@@ -301,11 +301,6 @@ input {
     opacity: 0;
   }
 }
-
-.grid.agua::before {
-  filter: url("#agua");
-  animation: ninguna;
-}
   
 </style>
 </head>
@@ -680,7 +675,6 @@ function dibujarTablero() {
       dibujarTablero();
       const botonRipple = grid.children[Number(n)];
       crearRipple(botonRipple);
-      activarAgua();
     };
 
     grid.appendChild(b);
@@ -730,16 +724,6 @@ function crearRipple(boton) {
   }, { once: true });
 }
 
-function activarAgua() {
-  grid.classList.remove("agua");
-  void grid.offsetWidth;
-  grid.classList.add("agua");
-
-  setTimeout(() => {
-    grid.classList.remove("agua");
-  }, 1300);
-}
-  
 // RESERVAR NÚMEROS
 
 reservar.onclick = async () => {
@@ -870,35 +854,5 @@ setInterval(() => {
 
 </script>
 
-<svg width="0" height="0" style="position:absolute">
-  <filter id="agua">
-    <feTurbulence
-      type="fractalNoise"
-      baseFrequency="0.012 0.025"
-      numOctaves="1"
-      seed="2"
-      result="noise">
-      <animate
-        attributeName="baseFrequency"
-        values="0.012 0.025;0.025 0.04;0.012 0.025"
-        dur="1.2s"
-        repeatCount="indefinite"/>
-    </feTurbulence>
-
-    <feDisplacementMap
-      in="SourceGraphic"
-      in2="noise"
-      scale="0"
-      xChannelSelector="R"
-      yChannelSelector="G">
-      <animate
-        attributeName="scale"
-        values="0;18;35;18;0"
-        dur="1.2s"
-        repeatCount="1"/>
-    </feDisplacementMap>
-  </filter>
-</svg>
-  
 </body>
 </html>
