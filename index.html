@@ -321,38 +321,34 @@ input {
   transform: scale(1.05);
   z-index: 0;
   pointer-events: none;
+  animation: escanerPuntos 6s linear infinite;
+}
+
+css
+@keyframes escanerPuntos {
+  0% {
+    clip-path: inset(0 0 100% 0);
+    filter: blur(1px) brightness(0.4);
+  }
+
+  50% {
+    filter: blur(1px) brightness(1.8);
+  }
+
+  100% {
+    clip-path: inset(0 0 0 0);
+    filter: blur(1px) brightness(1);
+  }
 }
 
 .grid.completado::before {
+  animation: none;
+  clip-path: none;
   filter: none;
 }
-
-/* Escáner */
-.grid::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: -20%;
-  width: 100%;
-  height: 35px;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    rgba(56,217,169,.12),
-    rgba(56,217,169,.7),
-    white,
-    rgba(56,217,169,.7),
-    transparent
-  );
-  box-shadow: 0 0 15px rgba(56,217,169,.7);
-  z-index: 1;
-  pointer-events: none;
-  animation: escaner 6s linear infinite;
-}
-
-@keyframes escaner {
-  from { top: -20%; }
-  to { top: 120%; }
+  
+.grid.completado::before {
+  filter: none;
 }
 
 /* Partículas */
