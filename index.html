@@ -308,66 +308,6 @@ input {
   overflow: hidden;
 }
 
-/* Fondo */
-.grid::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: var(--puzzle);
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: blur(1px) brightness(.4);
-  transform: scale(1.05);
-  z-index: 0;
-  pointer-events: none;
-}
-
-.grid.completado::before {
-  filter: none;
-}
-
-/* CAPA DE ILUMINACIÓN DE LOS PUNTOS */
-
-.grid .halftone-luz {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-
-  background-image: var(--puzzle);
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  filter:
-    invert(45%)
-    sepia(90%)
-    saturate(900%)
-    hue-rotate(105deg)
-    brightness(1.5);
-
-  opacity: 0;
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black 45%,
-    black 55%,
-    transparent 100%
-  );
-
-  animation: iluminarPuntos 6s linear infinite;
-}
-
-@keyframes iluminarPuntos {
-  from {
-    mask-position: 0 -100%;
-  }
-  to {
-    mask-position: 0 100%;
-  }
-}
-
 /* Partículas */
 .particula {
   position: absolute;
@@ -530,17 +470,10 @@ function crearHalftone(src) {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
 
-      const maxSize = 600;
-      const scale = Math.min(1, maxSize / img.width);
+      const scale = Math.min(1, 600 / img.width);
 
       canvas.width = Math.round(img.width * scale);
       canvas.height = Math.round(img.height * scale);
-
-      const cell = 8;
-      const maxRadius = cell * 0.48;
-
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
@@ -548,13 +481,12 @@ function crearHalftone(src) {
         0, 0, canvas.width, canvas.height
       );
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const cell = 8;
+      const maxRadius = cell * 0.48;
+      const puntos = [];
 
       for (let y = 0; y < canvas.height; y += cell) {
         for (let x = 0; x < canvas.width; x += cell) {
-
           let total = 0;
           let count = 0;
 
@@ -577,23 +509,22 @@ function crearHalftone(src) {
           }
 
           const brightness = total / count;
-          const radius = (1 - brightness / 255) * maxRadius;
 
-          ctx.beginPath();
-          ctx.arc(
-            x + cell / 2,
-            y + cell / 2,
-            radius,
-            0,
-            Math.PI * 2
-          );
-
-          ctx.fillStyle = "#111111";
-          ctx.fill();
+          puntos.push({
+            x: x + cell / 2,
+            y: y + cell / 2,
+            radius: (1 - brightness / 255) * maxRadius
+          });
         }
       }
 
-      resolve(canvas.toDataURL("image/png"));
+      imagenPuzzle = {
+        width: canvas.width,
+        height: canvas.height,
+        puntos
+      };
+
+      resolve();
     };
 
     img.onerror = reject;
@@ -601,6 +532,106 @@ function crearHalftone(src) {
   });
 }
 
+function dibujarHalftone() {
+  if (!imagenPuzzle || !grid) return;
+
+  let canvas = grid.querySelector(".halftone-canvas");
+
+  if (!canvas) {
+    canvas = document.createElement("canvas");
+    canvas.className = "halftone-canvas";
+
+    canvas.style.cssText = `
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    `;
+
+    grid.prepend(canvas);
+  }
+
+  const rect = grid.getBoundingClientRect();
+
+  if (!rect.width || !rect.height) return;
+
+  const dpr = window.devicePixelRatio || 1;
+
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+
+  const ctx = canvas.getContext("2d");
+
+  ctx.setTransform(
+    canvas.width / imagenPuzzle.width, 0,
+    0, canvas.height / imagenPuzzle.height,
+    0, 0
+  );
+
+  const ahora = performance.now() / 1000;
+  const posicion = ((ahora % 6) / 6) *
+    imagenPuzzle.height * 1.4 -
+    imagenPuzzle.height * 0.2;
+
+  const anchoOnda = 65;
+
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, imagenPuzzle.width, imagenPuzzle.height);
+
+  for (const punto of imagenPuzzle.puntos) {
+    if (punto.radius <= 0.1) continue;
+
+    const distancia = Math.abs(punto.y - posicion);
+
+    const intensidad = Math.max(
+      0,
+      1 - distancia / anchoOnda
+    );
+
+    ctx.beginPath();
+    ctx.arc(
+      punto.x,
+      punto.y,
+      punto.radius,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fillStyle = intensidad > 0
+      ? `rgb(${Math.round(17 + intensidad * 38)}, ${Math.round(17 + intensidad * 222)}, ${Math.round(17 + intensidad * 222)})`
+      : "#111111";
+
+    ctx.shadowBlur = intensidad * 10;
+    ctx.shadowColor = "#38d9a9";
+
+    ctx.fill();
+  }
+
+  ctx.shadowBlur = 0;
+}
+
+let animacionHalftone = null;
+
+function iniciarHalftone() {
+  if (animacionHalftone) return;
+
+  function animar() {
+    if (
+      !tablero.classList.contains("oculto") &&
+      !grid.classList.contains("cargando") &&
+      !grid.classList.contains("completado")
+    ) {
+      dibujarHalftone();
+    }
+
+    animacionHalftone = requestAnimationFrame(animar);
+  }
+
+  animar();
+}
+  
 // CARGAR TODAS LAS RIFAS ACTIVAS
 
 async function cargarRifas() {
@@ -691,6 +722,8 @@ async function abrirRifa(id) {
     await cargarRifa();
     await cargarNumeros();
 
+    iniciarHalftone();
+
   } catch(error) {
     console.error(error);
 
@@ -717,7 +750,7 @@ async function cargarRifa() {
   const rifa = await respuesta.json();
 
   const imagenOriginal = normalizarImagen(rifa.puzzle_image);
-  imagenPuzzle = await crearHalftone(imagenOriginal);
+  await crearHalftone(imagenOriginal);
 }
 
 document.getElementById("volver").onclick = () => {
