@@ -327,15 +327,21 @@ input {
   filter: none;
 }
 
-/* ESCÁNER VERTICAL */
-.grid::after {
-  content: "";
+/* ESCÁNER */
+.escaner {
   position: absolute;
   left: 0;
   top: -20%;
   width: 100%;
   height: 50px;
+  z-index: 3;
+  pointer-events: none;
+  animation: escaner 5s linear infinite;
+}
 
+.escaner-linea {
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
     to bottom,
     transparent 0%,
@@ -349,17 +355,44 @@ input {
     rgba(56,217,169,.7) 62%,
     transparent 100%
   );
-
   box-shadow: 0 0 15px rgba(56,217,169,.7);
-  z-index: 1;
-  pointer-events: none;
-
-  animation: escaner 5s linear infinite;
 }
 
 @keyframes escaner {
   from { top: -20%; }
   to { top: 120%; }
+}
+
+/* DESTELLO */
+.destello-escaner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 75px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+
+  background: radial-gradient(
+    ellipse,
+    white 0%,
+    white 12%,
+    #38d9a9 35%,
+    transparent 75%
+  );
+
+  box-shadow:
+    0 0 8px white,
+    0 0 18px #38d9a9,
+    0 0 30px #38d9a9;
+
+  animation: destelloHorizontal 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes destelloHorizontal {
+  from { left: 5%; }
+  to { left: 95%; }
 }
 
 /* Partículas */
@@ -534,10 +567,20 @@ async function comprobarReservaPendiente() {
 }
 
 const grid = document.getElementById("grid");
-  
+
+const escaner = document.createElement("div");
+escaner.className = "escaner";
+
+const lineaEscaner = document.createElement("div");
+lineaEscaner.className = "escaner-linea";
+
 const destello = document.createElement("div");
 destello.className = "destello-escaner";
-grid.appendChild(destello);
+
+escaner.appendChild(lineaEscaner);
+escaner.appendChild(destello);
+grid.appendChild(escaner);
+
 const mensaje = document.getElementById("mensaje");
 const reservar = document.getElementById("reservar");
 
