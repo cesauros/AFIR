@@ -294,17 +294,7 @@ input {
 }
 
 @keyframes rippleExpand {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-  10% {
-    opacity: var(--intensidad);
-  }
-  50% {
-    opacity: calc(var(--intensidad) * 0.45);
-  }
-  100% {
+  to {
     transform: translate(-50%, -50%) scale(1);
     opacity: 0;
   }
@@ -717,31 +707,19 @@ function crearRipple(boton) {
     tableroRect.height
   ) * 2.2;
 
-  const cantidad = 8;
+  const onda = document.createElement("div");
 
-  for (let i = 0; i < cantidad; i++) {
-    const onda = document.createElement("div");
+  onda.className = "ripple-wave";
+  onda.style.width = diametro + "px";
+  onda.style.height = diametro + "px";
+  onda.style.left = x + "px";
+  onda.style.top = y + "px";
 
-    onda.className = "ripple-wave";
+  grid.appendChild(onda);
 
-    onda.style.width = diametro + "px";
-    onda.style.height = diametro + "px";
-    onda.style.left = x + "px";
-    onda.style.top = y + "px";
-
-    onda.style.setProperty(
-      "--intensidad",
-      Math.pow(0.88, i)
-    );
-
-    onda.style.animationDelay = (i * 0.16) + "s";
-
-    grid.appendChild(onda);
-
-    onda.addEventListener("animationend", () => {
-      onda.remove();
-    }, { once: true });
-  }
+  onda.addEventListener("animationend", () => {
+    onda.remove();
+  }, { once: true });
 }
 
 // RESERVAR NÚMEROS
