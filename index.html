@@ -521,6 +521,115 @@ button.numero {
   from { left: 5%; }
   to { left: 95%; }
 }
+
+
+/* =====================================
+   HOLOGRAMA DE PUNTOS ENERGIZADOS
+===================================== */
+
+.grid {
+  --energia: rgba(56,217,169,.8);
+}
+
+/* Pulsación general */
+
+.grid:not(.completado)::before {
+  animation: hologramaPulso 3s ease-in-out infinite alternate;
+}
+
+@keyframes hologramaPulso {
+  0% {
+    filter: brightness(.8) contrast(1.15);
+  }
+  50% {
+    filter: brightness(1.4) contrast(1.3);
+  }
+  100% {
+    filter: brightness(1) contrast(1.2);
+  }
+}
+
+/* Luces individuales */
+
+.punto-luz {
+  position: absolute;
+  z-index: 1;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  pointer-events: none;
+
+  background: #38d9a9;
+
+  box-shadow:
+    0 0 4px #38d9a9,
+    0 0 9px #38d9a9,
+    0 0 15px white;
+
+  animation: puntoTitilante var(--tiempo) ease-in-out infinite;
+}
+
+@keyframes puntoTitilante {
+  0%, 100% {
+    opacity: .08;
+    transform: scale(.4);
+  }
+
+  40% {
+    opacity: .9;
+    transform: scale(1.2);
+  }
+
+  50% {
+    opacity: 1;
+    background: white;
+    box-shadow:
+      0 0 5px white,
+      0 0 12px #38d9a9,
+      0 0 22px #38d9a9;
+  }
+
+  65% {
+    opacity: .2;
+    transform: scale(.6);
+  }
+}
+
+/* Destellos ocasionales */
+
+.chispa-imagen {
+  position: absolute;
+  z-index: 1;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: white;
+  pointer-events: none;
+
+  box-shadow:
+    0 0 5px white,
+    0 0 12px #38d9a9,
+    0 0 20px #38d9a9;
+
+  animation: chispaImagen .8s ease-out forwards;
+}
+
+@keyframes chispaImagen {
+  0% {
+    opacity: 0;
+    transform: scale(.2);
+  }
+
+  25% {
+    opacity: 1;
+    transform: scale(3);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(.1);
+  }
+}
   
 </style>
 </head>
@@ -1203,6 +1312,68 @@ function crearParticula() {
 }
 
 setInterval(crearParticula, 0.5);
+
+/* =====================================
+   LUCES HOLOGRÁFICAS DEL TABLERO
+===================================== */
+
+function crearLucesHolograma() {
+
+  if (
+    grid.classList.contains("cargando") ||
+    tablero.classList.contains("oculto") ||
+    grid.classList.contains("completado")
+  ) return;
+
+  // Evitar duplicar luces
+  if (grid.querySelectorAll(".punto-luz").length > 45) return;
+
+  const luz = document.createElement("div");
+
+  luz.className = "punto-luz";
+
+  luz.style.left = Math.random() * 100 + "%";
+  luz.style.top = Math.random() * 100 + "%";
+
+  luz.style.setProperty(
+    "--tiempo",
+    (1 + Math.random() * 3) + "s"
+  );
+
+  grid.appendChild(luz);
+
+  luz.addEventListener("animationend", () => {
+    luz.remove();
+  }, { once: true });
+}
+
+function crearChispaImagen() {
+
+  if (
+    grid.classList.contains("cargando") ||
+    tablero.classList.contains("oculto") ||
+    grid.classList.contains("completado")
+  ) return;
+
+  const chispa = document.createElement("div");
+
+  chispa.className = "chispa-imagen";
+
+  chispa.style.left = Math.random() * 100 + "%";
+  chispa.style.top = Math.random() * 100 + "%";
+
+  grid.appendChild(chispa);
+
+  chispa.addEventListener("animationend", () => {
+    chispa.remove();
+  }, { once: true });
+}
+
+// Luces independientes
+setInterval(crearLucesHolograma, 180);
+
+// Pequeñas descargas luminosas
+setInterval(crearChispaImagen, 350);
 
 // INICIO
 
