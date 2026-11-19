@@ -105,6 +105,8 @@ h1 { color: #38d9a9; }
 }
 
 button.numero {
+  position: relative;
+  z-index: 2;
   min-width: 0;
   aspect-ratio: 1 / 1;
   padding: 0;
@@ -278,7 +280,7 @@ input {
 
 .ripple-wave {
   position: absolute;
-  z-index: 10;
+  z-index: 1;
   pointer-events: none;
   border-radius: 50%;
   background: radial-gradient(
