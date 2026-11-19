@@ -317,7 +317,7 @@ input {
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
-  filter: blur(5px) brightness(.5);
+  filter: blur(1px) brightness(.3);
   transform: scale(1.05);
   z-index: 0;
   pointer-events: none;
@@ -533,7 +533,7 @@ function crearHalftone(src) {
         canvas.width, canvas.height
       );
 
-      const cell = 6;
+      const cell = 8;
       const maxRadius = cell * 0.48;
 
       for (let y = 0; y < canvas.height; y += cell) {
