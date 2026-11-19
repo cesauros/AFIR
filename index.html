@@ -401,7 +401,7 @@ button.numero {
 .grid .destello-escaner {
   position: absolute;
   z-index: 3;
-  top: 50%;
+  top: 25%;
   left: 0;
   width: 65px;
   height: 3px;
@@ -524,6 +524,7 @@ async function comprobarReservaPendiente() {
 }
 
 const grid = document.getElementById("grid");
+  
 const destello = document.createElement("div");
 destello.className = "destello-escaner";
 grid.appendChild(destello);
@@ -724,7 +725,11 @@ async function abrirRifa(id) {
 
   grid.classList.add("cargando");
   grid.style.backgroundImage = "none";
-  grid.replaceChildren();
+  grid.querySelectorAll("*").forEach(elemento => {
+    if (!elemento.classList.contains("destello-escaner")) {
+      elemento.remove();
+    }
+  });
 
   portada.classList.add("oculto");
   tablero.classList.remove("oculto");
@@ -853,7 +858,9 @@ async function cargarNumeros() {
 function dibujarTablero() {
 
   grid.style.backgroundImage = "none";
-  grid.replaceChildren();
+  grid.querySelectorAll(
+    "button.numero, .ripple-wave, .particula"
+  ).forEach(elemento => elemento.remove());
 
   for (let i = 0; i < 100; i++) {
 
