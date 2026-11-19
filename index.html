@@ -301,41 +301,6 @@ input {
     opacity: 0;
   }
 }
-
-/* ONDAS DE AGUA SOBRE EL FONDO */
-
-.grid::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    repeating-radial-gradient(
-      circle at 50% 50%,
-      transparent 0 18px,
-      rgba(56,217,169,.22) 20px,
-      rgba(255,255,255,.28) 22px,
-      transparent 25px 42px
-    );
-  animation: ondasAgua 4s ease-in-out infinite;
-  opacity: .65;
-}
-
-@keyframes ondasAgua {
-  0% {
-    transform: scale(.75);
-    opacity: .15;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: .65;
-  }
-  100% {
-    transform: scale(.75);
-    opacity: .15;
-  }
-}
   
 </style>
 </head>
@@ -889,33 +854,5 @@ setInterval(() => {
 
 </script>
 
-<svg width="0" height="0" style="position:absolute">
-  <filter id="agua"
-    x="-15%" y="-15%"
-    width="130%" height="130%">
-
-    <feTurbulence
-      type="fractalNoise"
-      baseFrequency="0.012 0.018"
-      numOctaves="2"
-      seed="3"
-      result="ruido">
-
-      <animate
-        attributeName="baseFrequency"
-        values="0.012 0.018;0.018 0.025;0.012 0.018"
-        dur="4s"
-        repeatCount="indefinite"/>
-    </feTurbulence>
-
-    <feDisplacementMap
-      in="SourceGraphic"
-      in2="ruido"
-      scale="22"
-      xChannelSelector="R"
-      yChannelSelector="G"/>
-  </filter>
-</svg>
-  
 </body>
 </html>
