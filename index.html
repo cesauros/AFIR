@@ -470,6 +470,63 @@ button.numero {
     filter: brightness(1.8) drop-shadow(0 0 8px #38d9a9);
   }
 }
+
+/* MÁSCARA LUMINOSA DEL LÁSER */
+
+.grid .mascara-laser {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  background-image: var(--puzzle);
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  filter:
+    brightness(2)
+    sepia(1)
+    saturate(5)
+    hue-rotate(95deg)
+    drop-shadow(0 0 5px #38d9a9);
+
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    black 40%,
+    black 60%,
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    black 40%,
+    black 60%,
+    transparent 100%
+  );
+
+  -webkit-mask-size: 40% 100%;
+  mask-size: 40% 100%;
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  animation: recorrerLaser 3s linear forwards;
+}
+
+@keyframes recorrerLaser {
+  from {
+    -webkit-mask-position: -40% 0;
+    mask-position: -40% 0;
+  }
+
+  to {
+    -webkit-mask-position: 140% 0;
+    mask-position: 140% 0;
+  }
+}
   
 </style>
 </head>
@@ -1180,9 +1237,9 @@ function ejecutarEfectoAleatorio() {
   ];
 
   if (efecto === "laser") {
-    const laser = document.createElement("div");
-    laser.className = "laser";
-    capaLuminosa.appendChild(laser);
+    const mascara = document.createElement("div");
+    mascara.className = "mascara-laser";
+    capaLuminosa.appendChild(mascara);
   }
 
   if (efecto === "onda") {
