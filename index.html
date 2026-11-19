@@ -854,5 +854,33 @@ setInterval(() => {
 
 </script>
 
+<svg width="0" height="0" style="position:absolute">
+  <filter id="agua"
+    x="-15%" y="-15%"
+    width="130%" height="130%">
+
+    <feTurbulence
+      type="fractalNoise"
+      baseFrequency="0.012 0.018"
+      numOctaves="2"
+      seed="3"
+      result="ruido">
+
+      <animate
+        attributeName="baseFrequency"
+        values="0.012 0.018;0.018 0.025;0.012 0.018"
+        dur="4s"
+        repeatCount="indefinite"/>
+    </feTurbulence>
+
+    <feDisplacementMap
+      in="SourceGraphic"
+      in2="ruido"
+      scale="22"
+      xChannelSelector="R"
+      yChannelSelector="G"/>
+  </filter>
+</svg>
+  
 </body>
 </html>
