@@ -509,81 +509,6 @@ function normalizarImagen(valor) {
   return "data:image/jpeg;base64," + imagen;
 }
 
-function crearImagenImprenta(src) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      const ancho = 600;
-      const escala = ancho / img.width;
-
-      canvas.width = ancho;
-      canvas.height = img.height * escala;
-
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      const imagen = ctx.getImageData(
-        0, 0, canvas.width, canvas.height
-      );
-
-      const datos = imagen.data;
-      const paso = 5;
-
-      for (let y = 0; y < canvas.height; y += paso) {
-        for (let x = 0; x < canvas.width; x += paso) {
-
-          const i = (y * canvas.width + x) * 4;
-
-          const brillo =
-            (datos[i] * 0.299 +
-             datos[i + 1] * 0.587 +
-             datos[i + 2] * 0.114) / 255;
-
-          const radio = (1 - brillo) * paso * 0.48;
-
-          for (let dy = 0; dy < paso; dy++) {
-            for (let dx = 0; dx < paso; dx++) {
-              const px = x + dx;
-              const py = y + dy;
-
-              if (
-                px < canvas.width &&
-                py < canvas.height
-              ) {
-                const distancia = Math.hypot(
-                  dx - paso / 2,
-                  dy - paso / 2
-                );
-
-                const p = (py * canvas.width + px) * 4;
-
-                if (distancia < radio) {
-                  datos[p] = 16;
-                  datos[p + 1] = 24;
-                  datos[p + 2] = 39;
-                } else {
-                  datos[p] = 255;
-                  datos[p + 1] = 255;
-                  datos[p + 2] = 255;
-                }
-              }
-            }
-          }
-        }
-      }
-
-      ctx.putImageData(imagen, 0, 0);
-      resolve(canvas.toDataURL("image/png"));
-    };
-
-    img.onerror = reject;
-    img.src = src;
-  });
-}
-
 // CARGAR TODAS LAS RIFAS ACTIVAS
 
 async function cargarRifas() {
@@ -699,8 +624,7 @@ async function cargarRifa() {
 
   const rifa = await respuesta.json();
 
-  const imagenOriginal = normalizarImagen(rifa.puzzle_image);
-  imagenPuzzle = await crearImagenImprenta(imagenOriginal);
+  imagenPuzzle = normalizarImagen(rifa.puzzle_image);
 }
 
 document.getElementById("volver").onclick = () => {
@@ -1006,7 +930,7 @@ function crearParticula() {
     grid.classList.contains("completado")
   ) return;
 
-  if (grid.querySelectorAll(".particula").length >= 5000) return;
+  if (grid.querySelectorAll(".particula").length >= 15) return;
 
   const particula = document.createElement("div");
   particula.className = "particula";
@@ -1036,7 +960,7 @@ function crearParticula() {
   }, { once: true });
 }
 
-setInterval(crearParticula, 1);
+setInterval(crearParticula, 500);
 
 // INICIO
 
