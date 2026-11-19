@@ -335,6 +335,7 @@ input {
   top: -20%;
   width: 100%;
   height: 50px;
+  background-size: 100% 100%;
   background: linear-gradient(
     to bottom,
     transparent 0%,
@@ -387,6 +388,49 @@ input {
 /* Números por encima de los efectos */
 button.numero {
   z-index: 2;
+}
+
+/* DESTELLO HORIZONTAL SOBRE EL ESCÁNER */
+
+.grid::after {
+  /* Mantener el escáner vertical */
+  position: absolute;
+}
+
+/* Destello móvil */
+.grid .destello-escaner {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: 50%;
+  width: 65px;
+  height: 3px;
+  border-radius: 50%;
+
+  background: white;
+
+  box-shadow:
+    0 0 5px white,
+    0 0 10px #38d9a9,
+    0 0 20px #38d9a9,
+    0 0 30px white;
+
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+
+  animation: destelloHorizontal 2s ease-in-out infinite alternate;
+}
+
+@keyframes destelloHorizontal {
+  0% {
+    left: 0%;
+    opacity: .5;
+  }
+
+  100% {
+    left: 100%;
+    opacity: 1;
+  }
 }
   
 </style>
@@ -489,6 +533,9 @@ async function comprobarReservaPendiente() {
 }
 
 const grid = document.getElementById("grid");
+const destello = document.createElement("div");
+destello.className = "destello-escaner";
+grid.appendChild(destello);
 const mensaje = document.getElementById("mensaje");
 const reservar = document.getElementById("reservar");
 
