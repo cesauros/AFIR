@@ -317,7 +317,7 @@ input {
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
-  filter: blur(1px) brightness(.4);
+  filter: blur(1px) brightness(1);
   transform: scale(1.05);
   z-index: 0;
   pointer-events: none;
@@ -583,7 +583,7 @@ function crearHalftone(src) {
 
               const inside = distance <= radius;
 
-              const color = inside ? 25 : 255;
+              const color = inside ? 255 : 25;
 
               output.data[i] = color;
               output.data[i + 1] = color;
@@ -1055,7 +1055,7 @@ function crearParticula() {
   }, { once: true });
 }
 
-setInterval(crearParticula, 0,5);
+setInterval(crearParticula, 0.5);
 
 // INICIO
 
