@@ -509,6 +509,100 @@ function normalizarImagen(valor) {
   return "data:image/jpeg;base64," + imagen;
 }
 
+function crearHalftone(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+      const maxSize = 600;
+      const scale = Math.min(1, maxSize / img.width);
+
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      const original = ctx.getImageData(
+        0, 0, canvas.width, canvas.height
+      );
+
+      const output = ctx.createImageData(
+        canvas.width, canvas.height
+      );
+
+      const cell = 6;
+      const maxRadius = cell * 0.48;
+
+      for (let y = 0; y < canvas.height; y += cell) {
+        for (let x = 0; x < canvas.width; x += cell) {
+
+          let total = 0;
+          let count = 0;
+
+          for (let dy = 0; dy < cell; dy++) {
+            for (let dx = 0; dx < cell; dx++) {
+              const px = x + dx;
+              const py = y + dy;
+
+              if (px >= canvas.width || py >= canvas.height) continue;
+
+              const i = (py * canvas.width + px) * 4;
+
+              const brightness =
+                0.299 * original.data[i] +
+                0.587 * original.data[i + 1] +
+                0.114 * original.data[i + 2];
+
+              total += brightness;
+              count++;
+            }
+          }
+
+          const brightness = total / count;
+          const radius = (1 - brightness / 255) * maxRadius;
+
+          const cx = x + cell / 2;
+          const cy = y + cell / 2;
+
+          for (let dy = 0; dy < cell; dy++) {
+            for (let dx = 0; dx < cell; dx++) {
+              const px = x + dx;
+              const py = y + dy;
+
+              if (px >= canvas.width || py >= canvas.height) continue;
+
+              const i = (py * canvas.width + px) * 4;
+
+              const distance = Math.hypot(
+                px + 0.5 - cx,
+                py + 0.5 - cy
+              );
+
+              const inside = distance <= radius;
+
+              const color = inside ? 25 : 255;
+
+              output.data[i] = color;
+              output.data[i + 1] = color;
+              output.data[i + 2] = color;
+              output.data[i + 3] = 255;
+            }
+          }
+        }
+      }
+
+      ctx.putImageData(output, 0, 0);
+      resolve(canvas.toDataURL("image/png"));
+    };
+
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
 // CARGAR TODAS LAS RIFAS ACTIVAS
 
 async function cargarRifas() {
@@ -624,7 +718,8 @@ async function cargarRifa() {
 
   const rifa = await respuesta.json();
 
-  imagenPuzzle = normalizarImagen(rifa.puzzle_image);
+  const imagenOriginal = normalizarImagen(rifa.puzzle_image);
+  imagenPuzzle = await crearHalftone(imagenOriginal);
 }
 
 document.getElementById("volver").onclick = () => {
