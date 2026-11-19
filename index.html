@@ -307,9 +307,8 @@ input {
   isolation: isolate;
   overflow: hidden;
 }
-
-/* FONDO CON ESCANER DE LUZ SOBRE LOS PUNTOS */
-
+  
+/* FONDO HALFTONE */
 .grid::before {
   content: "";
   position: absolute;
@@ -318,56 +317,14 @@ input {
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
-  filter: blur(1px) brightness(1);
+  filter: blur(1px);
   transform: scale(1.05);
   z-index: 0;
   pointer-events: none;
 }
 
-/* BARRIDO DE LUZ */
-
-.grid::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(56,217,169,0.05) 35%,
-    rgba(56,217,169,0.8) 48%,
-    white 50%,
-    rgba(56,217,169,0.8) 52%,
-    rgba(56,217,169,0.05) 65%,
-    transparent 100%
-  );
-
-  background-size: 100% 200%;
-  background-repeat: no-repeat;
-  mix-blend-mode: screen;
-  animation: escanerPuntos 4s linear infinite;
-}
-
-@keyframes escanerPuntos {
-  from {
-    background-position: 0 -100%;
-  }
-
-  to {
-    background-position: 0 200%;
-  }
-}
-
-/* TABLERO COMPLETADO */
-
 .grid.completado::before {
   filter: none;
-}
-
-.grid.completado::after {
-  display: none;
 }
 
 /* Partículas */
@@ -617,7 +574,66 @@ function crearHalftone(src) {
     img.src = src;
   });
 }
+  
+function escanearPuntos() {
+  if (!imagenPuzzle || grid.classList.contains("completado")) return;
 
+  const img = new Image();
+
+  img.onload = () => {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = 600;
+    canvas.height = 600;
+
+    let inicio = null;
+
+    function animar(tiempo) {
+      if (grid.classList.contains("completado")) return;
+
+      if (!inicio) inicio = tiempo;
+
+      const progreso = ((tiempo - inicio) % 4000) / 4000;
+      const posicion = progreso * canvas.height;
+
+      ctx.clearRect(0, 0, 600, 600);
+      ctx.drawImage(img, 0, 0, 600, 600);
+
+      const imagen = ctx.getImageData(0, 0, 600, 600);
+      const datos = imagen.data;
+
+      for (let y = 0; y < 600; y++) {
+        const distancia = Math.abs(y - posicion);
+        const intensidad = Math.max(0, 1 - distancia / 45);
+
+        if (intensidad <= 0) continue;
+
+        for (let x = 0; x < 600; x++) {
+          const i = (y * 600 + x) * 4;
+
+          datos[i] = Math.min(255, datos[i] + intensidad * 180);
+          datos[i + 1] = Math.min(255, datos[i + 1] + intensidad * 180);
+          datos[i + 2] = Math.min(255, datos[i + 2] + intensidad * 180);
+        }
+      }
+
+      ctx.putImageData(imagen, 0, 0);
+
+      grid.style.setProperty(
+        "--puzzle",
+        `url("${canvas.toDataURL("image/png")}")`
+      );
+
+      requestAnimationFrame(animar);
+    }
+
+    requestAnimationFrame(animar);
+  };
+
+  img.src = imagenPuzzle;
+}
+  
 // CARGAR TODAS LAS RIFAS ACTIVAS
 
 async function cargarRifas() {
@@ -735,6 +751,7 @@ async function cargarRifa() {
 
   const imagenOriginal = normalizarImagen(rifa.puzzle_image);
   imagenPuzzle = await crearHalftone(imagenOriginal);
+  escanearPuntos();
 }
 
 document.getElementById("volver").onclick = () => {
