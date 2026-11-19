@@ -471,8 +471,7 @@ button.numero {
   }
 }
 
-/* MÁSCARA LUMINOSA DEL LÁSER */
-
+/* MÁSCARA LUMINOSA */
 .grid .mascara-laser {
   position: absolute;
   inset: 0;
@@ -509,14 +508,24 @@ button.numero {
 
   -webkit-mask-size: 40% 100%;
   mask-size: 40% 100%;
-  
+
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  
+
   animation: recorrerLaser 3s linear infinite;
 }
 
+@keyframes recorrerLaser {
+  from {
+    -webkit-mask-position: -40% 0;
+    mask-position: -40% 0;
+  }
 
+  to {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+}
   
 </style>
 </head>
