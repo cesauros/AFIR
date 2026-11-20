@@ -1163,78 +1163,81 @@ function dibujarTablero() {
 
 function lanzarDestelloAlBoton(boton) {
 
-  if (!boton || !grid.contains(boton)) return;
+  if (!boton) return;
 
-  const rect = boton.getBoundingClientRect();
-  const tableroRect = grid.getBoundingClientRect();
+  const gridRect = grid.getBoundingClientRect();
+  const botonRect = boton.getBoundingClientRect();
 
-  // Centro exacto del número pulsado
+  // Centro del botón respecto al tablero
   const destinoX =
-    rect.left + rect.width / 2 - tableroRect.left;
+    botonRect.left - gridRect.left + botonRect.width / 2;
 
   const destinoY =
-    rect.top + rect.height / 2 - tableroRect.top;
+    botonRect.top - gridRect.top + botonRect.height / 2;
 
-  // Elegir punto de salida aleatorio en un borde
+  const ancho = grid.clientWidth;
+  const alto = grid.clientHeight;
+
+  // Salida aleatoria desde uno de los cuatro bordes
   const lado = Math.floor(Math.random() * 4);
 
-  let inicioX, inicioY;
+  let inicioX;
+  let inicioY;
 
-  switch (lado) {
-    case 0:
-      inicioX = -25;
-      inicioY = Math.random() * tableroRect.height;
-      break;
-
-    case 1:
-      inicioX = tableroRect.width + 25;
-      inicioY = Math.random() * tableroRect.height;
-      break;
-
-    case 2:
-      inicioX = Math.random() * tableroRect.width;
-      inicioY = -25;
-      break;
-
-    default:
-      inicioX = Math.random() * tableroRect.width;
-      inicioY = tableroRect.height + 25;
+  if (lado === 0) {
+    inicioX = -30;
+    inicioY = Math.random() * alto;
+  } else if (lado === 1) {
+    inicioX = ancho + 30;
+    inicioY = Math.random() * alto;
+  } else if (lado === 2) {
+    inicioX = Math.random() * ancho;
+    inicioY = -30;
+  } else {
+    inicioX = Math.random() * ancho;
+    inicioY = alto + 30;
   }
 
-  // Cancelar cualquier recorrido anterior
-  destelloObjetivo.getAnimations().forEach(a => a.cancel());
+  // Cancelar animación anterior
+  if (destelloObjetivo.animacion) {
+    destelloObjetivo.animacion.cancel();
+  }
 
   destelloObjetivo.style.display = "block";
 
-  // Posición inicial
   destelloObjetivo.style.left = inicioX + "px";
   destelloObjetivo.style.top = inicioY + "px";
+  destelloObjetivo.style.opacity = "1";
 
-  // Animación hacia el centro del botón
-  const animacion = destelloObjetivo.animate([
-    {
-      left: inicioX + "px",
-      top: inicioY + "px",
-      opacity: 1
-    },
-    {
-      left: destinoX + "px",
-      top: destinoY + "px",
-      opacity: 1,
-      offset: 0.8
-    },
-    {
-      left: destinoX + "px",
-      top: destinoY + "px",
-      opacity: 0
-    }
-  ], {
-    duration: 850,
-    easing: "cubic-bezier(.2,.8,.3,1)",
-    fill: "forwards"
-  });
+  // Movimiento real desde el borde hasta el número
+  destelloObjetivo.animacion =
+    destelloObjetivo.animate(
+      [
+        {
+          left: inicioX + "px",
+          top: inicioY + "px",
+          opacity: 1
+        },
+        {
+          left: destinoX + "px",
+          top: destinoY + "px",
+          opacity: 1,
+          offset: 0.85
+        },
+        {
+          left: destinoX + "px",
+          top: destinoY + "px",
+          opacity: 0
+        }
+      ],
+      {
+        duration: 1000,
+        easing: "ease-in-out",
+        fill: "forwards"
+      }
+    );
 
-  animacion.onfinish = () => {
+  destelloObjetivo.animacion.onfinish = () => {
     destelloObjetivo.style.display = "none";
   };
 }
