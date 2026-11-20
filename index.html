@@ -419,19 +419,39 @@ button.numero {
 
   transform: translate(-50%, -50%);
 
-  animation:
-    destelloVertical 5s linear infinite,
-    destelloHorizontal 2.5s ease-in-out infinite alternate;
+  animation: nadoPez 8s ease-in-out infinite;
 }
 
-@keyframes destelloVertical {
-  from { top: -20%; }
-  to { top: 120%; }
-}
+@keyframes nadoPez {
+  0% {
+    top: 20%;
+    left: 5%;
+  }
 
-@keyframes destelloHorizontal {
-  from { left: 5%; }
-  to { left: 95%; }
+  20% {
+    top: 45%;
+    left: 30%;
+  }
+
+  40% {
+    top: 25%;
+    left: 55%;
+  }
+
+  60% {
+    top: 65%;
+    left: 80%;
+  }
+
+  80% {
+    top: 45%;
+    left: 55%;
+  }
+
+  100% {
+    top: 20%;
+    left: 5%;
+  }
 }
   
 </style>
