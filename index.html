@@ -422,6 +422,80 @@ button.numero {
 
   animation: nadoPez 8s ease-in-out infinite;
 }
+
+/* ILUMINACIÓN SELECTIVA DE LOS PUNTOS */
+
+.grid .luz-puntos {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  background: transparent;
+
+  -webkit-mask-image: var(--mascara-puntos);
+  mask-image: var(--mascara-puntos);
+
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  overflow: hidden;
+  mix-blend-mode: screen;
+}
+
+.grid .luz-puntos::before {
+  content: "";
+  position: absolute;
+  inset: -100% -30%;
+
+  background:
+    radial-gradient(
+      ellipse 100px 120px at 20% 50%,
+      rgba(255,255,255,1),
+      rgba(56,217,169,.8) 35%,
+      transparent 75%
+    ),
+    radial-gradient(
+      ellipse 140px 100px at 55% 50%,
+      rgba(56,217,169,.95),
+      transparent 75%
+    ),
+    radial-gradient(
+      ellipse 85px 130px at 85% 50%,
+      rgba(255,255,255,.95),
+      rgba(56,217,169,.7) 40%,
+      transparent 75%
+    );
+
+  filter: blur(5px);
+
+  animation: ondaPuntos 8s ease-in-out infinite alternate;
+}
+
+@keyframes ondaPuntos {
+  0% {
+    transform: translate(-5%, -65%);
+  }
+
+  25% {
+    transform: translate(4%, -30%);
+  }
+
+  50% {
+    transform: translate(-3%, 5%);
+  }
+
+  75% {
+    transform: translate(5%, 45%);
+  }
+
+  100% {
+    transform: translate(-4%, 100%);
+  }
+}
   
 </style>
 </head>
@@ -483,6 +557,7 @@ const API = "https://blue-poetry-7c73.cesauro.workers.dev";
 let seleccionados = [];
 let numeros = [];
 let imagenPuzzle = "";
+let mascaraPuzzle = "";
 let raffleId = null;
 
 /* IDENTIFICADOR PARA EVITAR CARGAS ANTIGUAS */
@@ -523,6 +598,9 @@ async function comprobarReservaPendiente() {
 }
 
 const grid = document.getElementById("grid");
+const luzPuntos = document.createElement("div");
+luzPuntos.className = "luz-puntos";
+grid.appendChild(luzPuntos);
   
 const destello = document.createElement("div");
 destello.className = "destello-escaner";
@@ -608,30 +686,37 @@ function crearHalftone(src) {
     const img = new Image();
 
     img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d", { willReadFrequently: true });
-
       const maxSize = 600;
       const scale = Math.min(1, maxSize / img.width);
 
-      canvas.width = Math.round(img.width * scale);
-      canvas.height = Math.round(img.height * scale);
+      const width = Math.round(img.width * scale);
+      const height = Math.round(img.height * scale);
 
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const canvas = document.createElement("canvas");
+      const mascara = document.createElement("canvas");
 
-      const original = ctx.getImageData(
-        0, 0, canvas.width, canvas.height
-      );
+      canvas.width = mascara.width = width;
+      canvas.height = mascara.height = height;
 
-      const output = ctx.createImageData(
-        canvas.width, canvas.height
-      );
+      const ctx = canvas.getContext("2d", {
+        willReadFrequently: true
+      });
+
+      const mctx = mascara.getContext("2d", {
+        willReadFrequently: true
+      });
+
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const original = ctx.getImageData(0, 0, width, height);
+      const output = ctx.createImageData(width, height);
+      const mask = mctx.createImageData(width, height);
 
       const cell = 8;
       const maxRadius = cell * 0.48;
 
-      for (let y = 0; y < canvas.height; y += cell) {
-        for (let x = 0; x < canvas.width; x += cell) {
+      for (let y = 0; y < height; y += cell) {
+        for (let x = 0; x < width; x += cell) {
 
           let total = 0;
           let count = 0;
@@ -641,16 +726,15 @@ function crearHalftone(src) {
               const px = x + dx;
               const py = y + dy;
 
-              if (px >= canvas.width || py >= canvas.height) continue;
+              if (px >= width || py >= height) continue;
 
-              const i = (py * canvas.width + px) * 4;
+              const i = (py * width + px) * 4;
 
-              const brightness =
+              total +=
                 0.299 * original.data[i] +
                 0.587 * original.data[i + 1] +
                 0.114 * original.data[i + 2];
 
-              total += brightness;
               count++;
             }
           }
@@ -663,12 +747,13 @@ function crearHalftone(src) {
 
           for (let dy = 0; dy < cell; dy++) {
             for (let dx = 0; dx < cell; dx++) {
+
               const px = x + dx;
               const py = y + dy;
 
-              if (px >= canvas.width || py >= canvas.height) continue;
+              if (px >= width || py >= height) continue;
 
-              const i = (py * canvas.width + px) * 4;
+              const i = (py * width + px) * 4;
 
               const distance = Math.hypot(
                 px + 0.5 - cx,
@@ -683,13 +768,24 @@ function crearHalftone(src) {
               output.data[i + 1] = color;
               output.data[i + 2] = color;
               output.data[i + 3] = 255;
+
+              // MÁSCARA: SOLO LOS PUNTOS REALES
+              mask.data[i] = 255;
+              mask.data[i + 1] = 255;
+              mask.data[i + 2] = 255;
+              mask.data[i + 3] = inside ? 255 : 0;
             }
           }
         }
       }
 
       ctx.putImageData(output, 0, 0);
-      resolve(canvas.toDataURL("image/png"));
+      mctx.putImageData(mask, 0, 0);
+
+      resolve({
+        base: canvas.toDataURL("image/png"),
+        mascara: mascara.toDataURL("image/png")
+      });
     };
 
     img.onerror = reject;
@@ -817,7 +913,16 @@ async function cargarRifa() {
   const rifa = await respuesta.json();
 
   const imagenOriginal = normalizarImagen(rifa.puzzle_image);
-  imagenPuzzle = await crearHalftone(imagenOriginal);
+
+  const resultado = await crearHalftone(imagenOriginal);
+  
+  imagenPuzzle = resultado.base;
+  mascaraPuzzle = resultado.mascara;
+  
+  grid.style.setProperty(
+    "--mascara-puntos",
+    'url("' + mascaraPuzzle + '")'
+  );
 }
 
 document.getElementById("volver").onclick = () => {
