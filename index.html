@@ -873,10 +873,14 @@ async function abrirRifa(id) {
   grid.classList.add("cargando");
   grid.style.backgroundImage = "none";
   grid.querySelectorAll("*").forEach(elemento => {
-    if (!elemento.classList.contains("destello-escaner")) {
-      elemento.remove();
-    }
-  });
+    grid.querySelectorAll("*").forEach(elemento => {
+  if (
+    !elemento.classList.contains("destello-escaner") &&
+    !elemento.classList.contains("luz-puntos")
+  ) {
+    elemento.remove();
+  }
+});
 
   portada.classList.add("oculto");
   tablero.classList.remove("oculto");
