@@ -947,7 +947,9 @@ function dibujarTablero() {
     }
 
     if (status === "sold") {
-      continue;
+      b.classList.add("vendido");
+      b.disabled = true;
+      b.style.visibility = "hidden";
     }
 
     if (seleccionados.includes(n)) {
