@@ -745,6 +745,7 @@ function moverDestelloRapido() {
 
 moverDestelloRapido();
 
+
 // =================================
 // TERCER DESTELLO
 // =================================
@@ -760,7 +761,7 @@ let terceroDestinoX = 50;
 let terceroDestinoY = 50;
 
 let terceroVelocidad = 30;
-let terceroModo = "moviendo";
+let terceroModo = "entrando";
 let terceroPausaHasta = 0;
 let terceroProximoCambio = 0;
 let terceroUltimoTiempo = performance.now();
@@ -768,6 +769,7 @@ let terceroUltimoTiempo = performance.now();
 function destinoAleatorioTercero() {
   terceroDestinoX = 8 + Math.random() * 84;
   terceroDestinoY = 8 + Math.random() * 84;
+
   terceroVelocidad = 18 + Math.random() * 22;
   terceroModo = "moviendo";
 
@@ -794,6 +796,7 @@ function entrarTercero() {
 
   terceroDestinoX = 8 + Math.random() * 84;
   terceroDestinoY = 8 + Math.random() * 84;
+
   terceroVelocidad = 30;
   terceroModo = "entrando";
 }
@@ -889,9 +892,6 @@ function moverTercero() {
         } else if (terceroModo === "persiguiendo") {
           terceroModo = "esperando";
           terceroPausaHasta = ahora + 500;
-
-        } else if (terceroModo === "entrando") {
-          destinoAleatorioTercero();
 
         } else {
           destinoAleatorioTercero();
