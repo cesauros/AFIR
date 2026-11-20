@@ -857,6 +857,7 @@ async function cargarRifas() {
   }
 }
 
+
 async function abrirRifa(id) {
   const nuevoId = Number(id);
 
@@ -872,15 +873,16 @@ async function abrirRifa(id) {
 
   grid.classList.add("cargando");
   grid.style.backgroundImage = "none";
+
+  // LIMPIAR ELEMENTOS ANTERIORES SIN ELIMINAR LOS EFECTOS
   grid.querySelectorAll("*").forEach(elemento => {
-    grid.querySelectorAll("*").forEach(elemento => {
-  if (
-    !elemento.classList.contains("destello-escaner") &&
-    !elemento.classList.contains("luz-puntos")
-  ) {
-    elemento.remove();
-  }
-});
+    if (
+      !elemento.classList.contains("destello-escaner") &&
+      !elemento.classList.contains("luz-puntos")
+    ) {
+      elemento.remove();
+    }
+  });
 
   portada.classList.add("oculto");
   tablero.classList.remove("oculto");
@@ -891,13 +893,17 @@ async function abrirRifa(id) {
     await cargarRifa();
     await cargarNumeros();
 
-  } catch(error) {
-    console.error(error);
+  } catch (error) {
+    console.error("Error al abrir la rifa:", error);
+
+    mensaje.textContent =
+      "No se pudo cargar la rifa. Intenta nuevamente.";
 
     tablero.classList.add("oculto");
     portada.classList.remove("oculto");
   }
 }
+
   
 // CARGAR UNA RIFA ESPECÍFICA
 
