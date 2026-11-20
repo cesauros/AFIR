@@ -471,7 +471,8 @@ button.numero {
   }
 }
 
-/* MÁSCARA LUMINOSA */
+/* LÁSER HORIZONTAL SOBRE LOS PUNTOS */
+
 .grid .mascara-laser {
   position: absolute;
   inset: 0;
@@ -480,7 +481,6 @@ button.numero {
 
   background-image: var(--puzzle);
   background-size: 100% 100%;
-  background-position: center;
   background-repeat: no-repeat;
 
   filter:
@@ -488,43 +488,9 @@ button.numero {
     sepia(1)
     saturate(5)
     hue-rotate(95deg)
-    drop-shadow(0 0 5px #38d9a9);
+    drop-shadow(0 0 6px #38d9a9);
 
-  -webkit-mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    black 40%,
-    black 60%,
-    transparent 100%
-  );
-
-  mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    black 40%,
-    black 60%,
-    transparent 100%
-  );
-
-  -webkit-mask-size: 40% 100%;
-  mask-size: 40% 100%;
-
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-
-  animation: recorrerLaser 3s linear infinite;
-}
-
-@keyframes recorrerLaser {
-  from {
-    -webkit-mask-position: -40% 0;
-    mask-position: -40% 0;
-  }
-
-  to {
-    -webkit-mask-position: 100% 0;
-    mask-position: 100% 0;
-  }
+  clip-path: inset(0 100% 0 0);
 }
   
 </style>
@@ -1235,11 +1201,54 @@ function ejecutarEfectoAleatorio() {
     Math.floor(Math.random() * efectos.length)
   ];
 
-  if (efecto === "laser") {
-    const mascara = document.createElement("div");
-    mascara.className = "mascara-laser";
-    capaLuminosa.appendChild(mascara);
+if (efecto === "laser") {
+
+  const mascara = document.createElement("div");
+  mascara.className = "mascara-laser";
+  capaLuminosa.appendChild(mascara);
+
+  const ancho = grid.clientWidth;
+  const duracionLaser = 3000;
+  const inicio = performance.now();
+
+  function animarLaser(ahora) {
+
+    if (!mascara.isConnected) return;
+
+    const progreso = Math.min(
+      (ahora - inicio) / duracionLaser,
+      1
+    );
+
+    const posicion = progreso * ancho;
+
+    const anchoFranja = ancho * 0.4;
+
+    const izquierda = Math.max(
+      0,
+      posicion - anchoFranja
+    );
+
+    const derecha = Math.min(
+      ancho,
+      posicion
+    );
+
+    const porcentajeIzquierda = izquierda / ancho * 100;
+    const porcentajeDerecha = (ancho - derecha) / ancho * 100;
+
+    mascara.style.clipPath =
+      `inset(0 ${porcentajeDerecha}% 0 ${porcentajeIzquierda}%)`;
+
+    if (progreso < 1) {
+      requestAnimationFrame(animarLaser);
+    } else {
+      mascara.remove();
+    }
   }
+
+  requestAnimationFrame(animarLaser);
+}
 
   if (efecto === "onda") {
     const onda = document.createElement("div");
