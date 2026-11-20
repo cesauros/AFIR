@@ -496,6 +496,64 @@ button.numero {
     transform: translate(-4%, 100%);
   }
 }
+
+/* ===== CORRECCIÓN DE CAPAS DEL EFECTO ===== */
+
+/* Imagen del rompecabezas */
+.grid::before {
+  z-index: 0;
+}
+
+/* Números: permitir ver la imagen debajo */
+.grid button.numero {
+  position: relative;
+  z-index: 2;
+  background: rgba(38, 52, 73, 0.38);
+}
+
+/* Números seleccionados */
+.grid button.numero.seleccionado {
+  background: #38d9a9;
+  color: #101827;
+}
+
+/* Números reservados */
+.grid button.numero.reservado {
+  background: #e05252;
+}
+
+/* Números vendidos */
+.grid button.numero.vendido {
+  background: transparent;
+}
+
+/* Iluminación sobre los números */
+.grid .luz-puntos {
+  z-index: 4;
+}
+
+/* Escáner sobre los números */
+.grid::after {
+  z-index: 5;
+}
+
+/* Destello móvil */
+.grid .destello-escaner {
+  z-index: 6;
+}
+
+/* Las partículas también deben verse */
+.grid .particula {
+  z-index: 7;
+}
+
+/* Las animaciones no deben bloquear los clics */
+.grid .luz-puntos,
+.grid .destello-escaner,
+.grid .particula,
+.grid::after {
+  pointer-events: none;
+}
   
 </style>
 </head>
