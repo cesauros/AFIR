@@ -448,7 +448,6 @@ button.numero {
   border-radius: 50%;
   pointer-events: none;
   display: none;
-  transform: translate(-50%, -50%);
 
   background: radial-gradient(
     ellipse at center,
@@ -463,6 +462,8 @@ button.numero {
   filter:
     drop-shadow(0 0 7px white)
     drop-shadow(0 0 15px #38d9a9);
+
+  transform: translate(-50%, -50%);
 }
   
 </style>
@@ -1162,75 +1163,80 @@ function dibujarTablero() {
 
 function lanzarDestelloAlBoton(boton) {
 
-  if (!boton) return;
+  if (!boton || !grid.contains(boton)) return;
 
   const rect = boton.getBoundingClientRect();
   const tableroRect = grid.getBoundingClientRect();
 
-  // POSICIÓN FINAL EXACTA DEL BOTÓN
-
+  // Centro exacto del número pulsado
   const destinoX =
     rect.left + rect.width / 2 - tableroRect.left;
 
   const destinoY =
     rect.top + rect.height / 2 - tableroRect.top;
 
-  // PUNTO ALEATORIO DE ENTRADA
-
+  // Elegir punto de salida aleatorio en un borde
   const lado = Math.floor(Math.random() * 4);
 
   let inicioX, inicioY;
 
-  if (lado === 0) {
-    inicioX = -20;
-    inicioY = Math.random() * tableroRect.height;
-  } else if (lado === 1) {
-    inicioX = tableroRect.width + 20;
-    inicioY = Math.random() * tableroRect.height;
-  } else if (lado === 2) {
-    inicioX = Math.random() * tableroRect.width;
-    inicioY = -20;
-  } else {
-    inicioX = Math.random() * tableroRect.width;
-    inicioY = tableroRect.height + 20;
+  switch (lado) {
+    case 0:
+      inicioX = -25;
+      inicioY = Math.random() * tableroRect.height;
+      break;
+
+    case 1:
+      inicioX = tableroRect.width + 25;
+      inicioY = Math.random() * tableroRect.height;
+      break;
+
+    case 2:
+      inicioX = Math.random() * tableroRect.width;
+      inicioY = -25;
+      break;
+
+    default:
+      inicioX = Math.random() * tableroRect.width;
+      inicioY = tableroRect.height + 25;
   }
 
-  // CANCELAR TRANSICIÓN ANTERIOR
+  // Cancelar cualquier recorrido anterior
+  destelloObjetivo.getAnimations().forEach(a => a.cancel());
 
-  destelloObjetivo.style.transition = "none";
   destelloObjetivo.style.display = "block";
 
-  // POSICIÓN INICIAL EN PÍXELES
-
+  // Posición inicial
   destelloObjetivo.style.left = inicioX + "px";
   destelloObjetivo.style.top = inicioY + "px";
 
-  // FORZAR ACTUALIZACIÓN
-
-  destelloObjetivo.offsetWidth;
-
-  // DESPLAZAMIENTO HACIA EL BOTÓN PULSADO
-
-  destelloObjetivo.style.transition =
-    "left .55s cubic-bezier(.2,.8,.3,1), " +
-    "top .55s cubic-bezier(.2,.8,.3,1)";
-
-  destelloObjetivo.style.left = destinoX + "px";
-  destelloObjetivo.style.top = destinoY + "px";
-
-  // OCULTAR AL LLEGAR
-
-  destelloObjetivo.addEventListener(
-    "transitionend",
-    function ocultarDestello(e) {
-
-      if (e.propertyName !== "top") return;
-
-      destelloObjetivo.style.display = "none";
-
+  // Animación hacia el centro del botón
+  const animacion = destelloObjetivo.animate([
+    {
+      left: inicioX + "px",
+      top: inicioY + "px",
+      opacity: 1
     },
-    { once: true }
-  );
+    {
+      left: destinoX + "px",
+      top: destinoY + "px",
+      opacity: 1,
+      offset: 0.8
+    },
+    {
+      left: destinoX + "px",
+      top: destinoY + "px",
+      opacity: 0
+    }
+  ], {
+    duration: 850,
+    easing: "cubic-bezier(.2,.8,.3,1)",
+    fill: "forwards"
+  });
+
+  animacion.onfinish = () => {
+    destelloObjetivo.style.display = "none";
+  };
 }
 
 function crearRipple(boton) {
