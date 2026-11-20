@@ -1084,7 +1084,7 @@ function crearParticula() {
     grid.classList.contains("completado")
   ) return;
 
-  if (grid.querySelectorAll(".particula").length >= 5000) return;
+  if (grid.querySelectorAll(".particula").length >= 10000) return;
 
   const particula = document.createElement("div");
   particula.className = "particula";
@@ -1114,7 +1114,7 @@ function crearParticula() {
   }, { once: true });
 }
 
-setInterval(crearParticula, 0.5);
+setInterval(crearParticula, 0.1);
 
 // INICIO
 
