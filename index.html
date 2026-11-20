@@ -585,7 +585,7 @@ function moverPez() {
 
     if (!pausaPez) {
 
-      faseOndulacion += 0.035;
+      faseOndulacion += 0.055;
 
       const distanciaX = destinoX - pezX;
       const distanciaY = destinoY - pezY;
@@ -593,8 +593,13 @@ function moverPez() {
       pezX += distanciaX * velocidadPez;
       pezY += distanciaY * velocidadPez;
 
-      const ondulacionX = Math.sin(faseOndulacion) * 0.8;
-      const ondulacionY = Math.cos(faseOndulacion * 0.7) * 0.8;
+      const ondulacionX =
+        Math.sin(faseOndulacion) * 2.5 +
+        Math.sin(faseOndulacion * 0.45) * 1.5;
+      
+      const ondulacionY =
+        Math.cos(faseOndulacion * 0.7) * 2.5 +
+        Math.sin(faseOndulacion * 0.35) * 1.5;
 
       destello.style.left = (pezX + ondulacionX) + "%";
       destello.style.top = (pezY + ondulacionY) + "%";
