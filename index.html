@@ -552,22 +552,26 @@ let pezY = 20;
 let destinoX = 80;
 let destinoY = 70;
 
-let velocidadPez = 0.025;
+let velocidadPez = 0.012;
 
 let ultimoMovimiento = 0;
 let pausaPez = false;
+
+let faseOndulacion = 0;
+let intensidadLuz = 1;
+let direccionLuz = 1;
 
 function nuevoDestino() {
 
   destinoX = 5 + Math.random() * 90;
   destinoY = 5 + Math.random() * 90;
 
-  velocidadPez = 0.008 + Math.random() * 0.025;
+  velocidadPez = 0.006 + Math.random() * 0.018;
 
-  pausaPez = Math.random() < 0.2;
+  pausaPez = Math.random() < 0.15;
 
   ultimoMovimiento =
-    performance.now() + 1000 + Math.random() * 2500;
+    performance.now() + 1500 + Math.random() * 3000;
 }
 
 function moverPez() {
@@ -581,12 +585,39 @@ function moverPez() {
 
     if (!pausaPez) {
 
-      pezX += (destinoX - pezX) * velocidadPez;
-      pezY += (destinoY - pezY) * velocidadPez;
+      faseOndulacion += 0.035;
 
-      destello.style.left = pezX + "%";
-      destello.style.top = pezY + "%";
+      const distanciaX = destinoX - pezX;
+      const distanciaY = destinoY - pezY;
+
+      pezX += distanciaX * velocidadPez;
+      pezY += distanciaY * velocidadPez;
+
+      const ondulacionX = Math.sin(faseOndulacion) * 0.8;
+      const ondulacionY = Math.cos(faseOndulacion * 0.7) * 0.8;
+
+      destello.style.left = (pezX + ondulacionX) + "%";
+      destello.style.top = (pezY + ondulacionY) + "%";
     }
+
+    // RESPIRACIÓN LUMINOSA
+
+    intensidadLuz += 0.008 * direccionLuz;
+
+    if (intensidadLuz >= 1.35) {
+      intensidadLuz = 1.35;
+      direccionLuz = -1;
+    }
+
+    if (intensidadLuz <= 0.65) {
+      intensidadLuz = 0.65;
+      direccionLuz = 1;
+    }
+
+    destello.style.opacity = intensidadLuz;
+    destello.style.filter =
+      `brightness(${intensidadLuz}) drop-shadow(0 0 5px white)
+       drop-shadow(0 0 12px #38d9a9)`;
   }
 
   requestAnimationFrame(moverPez);
