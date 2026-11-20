@@ -967,7 +967,9 @@ function dibujarTablero() {
       }
 
       dibujarTablero();
-      const botonRipple = grid.children[Number(n)];
+      const botonRipple = [...grid.querySelectorAll("button.numero")]
+      .find(b => b.textContent === n);
+      
       crearRipple(botonRipple);
     };
 
