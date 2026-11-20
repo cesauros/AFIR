@@ -677,11 +677,9 @@ function crearHalftone(src) {
 
               const inside = distance <= radius;
 
-              const color = inside ? 255 : 25;
-
-              output.data[i] = color;
-              output.data[i + 1] = color;
-              output.data[i + 2] = color;
+              output.data[i] = original.data[i];
+              output.data[i + 1] = original.data[i + 1];
+              output.data[i + 2] = original.data[i + 2];
               output.data[i + 3] = 255;
             }
           }
