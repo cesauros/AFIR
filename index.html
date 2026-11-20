@@ -442,7 +442,7 @@ button.numero {
 
 .grid .destello-objetivo {
   position: absolute;
-  z-index: 4;
+  z-index: 10;
   width: 45px;
   height: 35px;
   border-radius: 50%;
@@ -463,10 +463,6 @@ button.numero {
   filter:
     drop-shadow(0 0 7px white)
     drop-shadow(0 0 15px #38d9a9);
-
-  transition:
-    left .55s cubic-bezier(.2,.8,.3,1),
-    top .55s cubic-bezier(.2,.8,.3,1);
 }
   
 </style>
@@ -1171,7 +1167,7 @@ function lanzarDestelloAlBoton(boton) {
   const rect = boton.getBoundingClientRect();
   const tableroRect = grid.getBoundingClientRect();
 
-  // POSICIÓN DEL NÚMERO PULSADO
+  // POSICIÓN FINAL EXACTA DEL BOTÓN
 
   const destinoX =
     rect.left + rect.width / 2 - tableroRect.left;
@@ -1179,57 +1175,59 @@ function lanzarDestelloAlBoton(boton) {
   const destinoY =
     rect.top + rect.height / 2 - tableroRect.top;
 
-  // ELEGIR UN BORDE ALEATORIO DE ENTRADA
+  // PUNTO ALEATORIO DE ENTRADA
 
   const lado = Math.floor(Math.random() * 4);
 
   let inicioX, inicioY;
 
   if (lado === 0) {
-    inicioX = -15;
-    inicioY = Math.random() * 100;
+    inicioX = -20;
+    inicioY = Math.random() * tableroRect.height;
   } else if (lado === 1) {
-    inicioX = 115;
-    inicioY = Math.random() * 100;
+    inicioX = tableroRect.width + 20;
+    inicioY = Math.random() * tableroRect.height;
   } else if (lado === 2) {
-    inicioX = Math.random() * 100;
-    inicioY = -15;
+    inicioX = Math.random() * tableroRect.width;
+    inicioY = -20;
   } else {
-    inicioX = Math.random() * 100;
-    inicioY = 115;
+    inicioX = Math.random() * tableroRect.width;
+    inicioY = tableroRect.height + 20;
   }
 
-  // PREPARAR EL DESTELLO
+  // CANCELAR TRANSICIÓN ANTERIOR
 
   destelloObjetivo.style.transition = "none";
-
   destelloObjetivo.style.display = "block";
 
-  destelloObjetivo.style.left = inicioX + "%";
-  destelloObjetivo.style.top = inicioY + "%";
+  // POSICIÓN INICIAL EN PÍXELES
 
-  // FORZAR ACTUALIZACIÓN VISUAL
+  destelloObjetivo.style.left = inicioX + "px";
+  destelloObjetivo.style.top = inicioY + "px";
+
+  // FORZAR ACTUALIZACIÓN
 
   destelloObjetivo.offsetWidth;
 
-  // ACTIVAR EL MOVIMIENTO HACIA EL NÚMERO
+  // DESPLAZAMIENTO HACIA EL BOTÓN PULSADO
 
   destelloObjetivo.style.transition =
     "left .55s cubic-bezier(.2,.8,.3,1), " +
     "top .55s cubic-bezier(.2,.8,.3,1)";
 
-  destelloObjetivo.style.left =
-    (destinoX / tableroRect.width * 100) + "%";
+  destelloObjetivo.style.left = destinoX + "px";
+  destelloObjetivo.style.top = destinoY + "px";
 
-  destelloObjetivo.style.top =
-    (destinoY / tableroRect.height * 100) + "%";
-
-  // OCULTAR AL TERMINAR EL RECORRIDO
+  // OCULTAR AL LLEGAR
 
   destelloObjetivo.addEventListener(
     "transitionend",
-    function ocultarDestello() {
+    function ocultarDestello(e) {
+
+      if (e.propertyName !== "top") return;
+
       destelloObjetivo.style.display = "none";
+
     },
     { once: true }
   );
