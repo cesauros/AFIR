@@ -437,6 +437,37 @@ button.numero {
 
   animation: nadoPez 8s ease-in-out infinite;
 }
+
+/* TERCER DESTELLO: OBJETIVO */
+
+.grid .destello-objetivo {
+  position: absolute;
+  z-index: 4;
+  width: 45px;
+  height: 35px;
+  border-radius: 50%;
+  pointer-events: none;
+  display: none;
+  transform: translate(-50%, -50%);
+
+  background: radial-gradient(
+    ellipse at center,
+    white 0%,
+    white 8%,
+    rgba(255,255,255,.9) 18%,
+    rgba(56,217,169,.9) 35%,
+    rgba(56,217,169,.35) 60%,
+    transparent 75%
+  );
+
+  filter:
+    drop-shadow(0 0 7px white)
+    drop-shadow(0 0 15px #38d9a9);
+
+  transition:
+    left .55s cubic-bezier(.2,.8,.3,1),
+    top .55s cubic-bezier(.2,.8,.3,1);
+}
   
 </style>
 </head>
@@ -552,6 +583,13 @@ destelloRapido.style.width = "45px";
 destelloRapido.style.height = "35px";
 
 grid.appendChild(destelloRapido);
+
+// TERCER DESTELLO: DIRIGIDO AL NÚMERO PULSADO
+
+const destelloObjetivo = document.createElement("div");
+destelloObjetivo.className = "destello-objetivo";
+
+grid.appendChild(destelloObjetivo);
   
 const tablero = document.getElementById("tablero");
   
@@ -1097,10 +1135,13 @@ function dibujarTablero() {
       }
 
       dibujarTablero();
+
       const botonRipple = [...grid.querySelectorAll("button.numero")]
-      .find(b => b.textContent === n);
-      
+        .find(b => b.textContent === n);
+
       crearRipple(botonRipple);
+
+      lanzarDestelloAlBoton(botonRipple);
     };
 
     grid.appendChild(b);
@@ -1120,6 +1161,77 @@ function dibujarTablero() {
   grid.classList.toggle(
     "completado",
     vendidos === 100
+  );
+}
+
+function lanzarDestelloAlBoton(boton) {
+
+  if (!boton) return;
+
+  const rect = boton.getBoundingClientRect();
+  const tableroRect = grid.getBoundingClientRect();
+
+  // POSICIÓN DEL NÚMERO PULSADO
+
+  const destinoX =
+    rect.left + rect.width / 2 - tableroRect.left;
+
+  const destinoY =
+    rect.top + rect.height / 2 - tableroRect.top;
+
+  // ELEGIR UN BORDE ALEATORIO DE ENTRADA
+
+  const lado = Math.floor(Math.random() * 4);
+
+  let inicioX, inicioY;
+
+  if (lado === 0) {
+    inicioX = -15;
+    inicioY = Math.random() * 100;
+  } else if (lado === 1) {
+    inicioX = 115;
+    inicioY = Math.random() * 100;
+  } else if (lado === 2) {
+    inicioX = Math.random() * 100;
+    inicioY = -15;
+  } else {
+    inicioX = Math.random() * 100;
+    inicioY = 115;
+  }
+
+  // PREPARAR EL DESTELLO
+
+  destelloObjetivo.style.transition = "none";
+
+  destelloObjetivo.style.display = "block";
+
+  destelloObjetivo.style.left = inicioX + "%";
+  destelloObjetivo.style.top = inicioY + "%";
+
+  // FORZAR ACTUALIZACIÓN VISUAL
+
+  destelloObjetivo.offsetWidth;
+
+  // ACTIVAR EL MOVIMIENTO HACIA EL NÚMERO
+
+  destelloObjetivo.style.transition =
+    "left .55s cubic-bezier(.2,.8,.3,1), " +
+    "top .55s cubic-bezier(.2,.8,.3,1)";
+
+  destelloObjetivo.style.left =
+    (destinoX / tableroRect.width * 100) + "%";
+
+  destelloObjetivo.style.top =
+    (destinoY / tableroRect.height * 100) + "%";
+
+  // OCULTAR AL TERMINAR EL RECORRIDO
+
+  destelloObjetivo.addEventListener(
+    "transitionend",
+    function ocultarDestello() {
+      destelloObjetivo.style.display = "none";
+    },
+    { once: true }
   );
 }
 
@@ -1303,7 +1415,7 @@ function crearParticula() {
   }, { once: true });
 }
 
-setInterval(crearParticula, 0.1);
+setInterval(crearParticula, 250);
 
 // INICIO
 
