@@ -542,6 +542,17 @@ const grid = document.getElementById("grid");
 const destello = document.createElement("div");
 destello.className = "destello-escaner";
 grid.appendChild(destello);
+
+// SEGUNDO DESTELLO
+
+const destelloRapido = document.createElement("div");
+destelloRapido.className = "destello-escaner";
+destelloRapido.style.display = "none";
+destelloRapido.style.width = "45px";
+destelloRapido.style.height = "35px";
+
+grid.appendChild(destelloRapido);
+  
 const tablero = document.getElementById("tablero");
   
 // MOVIMIENTO ALEATORIO DEL DESTELLO
@@ -615,6 +626,101 @@ function moverPez() {
 
   requestAnimationFrame(moverPez);
 }
+
+
+// SEGUNDO DESTELLO: MOVIMIENTO RAPIDO E INDEPENDIENTE
+
+let rapidoX = 0;
+let rapidoY = 0;
+let rapidoDestinoX = 0;
+let rapidoDestinoY = 0;
+
+let velocidadRapida = 0.04;
+let proximaAparicion = performance.now() + 2000;
+let destelloVisible = false;
+
+function iniciarRecorridoRapido() {
+
+  const lado = Math.floor(Math.random() * 4);
+
+  if (lado === 0) {
+    rapidoX = -15;
+    rapidoY = Math.random() * 100;
+    rapidoDestinoX = 115;
+    rapidoDestinoY = Math.random() * 100;
+  }
+
+  if (lado === 1) {
+    rapidoX = 115;
+    rapidoY = Math.random() * 100;
+    rapidoDestinoX = -15;
+    rapidoDestinoY = Math.random() * 100;
+  }
+
+  if (lado === 2) {
+    rapidoX = Math.random() * 100;
+    rapidoY = -15;
+    rapidoDestinoX = Math.random() * 100;
+    rapidoDestinoY = 115;
+  }
+
+  if (lado === 3) {
+    rapidoX = Math.random() * 100;
+    rapidoY = 115;
+    rapidoDestinoX = Math.random() * 100;
+    rapidoDestinoY = -15;
+  }
+
+  velocidadRapida = 0.025 + Math.random() * 0.025;
+
+  destelloRapido.style.left = rapidoX + "%";
+  destelloRapido.style.top = rapidoY + "%";
+
+  destelloRapido.style.display = "block";
+
+  destelloVisible = true;
+}
+
+function moverDestelloRapido() {
+
+  const ahora = performance.now();
+
+  if (!tablero.classList.contains("oculto") &&
+      !grid.classList.contains("cargando")) {
+
+    if (!destelloVisible && ahora >= proximaAparicion) {
+      iniciarRecorridoRapido();
+    }
+
+    if (destelloVisible) {
+
+      rapidoX += (rapidoDestinoX - rapidoX) * velocidadRapida;
+      rapidoY += (rapidoDestinoY - rapidoY) * velocidadRapida;
+
+      destelloRapido.style.left = rapidoX + "%";
+      destelloRapido.style.top = rapidoY + "%";
+
+      const distancia = Math.hypot(
+        rapidoDestinoX - rapidoX,
+        rapidoDestinoY - rapidoY
+      );
+
+      if (distancia < 1) {
+
+        destelloRapido.style.display = "none";
+
+        destelloVisible = false;
+
+        proximaAparicion =
+          ahora + 5000 + Math.random() * 7000;
+      }
+    }
+  }
+
+  requestAnimationFrame(moverDestelloRapido);
+}
+
+moverDestelloRapido();
 
 nuevoDestino();
 moverPez();
