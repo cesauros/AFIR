@@ -1203,7 +1203,8 @@ async function abrirRifa(id) {
   grid.querySelectorAll("*").forEach(elemento => {
     if (
       !elemento.classList.contains("destello-escaner") &&
-      !elemento.classList.contains("destello-tercero")
+      !elemento.classList.contains("destello-tercero") &&
+      !elemento.classList.contains("escaner-horizontal")
     ) {
       elemento.remove();
     }
