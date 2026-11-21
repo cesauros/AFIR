@@ -514,59 +514,6 @@ button.numero:hover:not(:disabled) {
     opacity: 0.12;
   }
 }
-
-/* SEGUNDO ESCÁNER HORIZONTAL */
-
-.grid .escaner-horizontal {
-  position: absolute;
-  top: 0;
-  left: -60px;
-  width: 60px;
-  height: 100%;
-  pointer-events: none;
-  z-index: 3;
-
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    rgba(56,217,169,.12) 20%,
-    rgba(56,217,169,.7) 38%,
-    white 45%,
-    rgba(56,217,169,.7) 50%,
-    white 55%,
-    rgba(56,217,169,.7) 62%,
-    transparent 100%
-  );
-
-  filter:
-    drop-shadow(0 0 5px white)
-    drop-shadow(0 0 12px #38d9a9)
-    drop-shadow(0 0 20px #38d9a9);
-
-  animation: escanerHorizontal 8s ease-in-out infinite;
-}
-
-@keyframes escanerHorizontal {
-  0% {
-    left: -60px;
-  }
-
-  45% {
-    left: calc(100% + 60px);
-  }
-
-  50% {
-    left: calc(100% + 60px);
-  }
-
-  95% {
-    left: -60px;
-  }
-
-  100% {
-    left: -60px;
-  }
-}
   
 </style>
 </head>
@@ -672,7 +619,7 @@ const grid = document.getElementById("grid");
 const destello = document.createElement("div");
 destello.className = "destello-escaner";
 grid.appendChild(destello);
-  
+
 // SEGUNDO DESTELLO
 
 const destelloRapido = document.createElement("div");
@@ -682,14 +629,6 @@ destelloRapido.style.width = "100px";
 destelloRapido.style.height = "100px";
 
 grid.appendChild(destelloRapido);
-
-// SEGUNDO ESCÁNER HORIZONTAL
-
-const escanerHorizontal = document.createElement("div");
-
-escanerHorizontal.className = "escaner-horizontal";
-
-grid.appendChild(escanerHorizontal);
   
 const tablero = document.getElementById("tablero");
   
@@ -1230,8 +1169,7 @@ async function abrirRifa(id) {
   grid.querySelectorAll("*").forEach(elemento => {
     if (
       !elemento.classList.contains("destello-escaner") &&
-      !elemento.classList.contains("destello-tercero") &&
-      !elemento.classList.contains("escaner-horizontal")
+      !elemento.classList.contains("destello-tercero")
     ) {
       elemento.remove();
     }
