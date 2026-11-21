@@ -377,41 +377,28 @@ input {
   to { top: 120%; }
 }
 
-/* MONEDAS DORADAS GIRATORIAS */
+/* PARTÍCULAS CONTINUAS */
 
 .particula {
   position: absolute;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-
-  background: radial-gradient(
-    circle at 30% 30%,
-    #fff9bd 0%,
-    #ffd700 30%,
-    #d99b00 65%,
-    #8a5a00 100%
-  );
-
-  border: 1px solid #fff0a0;
+  background: #ffd700;
 
   box-shadow:
-    0 0 5px #ffd700,
-    0 0 12px #ffbf00,
-    0 0 22px #fff2a0,
+    0 0 7px #ffd700,
+    0 0 15px #ffbf00,
+    0 0 25px #fff2a0,
     0 0 35px #ffd700;
 
   pointer-events: none;
   z-index: 1;
+
   will-change: transform, opacity;
 
-  animation:
-    flotar var(--duracion) linear forwards,
-    girar var(--giro) linear infinite,
-    brillo var(--brillo) ease-in-out infinite;
+  animation: flotar var(--duracion) linear forwards;
 }
-
-/* DESPLAZAMIENTO */
 
 @keyframes flotar {
   0% {
@@ -424,7 +411,7 @@ input {
   }
 
   85% {
-    opacity: .9;
+    opacity: .85;
   }
 
   100% {
@@ -432,34 +419,6 @@ input {
       translate3d(var(--movimiento), var(--altura), 0)
       scale(1.5);
     opacity: 0;
-  }
-}
-
-/* GIRO DE LAS MONEDAS */
-
-@keyframes girar {
-  from {
-    rotate: 0deg;
-  }
-  to {
-    rotate: 360deg;
-  }
-}
-
-/* DESTELLOS INDEPENDIENTES */
-
-@keyframes brillo {
-  0%, 100% {
-    filter: brightness(.8);
-    box-shadow: 0 0 5px #ffd700, 0 0 10px #ffbf00;
-  }
-
-  50% {
-    filter: brightness(2.2);
-    box-shadow:
-      0 0 10px #fff9bd,
-      0 0 22px #ffd700,
-      0 0 40px #fff2a0;
   }
 }
   
@@ -1545,16 +1504,6 @@ function crearParticula() {
   particula.style.setProperty(
     "--duracion",
     (5 + Math.random() * 3) + "s"
-  );
-
-  particula.style.setProperty(
-    "--giro",
-    (1 + Math.random() * 3) + "s"
-  );
-
-  particula.style.setProperty(
-    "--brillo",
-    (0.7 + Math.random() * 2) + "s"
   );
 
   particula.style.setProperty(
