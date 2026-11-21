@@ -514,37 +514,6 @@ button.numero:hover:not(:disabled) {
     opacity: 0.12;
   }
 }
-
-/* ESCÁNER VERTICAL CON RECORRIDO HORIZONTAL */
-
-.grid .escaner-horizontal {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 4px;
-  z-index: 10;
-  pointer-events: none;
-
-  background: white;
-
-  box-shadow:
-    0 0 5px white,
-    0 0 12px #38d9a9,
-    0 0 25px #38d9a9,
-    0 0 40px #38d9a9;
-
-  animation: recorridoHorizontal 4s linear infinite alternate;
-}
-
-@keyframes recorridoHorizontal {
-  from {
-    left: -20;
-  }
-  to {
-    left: calc(100% - +20px);
-  }
-}
   
 </style>
 </head>
@@ -839,10 +808,6 @@ const destelloTercero = document.createElement("div");
 destelloTercero.className = "destello-tercero";
 grid.appendChild(destelloTercero);
 
-const escanerHorizontal = document.createElement("div");
-escanerHorizontal.className = "escaner-horizontal";
-grid.appendChild(escanerHorizontal);
-
 let terceroX = -15;
 let terceroY = 50;
 
@@ -971,6 +936,7 @@ function moverTercero() {
       const paso = terceroVelocidad * delta;
 
       if (distancia <= paso || distancia < 0.01) {
+
         terceroX = terceroDestinoX;
         terceroY = terceroDestinoY;
 
@@ -1203,8 +1169,7 @@ async function abrirRifa(id) {
   grid.querySelectorAll("*").forEach(elemento => {
     if (
       !elemento.classList.contains("destello-escaner") &&
-      !elemento.classList.contains("destello-tercero") &&
-      !elemento.classList.contains("escaner-horizontal")
+      !elemento.classList.contains("destello-tercero")
     ) {
       elemento.remove();
     }
