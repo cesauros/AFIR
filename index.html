@@ -521,32 +521,31 @@ button.numero:hover:not(:disabled) {
   position: absolute;
   top: 0;
   left: 0;
-  width: 3px;
+  width: 5px;
   height: 100%;
+  z-index: 5;
+  pointer-events: none;
 
   background: linear-gradient(
     to right,
     transparent,
-    rgba(56,217,169,.7),
-    white,
-    rgba(56,217,169,.7),
+    #38d9a9 30%,
+    white 50%,
+    #38d9a9 70%,
     transparent
   );
 
   box-shadow:
-    0 0 8px #38d9a9,
-    0 0 18px #38d9a9,
-    0 0 30px white;
-
-  pointer-events: none;
-  z-index: 3;
+    0 0 10px white,
+    0 0 20px #38d9a9,
+    0 0 35px #38d9a9;
 
   animation: escanerHorizontal 4s linear infinite alternate;
 }
 
 @keyframes escanerHorizontal {
   from { left: 0; }
-  to { left: calc(100% - 3px); }
+  to { left: calc(100% - 5px); }
 }
   
 </style>
