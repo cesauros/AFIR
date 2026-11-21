@@ -514,6 +514,40 @@ button.numero:hover:not(:disabled) {
     opacity: 0.12;
   }
 }
+
+/* ESCÁNER VERTICAL CON RECORRIDO HORIZONTAL */
+
+.grid .escaner-horizontal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(56,217,169,.7),
+    white,
+    rgba(56,217,169,.7),
+    transparent
+  );
+
+  box-shadow:
+    0 0 8px #38d9a9,
+    0 0 18px #38d9a9,
+    0 0 30px white;
+
+  pointer-events: none;
+  z-index: 3;
+
+  animation: escanerHorizontal 4s linear infinite alternate;
+}
+
+@keyframes escanerHorizontal {
+  from { left: 0; }
+  to { left: calc(100% - 3px); }
+}
   
 </style>
 </head>
@@ -807,6 +841,10 @@ moverDestelloRapido();
 const destelloTercero = document.createElement("div");
 destelloTercero.className = "destello-tercero";
 grid.appendChild(destelloTercero);
+
+const escanerHorizontal = document.createElement("div");
+escanerHorizontal.className = "escaner-horizontal";
+grid.appendChild(escanerHorizontal);
 
 let terceroX = -15;
 let terceroY = 50;
