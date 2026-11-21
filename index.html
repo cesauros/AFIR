@@ -1200,7 +1200,9 @@ async function cargarNumeros() {
 
     /* OCULTAR EL TABLERO ANTES DE CARGAR */
 
-    grid.classList.add("cargando");
+    if (grid.children.length <= 3) {
+      grid.classList.add("cargando");
+    }
     grid.style.backgroundImage = "none";
 
     const respuesta = await fetch(
