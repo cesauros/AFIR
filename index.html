@@ -521,26 +521,21 @@ button.numero:hover:not(:disabled) {
   position: absolute;
   top: 0;
   left: -20%;
-  width: 50px;
+  width: 55px;
   height: 120%;
   pointer-events: none;
-  z-index: 1;
+  z-index: 3;
 
   background: linear-gradient(
     to right,
-    transparent 0%,
-    rgba(56,217,169,.12) 20%,
-    rgba(56,217,169,.7) 38%,
-    white 45%,
-    rgba(56,217,169,.7) 48%,
-    white 50%,
-    rgba(56,217,169,.7) 52%,
-    white 55%,
-    rgba(56,217,169,.7) 62%,
-    transparent 100%
+    transparent,
+    rgba(56,217,169,.7),
+    white,
+    rgba(56,217,169,.7),
+    transparent
   );
 
-  box-shadow: 0 0 15px rgba(56,217,169,.7);
+  box-shadow: 0 0 15px #38d9a9;
 
   animation: escanerHorizontal 7s linear infinite;
 }
