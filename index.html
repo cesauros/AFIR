@@ -480,22 +480,6 @@ button.numero {
   transform: translate(-50%, -50%);
   will-change: left, top;
 }
-
-.grid.brillo-puntos::before {
-  animation: brilloPuntos 1.2s ease-in-out;
-}
-
-@keyframes brilloPuntos {
-  0%, 100% {
-    filter: brightness(1);
-  }
-  30% {
-    filter: brightness(2.5) contrast(1.8);
-  }
-  50% {
-    filter: brightness(3.5) contrast(2);
-  }
-}
   
 </style>
 </head>
@@ -1553,20 +1537,6 @@ setInterval(() => {
 
 }, 20000);
 
-setInterval(() => {
-  if (
-    grid.classList.contains("cargando") ||
-    tablero.classList.contains("oculto")
-  ) return;
-
-  grid.classList.remove("brillo-puntos");
-
-  void grid.offsetWidth;
-
-  grid.classList.add("brillo-puntos");
-
-}, 7000 + Math.random() * 10000);
-  
 </script>
 
 </body>
