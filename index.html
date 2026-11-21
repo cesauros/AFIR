@@ -1556,6 +1556,15 @@ setInterval(() => {
 
 }, 20000);
 
+setInterval(() => {
+  if (!destelloVisible) return;
+
+  destelloRapido.style.filter =
+    destelloRapido.style.filter.includes("brightness(2.5)")
+      ? "brightness(0.7) drop-shadow(0 0 5px white) drop-shadow(0 0 10px #38d9a9)"
+      : "brightness(2.5) drop-shadow(0 0 15px white) drop-shadow(0 0 30px #38d9a9)";
+}, 350);
+
 </script>
 
 </body>
