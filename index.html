@@ -480,25 +480,6 @@ button.numero {
   transform: translate(-50%, -50%);
   will-change: left, top;
 }
-
-#grid .destello-escaner:nth-of-type(2) {
-  animation:
-    parpadeoLucero 0.7s ease-in-out infinite alternate;
-}
-
-@keyframes parpadeoLucero {
-  from {
-    filter: brightness(0.8)
-      drop-shadow(0 0 5px white)
-      drop-shadow(0 0 10px #38d9a9);
-  }
-
-  to {
-    filter: brightness(2.5)
-      drop-shadow(0 0 12px white)
-      drop-shadow(0 0 30px #38d9a9);
-  }
-}
   
 </style>
 </head>
@@ -1555,15 +1536,6 @@ setInterval(() => {
   }
 
 }, 20000);
-
-setInterval(() => {
-  if (!destelloVisible) return;
-
-  destelloRapido.style.filter =
-    destelloRapido.style.filter.includes("brightness(2.5)")
-      ? "brightness(0.7) drop-shadow(0 0 5px white) drop-shadow(0 0 10px #38d9a9)"
-      : "brightness(2.5) drop-shadow(0 0 15px white) drop-shadow(0 0 30px #38d9a9)";
-}, 350);
 
 </script>
 
