@@ -480,6 +480,11 @@ button.numero {
   transform: translate(-50%, -50%);
   will-change: left, top;
 }
+
+button.numero:hover:not(:disabled) {
+  transform: translateY(-4px);
+  transition: transform 0.2s ease;
+}
   
 </style>
 </head>
