@@ -377,30 +377,18 @@ input {
   to { top: 120%; }
 }
 
-/* Partículas */
-.particula {
+
+/* SISTEMA DE PARTICULAS CANVAS */
+
+#particulasCanvas {
   position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #38d9a9;
-  box-shadow: 0 0 7px #38d9a9, 0 0 12px white;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: 1;
-  animation: flotar var(--duracion) ease-out forwards;
 }
 
-@keyframes flotar {
-  0% {
-    transform: translate(0, 0) scale(.4);
-    opacity: 0;
-  }
-  20% { opacity: 1; }
-  100% {
-    transform: translate(var(--movimiento), var(--altura)) scale(1.4);
-    opacity: 0;
-  }
-}
 
 /* Números por encima de los efectos */
 button.numero {
@@ -1115,7 +1103,8 @@ async function abrirRifa(id) {
   grid.querySelectorAll("*").forEach(elemento => {
     if (
       !elemento.classList.contains("destello-escaner") &&
-      !elemento.classList.contains("destello-tercero")
+      !elemento.classList.contains("destello-tercero") &&
+      elemento.id !== "particulasCanvas"
     ) {
       elemento.remove();
     }
@@ -1461,44 +1450,268 @@ document.getElementById("telefono").addEventListener(
 
 setInterval(comprobarReservaPendiente, 10000);
 
-function crearParticula() {
-  if (
-    grid.classList.contains("cargando") ||
-    tablero.classList.contains("oculto") ||
-    grid.classList.contains("completado")
-  ) return;
+// ========================================
+// SISTEMA DE PARTICULAS ORGANICAS CON CANVAS
+// ========================================
 
-  if (grid.querySelectorAll(".particula").length >= 10000) return;
+const canvasParticulas = document.createElement("canvas");
+canvasParticulas.id = "particulasCanvas";
 
-  const particula = document.createElement("div");
-  particula.className = "particula";
+grid.appendChild(canvasParticulas);
 
-  particula.style.left = Math.random() * 100 + "%";
-  particula.style.top = Math.random() * 100 + "%";
+const ctxParticulas = canvasParticulas.getContext("2d");
 
-  particula.style.setProperty(
-    "--duracion",
-    (3 + Math.random() * 3) + "s"
-  );
+const CONFIG_PARTICULAS = {
+  cantidad: 500,
+  fps: 30,
+  tamanoMinimo: 0.6,
+  tamanoMaximo: 2.2,
+  velocidadMinima: 3,
+  velocidadMaxima: 17
+};
 
-  particula.style.setProperty(
-    "--movimiento",
-    (Math.random() * 70 - 35) + "px"
-  );
+let particulas = [];
+let anchoCanvas = 0;
+let altoCanvas = 0;
+let ultimaActualizacion = 0;
+let animacionParticulas = null;
+let particulasActivas = false;
 
-  particula.style.setProperty(
-    "--altura",
-    (-30 - Math.random() * 70) + "px"
-  );
+function ajustarCanvasParticulas() {
 
-  grid.appendChild(particula);
+  const rect = grid.getBoundingClientRect();
 
-  particula.addEventListener("animationend", () => {
-    particula.remove();
-  }, { once: true });
+  if (!rect.width || !rect.height) return;
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  anchoCanvas = rect.width;
+  altoCanvas = rect.height;
+
+  canvasParticulas.width = Math.round(anchoCanvas * dpr);
+  canvasParticulas.height = Math.round(altoCanvas * dpr);
+
+  ctxParticulas.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
-setInterval(crearParticula, 150);
+function crearParticulaCanvas() {
+
+  return {
+    x: Math.random() * anchoCanvas,
+    y: Math.random() * altoCanvas,
+
+    radio:
+      CONFIG_PARTICULAS.tamanoMinimo +
+      Math.random() *
+      (CONFIG_PARTICULAS.tamanoMaximo -
+       CONFIG_PARTICULAS.tamanoMinimo),
+
+    vx: (Math.random() - 0.5) * 9,
+
+    vy: -(CONFIG_PARTICULAS.velocidadMinima +
+      Math.random() *
+      (CONFIG_PARTICULAS.velocidadMaxima -
+       CONFIG_PARTICULAS.velocidadMinima)),
+
+    opacidad: 0,
+    opacidadMaxima: 0.25 + Math.random() * 0.75,
+
+    fase: Math.random() * Math.PI * 2,
+
+    oscilacion: 0.3 + Math.random() * 1.5,
+
+    velocidadFase: 0.3 + Math.random() * 1.2,
+
+    brillo: Math.random(),
+
+    vida: 0,
+    vidaMaxima: 4 + Math.random() * 8
+  };
+}
+
+function iniciarParticulasCanvas() {
+
+  if (particulasActivas) return;
+
+  particulasActivas = true;
+
+  ajustarCanvasParticulas();
+
+  particulas = [];
+
+  for (
+    let i = 0;
+    i < CONFIG_PARTICULAS.cantidad;
+    i++
+  ) {
+
+    const p = crearParticulaCanvas();
+
+    // Distribución inicial sin aparición simultánea
+    p.y = Math.random() * altoCanvas;
+    p.vida = Math.random() * p.vidaMaxima;
+    p.opacidad = p.opacidadMaxima *
+      Math.random();
+
+    particulas.push(p);
+  }
+
+  ultimaActualizacion = 0;
+
+  animarParticulas(performance.now());
+}
+
+function detenerParticulasCanvas() {
+
+  particulasActivas = false;
+
+  if (animacionParticulas !== null) {
+    cancelAnimationFrame(animacionParticulas);
+    animacionParticulas = null;
+  }
+}
+
+function animarParticulas(ahora) {
+
+  if (!particulasActivas) return;
+
+  animacionParticulas =
+    requestAnimationFrame(animarParticulas);
+
+  const intervalo = 1000 / CONFIG_PARTICULAS.fps;
+
+  if (ahora - ultimaActualizacion < intervalo) return;
+
+  const delta = ultimaActualizacion
+    ? Math.min((ahora - ultimaActualizacion) / 1000, 0.05)
+    : 0.033;
+
+  ultimaActualizacion = ahora;
+
+  ctxParticulas.clearRect(
+    0,
+    0,
+    anchoCanvas,
+    altoCanvas
+  );
+
+  for (const p of particulas) {
+
+    p.vida += delta;
+
+    p.fase += p.velocidadFase * delta;
+
+    p.x += (
+      p.vx +
+      Math.sin(p.fase) * p.oscilacion
+    ) * delta;
+
+    p.y += p.vy * delta;
+
+    // Aparición y desaparición gradual
+    const entrada = Math.min(p.vida / 1.5, 1);
+
+    const salida = Math.min(
+      (p.vidaMaxima - p.vida) / 2,
+      1
+    );
+
+    p.opacidad =
+      Math.max(0, Math.min(entrada, salida)) *
+      p.opacidadMaxima;
+
+    // Si sale del tablero o termina su vida,
+    // nace una nueva partícula en otra posición.
+    if (
+      p.vida >= p.vidaMaxima ||
+      p.y < -10 ||
+      p.x < -20 ||
+      p.x > anchoCanvas + 20
+    ) {
+
+      Object.assign(p, crearParticulaCanvas());
+
+      p.y = altoCanvas + Math.random() * 15;
+      p.x = Math.random() * anchoCanvas;
+
+      continue;
+    }
+
+    if (p.opacidad <= 0) continue;
+
+    const verde = p.brillo > 0.35;
+
+    const color = verde
+      ? "56,217,169"
+      : "255,255,255";
+
+    ctxParticulas.beginPath();
+
+    ctxParticulas.arc(
+      p.x,
+      p.y,
+      p.radio,
+      0,
+      Math.PI * 2
+    );
+
+    ctxParticulas.fillStyle =
+      `rgba(${color},${p.opacidad})`;
+
+    ctxParticulas.shadowColor =
+      verde ? "#38d9a9" : "#ffffff";
+
+    ctxParticulas.shadowBlur =
+      p.radio * (p.brillo > 0.7 ? 7 : 3);
+
+    ctxParticulas.fill();
+  }
+
+  ctxParticulas.shadowBlur = 0;
+}
+
+// Controlar la visibilidad del tablero
+function actualizarEstadoParticulas() {
+
+  if (
+    !tablero.classList.contains("oculto") &&
+    !grid.classList.contains("cargando") &&
+    !grid.classList.contains("completado")
+  ) {
+
+    if (!particulasActivas) {
+      iniciarParticulasCanvas();
+    }
+
+  } else {
+
+    detenerParticulasCanvas();
+  }
+}
+
+// Ajustar tamaño al cambiar orientación o ventana
+window.addEventListener("resize", () => {
+
+  if (particulasActivas) {
+    ajustarCanvasParticulas();
+  }
+
+});
+
+// Revisar cambios de estado del tablero
+const observadorParticulas = new MutationObserver(() => {
+  actualizarEstadoParticulas();
+});
+
+observadorParticulas.observe(grid, {
+  attributes: true,
+  attributeFilter: ["class"]
+});
+
+observadorParticulas.observe(tablero, {
+  attributes: true,
+  attributeFilter: ["class"]
+});
 
 // INICIO
 
