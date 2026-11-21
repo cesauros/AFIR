@@ -643,7 +643,9 @@ async function comprobarReservaPendiente() {
 
 const grid = document.getElementById("grid");
 
-const destello = document.createElement("div");
+const escanerHorizontal = document.createElement("div");
+escanerHorizontal.className = "escaner-horizontal";
+grid.appendChild(escanerHorizontal);
   
 const destello = document.createElement("div");
 destello.className = "destello-escaner";
