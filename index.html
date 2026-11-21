@@ -643,13 +643,15 @@ async function comprobarReservaPendiente() {
 
 const grid = document.getElementById("grid");
 
-const escanerHorizontal = document.createElement("div");
-escanerHorizontal.className = "escaner-horizontal";
-grid.appendChild(escanerHorizontal);
-  
+// DESTELLO LUMINOSO
 const destello = document.createElement("div");
 destello.className = "destello-escaner";
 grid.appendChild(destello);
+
+// ESCÁNER HORIZONTAL
+const escanerHorizontal = document.createElement("div");
+escanerHorizontal.className = "escaner-horizontal";
+grid.appendChild(escanerHorizontal);
 
 // SEGUNDO DESTELLO
 
