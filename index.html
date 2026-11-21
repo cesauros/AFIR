@@ -498,6 +498,22 @@ button.numero:hover:not(:disabled) {
 
   border-color: white;
 }
+
+/* PARPADEO DEL SEGUNDO DESTELLO */
+
+.grid .destello-rapido {
+  animation: parpadeoRapido 0.22s steps(2, end) infinite;
+}
+
+@keyframes parpadeoRapido {
+  0%, 100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.12;
+  }
+}
   
 </style>
 </head>
@@ -607,7 +623,7 @@ grid.appendChild(destello);
 // SEGUNDO DESTELLO
 
 const destelloRapido = document.createElement("div");
-destelloRapido.className = "destello-escaner";
+destelloRapido.className = "destello-escaner destello-rapido";
 destelloRapido.style.display = "none";
 destelloRapido.style.width = "100px";
 destelloRapido.style.height = "100px";
