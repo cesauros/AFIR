@@ -514,33 +514,6 @@ button.numero:hover:not(:disabled) {
     opacity: 0.12;
   }
 }
-
-/* ESCÁNER HORIZONTAL */
-
-.grid .escaner-horizontal {
-  position: absolute;
-  top: 0;
-  left: -20%;
-  width: 50px;
-  height: 100%;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(56,217,169,.7),
-    white,
-    rgba(56,217,169,.7),
-    transparent
-  );
-  box-shadow: 0 0 15px rgba(56,217,169,.7);
-  z-index: 1;
-  pointer-events: none;
-  animation: escanerHorizontal 5s linear infinite;
-}
-
-@keyframes escanerHorizontal {
-  from { left: -20%; }
-  to { left: 120%; }
-}
   
 </style>
 </head>
@@ -642,16 +615,10 @@ async function comprobarReservaPendiente() {
 }
 
 const grid = document.getElementById("grid");
-
-// DESTELLO LUMINOSO
+  
 const destello = document.createElement("div");
 destello.className = "destello-escaner";
 grid.appendChild(destello);
-
-// ESCÁNER HORIZONTAL
-const escanerHorizontal = document.createElement("div");
-escanerHorizontal.className = "escaner-horizontal";
-grid.appendChild(escanerHorizontal);
 
 // SEGUNDO DESTELLO
 
