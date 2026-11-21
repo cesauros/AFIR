@@ -498,27 +498,6 @@ button.numero:hover:not(:disabled) {
 
   border-color: white;
 }
-
-.destello-escaner {
-  animation: parpadeoLuz 1.2s ease-in-out infinite;
-}
-
-@keyframes parpadeoLuz {
-  0%, 100% {
-    opacity: 0.65;
-    filter: brightness(1)
-      drop-shadow(0 0 5px white)
-      drop-shadow(0 0 12px #38d9a9);
-  }
-
-  50% {
-    opacity: 1;
-    filter: brightness(3)
-      drop-shadow(0 0 20px white)
-      drop-shadow(0 0 45px #38d9a9)
-      drop-shadow(0 0 65px #38d9a9);
-  }
-}
   
 </style>
 </head>
@@ -699,7 +678,11 @@ function moverPez() {
     }
 
     // LUMINOSIDAD CONSTANTE
-
+    
+    destello.style.opacity = 1;
+    
+    destello.style.filter =
+      "brightness(1.2) drop-shadow(0 0 7px white) drop-shadow(0 0 16px #38d9a9)";
   }
 
   requestAnimationFrame(moverPez);
