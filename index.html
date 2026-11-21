@@ -220,53 +220,6 @@ input {
   filter: none;
 }
 
-/* LUCERO QUE RECORRE EL BORDE */
-
-
-.grid .destello-borde {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 100;
-
-  background: white;
-
-  box-shadow:
-    0 0 8px 3px white,
-    0 0 18px 7px white,
-    0 0 30px 12px #38d9a9,
-    0 0 45px 18px #38d9a9;
-
-  animation: luceroBorde 6s linear infinite;
-}
-
-@keyframes luceroBorde {
-  0% {
-    left: 0;
-    top: 0;
-  }
-  25% {
-    left: calc(100% - 18px);
-    top: 0;
-  }
-  50% {
-    left: calc(100% - 18px);
-    top: calc(100% - 18px);
-  }
-  75% {
-    left: 0;
-    top: calc(100% - 18px);
-  }
-  100% {
-    left: 0;
-    top: 0;
-  }
-}
-
 .galeria-rifas {
   display: flex;
   gap: 15px;
@@ -628,10 +581,6 @@ async function comprobarReservaPendiente() {
 }
 
 const grid = document.getElementById("grid");
-
-const destelloBorde = document.createElement("div");
-destelloBorde.className = "destello-borde";
-grid.appendChild(destelloBorde);
   
 const destello = document.createElement("div");
 destello.className = "destello-escaner";
