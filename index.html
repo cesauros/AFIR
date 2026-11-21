@@ -935,7 +935,7 @@ function moverTercero() {
       const distancia = Math.hypot(dx, dy);
       const paso = terceroVelocidad * delta;
 
-      if (distancia <= paso || distancia < 0.15) {
+      if (distancia <= paso || distancia < 0.01) {
 
         terceroX = terceroDestinoX;
         terceroY = terceroDestinoY;
