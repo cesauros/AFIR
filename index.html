@@ -514,6 +514,50 @@ button.numero:hover:not(:disabled) {
     opacity: 0.12;
   }
 }
+
+/* SEGUNDO ESCÁNER HORIZONTAL */
+
+.grid .escaner-horizontal {
+  position: absolute;
+  top: 0;
+  left: -20%;
+  width: 50px;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(56,217,169,.12) 20%,
+    rgba(56,217,169,.7) 38%,
+    white 45%,
+    rgba(56,217,169,.7) 50%,
+    white 55%,
+    rgba(56,217,169,.7) 62%,
+    transparent 100%
+  );
+
+  box-shadow:
+    0 0 15px rgba(56,217,169,.7),
+    0 0 25px rgba(56,217,169,.4);
+
+  animation: escanerHorizontal 8s ease-in-out infinite alternate;
+}
+
+@keyframes escanerHorizontal {
+  0% {
+    left: -20%;
+  }
+
+  50% {
+    left: 100%;
+  }
+
+  100% {
+    left: -20%;
+  }
+}
   
 </style>
 </head>
@@ -620,6 +664,12 @@ const destello = document.createElement("div");
 destello.className = "destello-escaner";
 grid.appendChild(destello);
 
+// SEGUNDO ESCÁNER HORIZONTAL
+
+const escanerHorizontal = document.createElement("div");
+escanerHorizontal.className = "escaner-horizontal";
+grid.appendChild(escanerHorizontal);
+  
 // SEGUNDO DESTELLO
 
 const destelloRapido = document.createElement("div");
