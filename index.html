@@ -437,29 +437,6 @@ button.numero {
 
   animation: nadoPez 8s ease-in-out infinite;
 }
-
-/* TERCER DESTELLO */
-
-.destello-tercero {
-  position: absolute;
-  z-index: 4;
-  width: 55px;
-  height: 42px;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse at center,
-    white 0%,
-    rgba(255,255,255,.95) 8%,
-    rgba(56,217,169,.9) 25%,
-    rgba(56,217,169,.4) 48%,
-    transparent 72%
-  );
-  filter:
-    drop-shadow(0 0 6px white)
-    drop-shadow(0 0 15px #38d9a9);
-  transform: translate(-50%, -50%);
-  will-change: left, top;
-}
   
 </style>
 </head>
@@ -745,174 +722,6 @@ function moverDestelloRapido() {
 
 moverDestelloRapido();
 
-
-// =================================
-// TERCER DESTELLO
-// =================================
-
-const destelloTercero = document.createElement("div");
-destelloTercero.className = "destello-tercero";
-grid.appendChild(destelloTercero);
-
-let terceroX = -15;
-let terceroY = 50;
-
-let terceroDestinoX = 50;
-let terceroDestinoY = 50;
-
-let terceroVelocidad = 30;
-let terceroModo = "entrando";
-let terceroPausaHasta = 0;
-let terceroProximoCambio = 0;
-let terceroUltimoTiempo = performance.now();
-
-function destinoAleatorioTercero() {
-  terceroDestinoX = 8 + Math.random() * 84;
-  terceroDestinoY = 8 + Math.random() * 84;
-
-  terceroVelocidad = 18 + Math.random() * 22;
-  terceroModo = "moviendo";
-
-  terceroProximoCambio =
-    performance.now() + 2500 + Math.random() * 3500;
-}
-
-function entrarTercero() {
-  const lado = Math.floor(Math.random() * 4);
-
-  if (lado === 0) {
-    terceroX = -15;
-    terceroY = Math.random() * 100;
-  } else if (lado === 1) {
-    terceroX = 115;
-    terceroY = Math.random() * 100;
-  } else if (lado === 2) {
-    terceroX = Math.random() * 100;
-    terceroY = -15;
-  } else {
-    terceroX = Math.random() * 100;
-    terceroY = 115;
-  }
-
-  terceroDestinoX = 8 + Math.random() * 84;
-  terceroDestinoY = 8 + Math.random() * 84;
-
-  terceroVelocidad = 30;
-  terceroModo = "entrando";
-}
-
-function salirTercero() {
-  const lado = Math.floor(Math.random() * 4);
-
-  if (lado === 0) {
-    terceroDestinoX = -15;
-    terceroDestinoY = Math.random() * 100;
-  } else if (lado === 1) {
-    terceroDestinoX = 115;
-    terceroDestinoY = Math.random() * 100;
-  } else if (lado === 2) {
-    terceroDestinoX = Math.random() * 100;
-    terceroDestinoY = -15;
-  } else {
-    terceroDestinoX = Math.random() * 100;
-    terceroDestinoY = 115;
-  }
-
-  terceroVelocidad = 35;
-  terceroModo = "saliendo";
-}
-
-function dirigirTerceroA(boton) {
-  if (!boton || !boton.isConnected) return;
-
-  const rect = boton.getBoundingClientRect();
-  const tableroRect = grid.getBoundingClientRect();
-
-  if (!tableroRect.width || !tableroRect.height) return;
-
-  terceroDestinoX =
-    ((rect.left + rect.width / 2 - tableroRect.left) /
-    tableroRect.width) * 100;
-
-  terceroDestinoY =
-    ((rect.top + rect.height / 2 - tableroRect.top) /
-    tableroRect.height) * 100;
-
-  terceroVelocidad = 65;
-  terceroModo = "persiguiendo";
-}
-
-function moverTercero() {
-  const ahora = performance.now();
-
-  const delta = Math.min(
-    (ahora - terceroUltimoTiempo) / 1000,
-    0.05
-  );
-
-  terceroUltimoTiempo = ahora;
-
-  if (
-    !tablero.classList.contains("oculto") &&
-    !grid.classList.contains("cargando")
-  ) {
-
-    if (terceroModo === "esperando") {
-
-      if (ahora >= terceroPausaHasta) {
-        destinoAleatorioTercero();
-      }
-
-    } else {
-
-      if (
-        terceroModo === "moviendo" &&
-        ahora >= terceroProximoCambio
-      ) {
-        if (Math.random() < 0.25) {
-          salirTercero();
-        } else {
-          destinoAleatorioTercero();
-        }
-      }
-
-      const dx = terceroDestinoX - terceroX;
-      const dy = terceroDestinoY - terceroY;
-      const distancia = Math.hypot(dx, dy);
-      const paso = terceroVelocidad * delta;
-
-      if (distancia <= paso || distancia < 0.15) {
-
-        terceroX = terceroDestinoX;
-        terceroY = terceroDestinoY;
-
-        if (terceroModo === "saliendo") {
-          entrarTercero();
-
-        } else if (terceroModo === "persiguiendo") {
-          terceroModo = "esperando";
-          terceroPausaHasta = ahora + 500;
-
-        } else {
-          destinoAleatorioTercero();
-        }
-
-      } else {
-        terceroX += (dx / distancia) * paso;
-        terceroY += (dy / distancia) * paso;
-      }
-    }
-
-    destelloTercero.style.left = terceroX + "%";
-    destelloTercero.style.top = terceroY + "%";
-  }
-
-  requestAnimationFrame(moverTercero);
-}
-
-entrarTercero();
-requestAnimationFrame(moverTercero);
-  
 nuevoDestino();
 moverPez();
   
@@ -1113,10 +922,7 @@ async function abrirRifa(id) {
   grid.classList.add("cargando");
   grid.style.backgroundImage = "none";
   grid.querySelectorAll("*").forEach(elemento => {
-    if (
-      !elemento.classList.contains("destello-escaner") &&
-      !elemento.classList.contains("destello-tercero")
-    ) {
+    if (!elemento.classList.contains("destello-escaner")) {
       elemento.remove();
     }
   });
@@ -1295,7 +1101,6 @@ function dibujarTablero() {
       .find(b => b.textContent === n);
       
       crearRipple(botonRipple);
-      dirigirTerceroA(botonRipple);
     };
 
     grid.appendChild(b);
