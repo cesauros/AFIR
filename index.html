@@ -612,7 +612,7 @@ async function comprobarReservaPendiente() {
     }
 
     mensaje.textContent = resultado.pending
-      ? "Ya tienes una reserva pendiente de pago. Completa el pago para poder reservar nuevamente."
+      ? resultado.message
       : "";
 
   } catch(error) {
