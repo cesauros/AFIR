@@ -629,10 +629,28 @@ async function comprobarReservaPendiente() {
 
     if (!respuesta.ok) return;
 
-    reservar.hidden = resultado.pending;
-    mensaje.textContent = resultado.pending
-      ? "Ya tienes una reserva pendiente de pago. Completa el pago para poder reservar nuevamente."
-      : "";
+    if (resultado.pending) {
+
+      reservar.hidden = true;
+    
+      mensaje.textContent =
+        "Ya tienes una reserva pendiente de pago. Completa el pago para poder reservar nuevamente.";
+    
+    } else {
+    
+      reservar.hidden = false;
+    
+      if (enlaceNotificacion) {
+    
+        enlaceNotificacion = null;
+    
+        reservar.textContent = "Confirmar reserva";
+    
+        reservar.disabled = false;
+      }
+    
+      mensaje.textContent = "";
+    }
 
   } catch(error) {
     console.error(error);
