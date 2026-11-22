@@ -1640,6 +1640,8 @@ reservar.onclick = async () => {
       );
     }
 
+    const numerosComprados = [...seleccionados];
+
     mensaje.replaceChildren();
 
     const confirmacion = document.createElement("p");
@@ -1682,8 +1684,6 @@ if (resultado.admin_whatsapp_url) {
 
     enlaceNotificacion = resultado.admin_whatsapp_url;
     reservar.hidden = false;
-
-    const numerosComprados = [...seleccionados];
 
     seleccionados = [];
 
