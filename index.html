@@ -610,9 +610,11 @@ async function comprobarReservaPendiente() {
       reservar.textContent = "Confirmar reserva";
       reservar.disabled = false;
     }
-    mensaje.textContent = resultado.pending
-      ? "Ya tienes una reserva pendiente de pago. Completa el pago para poder reservar nuevamente."
-      : "";
+    if (!enlaceNotificacion) {
+      mensaje.textContent = resultado.pending
+        ? "Ya tienes una reserva pendiente de pago. Completa el pago para poder reservar nuevamente."
+        : "";
+    }
 
   } catch(error) {
     console.error(error);
@@ -1580,6 +1582,10 @@ reservar.onclick = async () => {
     window.open(enlaceNotificacion, "_blank");
     enlaceNotificacion = null;
     reservar.textContent = "Confirmar reserva";
+  
+    mensaje.textContent =
+      "Ya tienes una reserva pendiente de pago. Completa el pago para poder reservar nuevamente.";
+  
     return;
   }
 
@@ -1652,6 +1658,10 @@ reservar.onclick = async () => {
     mensaje.appendChild(confirmacion);
 
     enlaceNotificacion = resultado.admin_whatsapp_url;
+    mensaje.textContent =
+      "¡Reserva creada! Código: " +
+      resultado.reservation.reservation_code +
+      ". Tienes 72 horas para realizar el pago.";
     reservar.hidden = false;
 
     const numerosComprados = [...seleccionados];
