@@ -384,13 +384,12 @@ input {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #ffd700;
+  background: #38d9a9;
 
   box-shadow:
-    0 0 7px #ffd700,
-    0 0 15px #ffbf00,
-    0 0 25px #fff2a0,
-    0 0 35px #ffd700;
+    0 0 5px #38d9a9,
+    0 0 10px #38d9a9,
+    0 0 15px rgba(255,255,255,.8);
 
   pointer-events: none;
   z-index: 1;
@@ -479,40 +478,6 @@ button.numero {
     drop-shadow(0 0 15px #38d9a9);
   transform: translate(-50%, -50%);
   will-change: left, top;
-}
-
-button.numero:hover:not(:disabled) {
-  transform: translateY(-4px);
-  transition: transform 0.2s ease;
-}
-
-button.numero:hover:not(:disabled) {
-  transform: translateY(-4px);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-  box-shadow:
-    0 0 8px #38d9a9,
-    0 0 16px #38d9a9,
-    0 0 25px rgba(56,217,169,.8),
-    inset 0 0 10px rgba(255,255,255,.5);
-
-  border-color: white;
-}
-
-/* PARPADEO DEL SEGUNDO DESTELLO */
-
-.grid .destello-rapido {
-  animation: parpadeoRapido 0.10s steps(2, end) infinite;
-}
-
-@keyframes parpadeoRapido {
-  0%, 100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.12;
-  }
 }
   
 </style>
@@ -623,10 +588,10 @@ grid.appendChild(destello);
 // SEGUNDO DESTELLO
 
 const destelloRapido = document.createElement("div");
-destelloRapido.className = "destello-escaner destello-rapido";
+destelloRapido.className = "destello-escaner";
 destelloRapido.style.display = "none";
-destelloRapido.style.width = "100px";
-destelloRapido.style.height = "100px";
+destelloRapido.style.width = "45px";
+destelloRapido.style.height = "35px";
 
 grid.appendChild(destelloRapido);
   
@@ -748,7 +713,7 @@ function iniciarRecorridoRapido() {
     rapidoDestinoY = -15;
   }
 
-  velocidadRapida = 0.015 + Math.random() * 0.015;
+  velocidadRapida = 0.025 + Math.random() * 0.025;
 
   destelloRapido.style.left = rapidoX + "%";
   destelloRapido.style.top = rapidoY + "%";
@@ -892,7 +857,7 @@ function dirigirTerceroA(boton) {
     ((rect.top + rect.height / 2 - tableroRect.top) /
     tableroRect.height) * 100;
 
-  terceroVelocidad = 200;
+  terceroVelocidad = 65;
   terceroModo = "persiguiendo";
 }
 
@@ -935,7 +900,7 @@ function moverTercero() {
       const distancia = Math.hypot(dx, dy);
       const paso = terceroVelocidad * delta;
 
-      if (distancia <= paso || distancia < 0.01) {
+      if (distancia <= paso || distancia < 0.15) {
 
         terceroX = terceroDestinoX;
         terceroY = terceroDestinoY;
@@ -1234,9 +1199,7 @@ async function cargarNumeros() {
 
     /* OCULTAR EL TABLERO ANTES DE CARGAR */
 
-    if (grid.children.length <= 3) {
-      grid.classList.add("cargando");
-    }
+    grid.classList.add("cargando");
     grid.style.backgroundImage = "none";
 
     const respuesta = await fetch(
@@ -1575,3 +1538,4 @@ setInterval(() => {
 
 </body>
 </html>
+
