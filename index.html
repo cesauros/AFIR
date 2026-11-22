@@ -704,6 +704,43 @@ function moverPez() {
   requestAnimationFrame(moverPez);
 }
 
+function celebrarReserva() {
+  const inicioX = pezX;
+  const inicioY = pezY;
+  const inicio = performance.now();
+  const duracion = 3000;
+
+  function animar(ahora) {
+    const progreso = Math.min((ahora - inicio) / duracion, 1);
+
+    // Movimiento circular de celebración
+    const angulo = progreso * Math.PI * 6;
+    const radio = 12 * (1 - progreso * 0.5);
+
+    pezX = inicioX + Math.cos(angulo) * radio;
+    pezY = inicioY + Math.sin(angulo) * radio;
+
+    destello.style.left = pezX + "%";
+    destello.style.top = pezY + "%";
+
+    destello.style.filter =
+      "brightness(2) drop-shadow(0 0 12px white) drop-shadow(0 0 30px #38d9a9)";
+
+    destello.style.transform =
+      "translate(-50%, -50%) scale(" + (1 + Math.sin(progreso * Math.PI * 12) * 0.5) + ")";
+
+    if (progreso < 1) {
+      requestAnimationFrame(animar);
+    } else {
+      destello.style.transform = "translate(-50%, -50%)";
+      destello.style.filter =
+        "brightness(1.2) drop-shadow(0 0 7px white) drop-shadow(0 0 16px #38d9a9)";
+      nuevoDestino();
+    }
+  }
+
+  requestAnimationFrame(animar);
+}
 
 // SEGUNDO DESTELLO: MOVIMIENTO RAPIDO E INDEPENDIENTE
 
@@ -1482,6 +1519,8 @@ reservar.onclick = async () => {
     mensaje.appendChild(confirmacion);
 
     enlaceNotificacion = resultado.admin_whatsapp_url;
+
+    celebrarReserva();
 
     seleccionados = [];
 
