@@ -514,6 +514,33 @@ button.numero:hover:not(:disabled) {
     opacity: 0.12;
   }
 }
+
+/* CELEBRACIÓN DE NÚMEROS RESERVADOS */
+
+button.numero.reserva-iluminada {
+  z-index: 5;
+  animation: iluminarReserva .55s ease-in-out;
+  box-shadow:
+    0 0 12px white,
+    0 0 25px #38d9a9,
+    0 0 45px #38d9a9;
+  border: 2px solid white;
+}
+
+@keyframes iluminarReserva {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.25);
+    filter: brightness(2);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
   
 </style>
 </head>
@@ -911,7 +938,11 @@ function moverTercero() {
     !grid.classList.contains("cargando")
   ) {
 
-    if (terceroModo === "esperando") {
+    if (terceroModo === "celebrando") {
+
+      // El movimiento lo controla la animación de celebración.
+    
+    } else if (terceroModo === "esperando") {
 
       if (ahora >= terceroPausaHasta) {
         destinoAleatorioTercero();
@@ -966,6 +997,76 @@ function moverTercero() {
 
 entrarTercero();
 requestAnimationFrame(moverTercero);
+
+async function celebrarReserva(listaNumeros) {
+
+  terceroModo = "celebrando";
+
+  for (const numero of listaNumeros) {
+
+    const boton = [...grid.querySelectorAll("button.numero")]
+      .find(b => b.textContent === numero);
+
+    if (!boton) continue;
+
+    const rect = boton.getBoundingClientRect();
+    const tableroRect = grid.getBoundingClientRect();
+
+    const destinoX =
+      ((rect.left + rect.width / 2 - tableroRect.left) /
+      tableroRect.width) * 100;
+
+    const destinoY =
+      ((rect.top + rect.height / 2 - tableroRect.top) /
+      tableroRect.height) * 100;
+
+    const inicioX = terceroX;
+    const inicioY = terceroY;
+
+    const inicioTiempo = performance.now();
+    const duracion = 400;
+
+    await new Promise(resolve => {
+
+      function saltar(ahora) {
+
+        const progreso = Math.min(
+          (ahora - inicioTiempo) / duracion,
+          1
+        );
+
+        const suavizado = 1 - Math.pow(1 - progreso, 3);
+
+        terceroX = inicioX +
+          (destinoX - inicioX) * suavizado;
+
+        terceroY = inicioY +
+          (destinoY - inicioY) * suavizado;
+
+        if (progreso < 1) {
+          requestAnimationFrame(saltar);
+        } else {
+          resolve();
+        }
+      }
+
+      requestAnimationFrame(saltar);
+    });
+
+    // ILUMINAR EL NÚMERO
+
+    boton.classList.add("reserva-iluminada");
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    boton.classList.remove("reserva-iluminada");
+  }
+
+  // FINALIZAR CELEBRACIÓN
+
+  terceroModo = "esperando";
+  terceroPausaHasta = performance.now() + 700;
+}
   
 nuevoDestino();
 moverPez();
@@ -1483,11 +1584,17 @@ reservar.onclick = async () => {
 
     enlaceNotificacion = resultado.admin_whatsapp_url;
 
-    seleccionados = [];
+    
 
+    const numerosReservados = [...seleccionados];
+    
+    seleccionados = [];
+    
     await cargarNumeros();
 
-    if (enlaceNotificacion) {
+// CELEBRACIÓN DEL DESTELLO 3
+
+celebrarReserva(numerosReservados);    if (enlaceNotificacion) {
       reservar.textContent = "Notificar por WhatsApp";
       reservar.disabled = false;
     } else {
