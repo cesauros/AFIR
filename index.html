@@ -602,7 +602,9 @@ async function comprobarReservaPendiente() {
 
     if (!respuesta.ok) return;
 
-    reservar.hidden = resultado.pending;
+    if (!enlaceNotificacion) {
+      reservar.hidden = resultado.pending;
+    }
     if (!resultado.pending && enlaceNotificacion) {
       enlaceNotificacion = null;
       reservar.textContent = "Confirmar reserva";
@@ -1650,6 +1652,7 @@ reservar.onclick = async () => {
     mensaje.appendChild(confirmacion);
 
     enlaceNotificacion = resultado.admin_whatsapp_url;
+    reservar.hidden = false;
 
     const numerosComprados = [...seleccionados];
 
