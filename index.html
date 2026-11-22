@@ -968,76 +968,160 @@ entrarTercero();
 requestAnimationFrame(moverTercero);
 
 // =================================
-// COLISIONES ENTRE LOS TRES DESTELLOS
+// SISTEMA DE COLISIONES ENTRE DESTELLOS
 // =================================
 
-let ultimaColision = 0;
-const distanciaColision = 7;
-const enfriamientoColision = 700;
+const distanciaColision = 1.0;
+const colisionesActivas = new Set();
+
+function cambiarDireccionPorColision(destello, x, y) {
+
+  const dx = destello.x - x;
+  const dy = destello.y - y;
+  const distancia = Math.hypot(dx, dy) || 1;
+
+  const vx = dx / distancia;
+  const vy = dy / distancia;
+
+  if (destello.id === 0) {
+
+    destinoX = Math.max(-10, Math.min(110, pezX + vx * 65));
+    destinoY = Math.max(-10, Math.min(110, pezY + vy * 65));
+
+    pausaPez = false;
+    ultimoMovimiento = performance.now() + 3000;
+
+  } else if (destello.id === 1) {
+
+    rapidoDestinoX = Math.max(-15, Math.min(115, rapidoX + vx * 100));
+    rapidoDestinoY = Math.max(-15, Math.min(115, rapidoY + vy * 100));
+
+    velocidadRapida = 0.025 + Math.random() * 0.015;
+
+  } else if (destello.id === 2) {
+
+    terceroDestinoX = Math.max(8, Math.min(84, terceroX + vx * 65));
+    terceroDestinoY = Math.max(8, Math.min(84, terceroY + vy * 65));
+
+    terceroVelocidad = 35 + Math.random() * 20;
+    terceroModo = "moviendo";
+    terceroProximoCambio = performance.now() + 3000;
+  }
+}
 
 function detectarColisiones() {
 
   if (
-    tablero.classList.contains("oculto") ||
-    grid.classList.contains("cargando")
+    !tablero.classList.contains("oculto") &&
+    !grid.classList.contains("cargando")
   ) {
-    requestAnimationFrame(detectarColisiones);
-    return;
-  }
 
-  const ahora = performance.now();
-
-  if (ahora - ultimaColision > enfriamientoColision) {
-
-    const destellos = [
-      {
-        x: pezX,
-        y: pezY,
-        activo: true,
-        cambiar: () => nuevoDestino()
-      },
-      {
-        x: rapidoX,
-        y: rapidoY,
-        activo: destelloVisible,
-        cambiar: () => iniciarRecorridoRapido()
-      },
-      {
-        x: terceroX,
-        y: terceroY,
-        activo: true,
-        cambiar: () => destinoAleatorioTercero()
-      }
+    const elementos = [
+      destello,
+      destelloRapido,
+      destelloTercero
     ];
 
-    let colisionados = new Set();
+    const posiciones = elementos.map((elemento, id) => {
 
-    for (let i = 0; i < destellos.length; i++) {
-      for (let j = i + 1; j < destellos.length; j++) {
+      const visible =
+        id !== 1 || destelloVisible;
 
-        const a = destellos[i];
-        const b = destellos[j];
+      if (!visible) return null;
 
-        if (!a.activo || !b.activo) continue;
+      const rect = elemento.getBoundingClientRect();
+      const gridRect = grid.getBoundingClientRect();
 
-        const distancia = Math.hypot(
-          a.x - b.x,
-          a.y - b.y
-        );
+      return {
+        id,
+        elemento,
+        x: rect.left + rect.width / 2 - gridRect.left,
+        y: rect.top + rect.height / 2 - gridRect.top,
+        radio: Math.max(rect.width, rect.height) / 2
+      };
+    });
 
-        if (distancia < distanciaColision) {
-          colisionados.add(i);
-          colisionados.add(j);
+    const colisionados = new Set();
+
+    const paresDetectados = new Set();
+
+    for (let i = 0; i < posiciones.length; i++) {
+
+      for (let j = i + 1; j < posiciones.length; j++) {
+
+        const a = posiciones[i];
+        const b = posiciones[j];
+
+        if (!a || !b) continue;
+
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+
+        const distancia = Math.hypot(dx, dy);
+
+        const limite = a.radio + b.radio;
+
+        const par = i + "-" + j;
+
+        if (distancia < limite * distanciaColision) {
+
+          paresDetectados.add(par);
+
+          if (!colisionesActivas.has(par)) {
+
+            colisionados.add(i);
+            colisionados.add(j);
+          }
         }
       }
     }
 
+    // LIBERAR COLISIONES CUANDO SE SEPARAN
+
+    for (const par of colisionesActivas) {
+
+      if (!paresDetectados.has(par)) {
+        colisionesActivas.delete(par);
+      }
+    }
+
+    // REGISTRAR NUEVAS COLISIONES
+
+    for (const par of paresDetectados) {
+      colisionesActivas.add(par);
+    }
+
+    // CAMBIAR DIRECCIÓN DE TODOS LOS IMPLICADOS
+
     if (colisionados.size > 0) {
 
-      ultimaColision = ahora;
+      let centroX = 0;
+      let centroY = 0;
 
-      colisionados.forEach(indice => {
-        destellos[indice].cambiar();
+      colisionados.forEach(id => {
+        centroX += posiciones[id].x;
+        centroY += posiciones[id].y;
+      });
+
+      centroX /= colisionados.size;
+      centroY /= colisionados.size;
+
+      colisionados.forEach(id => {
+
+        const p = posiciones[id];
+
+        const x = centroX;
+        const y = centroY;
+
+        cambiarDireccionPorColision(
+          {
+            id,
+            x: p.x,
+            y: p.y
+          },
+          x,
+          y
+        );
       });
     }
   }
