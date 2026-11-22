@@ -610,9 +610,6 @@ async function comprobarReservaPendiente() {
       reservar.textContent = "Confirmar reserva";
       reservar.disabled = false;
     }
-    mensaje.textContent = resultado.pending
-      ? "Ya tienes una reserva pendiente de pago. Completa el pago para poder reservar nuevamente."
-      : "";
 
   } catch(error) {
     console.error(error);
