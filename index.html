@@ -110,12 +110,27 @@ button.numero {
   min-width: 0;
   aspect-ratio: 1 / 1;
   padding: 0;
-  border: 1px solid rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.35);
   border-radius: 8px;
-  background: #263449;
+
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,.28),
+    rgba(255,255,255,.04) 45%,
+    rgba(0,0,0,.25)
+  );
+
   color: white;
   font-size: clamp(10px, 3.2vw, 17px);
   cursor: pointer;
+
+  box-shadow:
+    inset 1px 1px 2px rgba(255,255,255,.45),
+    inset -2px -2px 4px rgba(0,0,0,.3),
+    0 3px 5px rgba(0,0,0,.4);
+
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
 button.numero.seleccionado {
@@ -362,31 +377,51 @@ input {
   to { top: 120%; }
 }
 
-/* Partículas */
+/* PARTÍCULAS CONTINUAS */
+
 .particula {
   position: absolute;
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #38d9a9;
-  box-shadow: 0 0 7px #38d9a9, 0 0 12px white;
+  background: #ffd700;
+
+  box-shadow:
+    0 0 7px #ffd700,
+    0 0 15px #ffbf00,
+    0 0 25px #fff2a0,
+    0 0 35px #ffd700;
+
   pointer-events: none;
   z-index: 1;
-  animation: flotar var(--duracion) ease-out forwards;
+
+  will-change: transform, opacity;
+
+  animation: flotar var(--duracion) linear forwards;
 }
 
 @keyframes flotar {
   0% {
-    transform: translate(0, 0) scale(.4);
+    transform: translate3d(0, 0, 0) scale(.3);
     opacity: 0;
   }
-  20% { opacity: 1; }
+
+  12% {
+    opacity: 1;
+  }
+
+  85% {
+    opacity: .85;
+  }
+
   100% {
-    transform: translate(var(--movimiento), var(--altura)) scale(1.4);
+    transform:
+      translate3d(var(--movimiento), var(--altura), 0)
+      scale(1.5);
     opacity: 0;
   }
 }
-
+  
 /* Números por encima de los efectos */
 button.numero {
   z-index: 2;
@@ -402,6 +437,7 @@ button.numero {
   width: 65px;
   height: 50px;
   pointer-events: none;
+  will-change: top, left;
 
   background: radial-gradient(
     ellipse at center,
@@ -419,19 +455,64 @@ button.numero {
 
   transform: translate(-50%, -50%);
 
-  animation:
-    destelloVertical 5s linear infinite,
-    destelloHorizontal 2.5s ease-in-out infinite alternate;
+  animation: nadoPez 8s ease-in-out infinite;
 }
 
-@keyframes destelloVertical {
-  from { top: -20%; }
-  to { top: 120%; }
+/* TERCER DESTELLO */
+
+.destello-tercero {
+  position: absolute;
+  z-index: 4;
+  width: 55px;
+  height: 42px;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    white 0%,
+    rgba(255,255,255,.95) 8%,
+    rgba(56,217,169,.9) 25%,
+    rgba(56,217,169,.4) 48%,
+    transparent 72%
+  );
+  filter:
+    drop-shadow(0 0 6px white)
+    drop-shadow(0 0 15px #38d9a9);
+  transform: translate(-50%, -50%);
+  will-change: left, top;
 }
 
-@keyframes destelloHorizontal {
-  from { left: 5%; }
-  to { left: 95%; }
+button.numero:hover:not(:disabled) {
+  transform: translateY(-4px);
+  transition: transform 0.2s ease;
+}
+
+button.numero:hover:not(:disabled) {
+  transform: translateY(-4px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  box-shadow:
+    0 0 8px #38d9a9,
+    0 0 16px #38d9a9,
+    0 0 25px rgba(56,217,169,.8),
+    inset 0 0 10px rgba(255,255,255,.5);
+
+  border-color: white;
+}
+
+/* PARPADEO DEL SEGUNDO DESTELLO */
+
+.grid .destello-rapido {
+  animation: parpadeoRapido 0.10s steps(2, end) infinite;
+}
+
+@keyframes parpadeoRapido {
+  0%, 100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.12;
+  }
 }
   
 </style>
@@ -538,12 +619,362 @@ const grid = document.getElementById("grid");
 const destello = document.createElement("div");
 destello.className = "destello-escaner";
 grid.appendChild(destello);
+
+// SEGUNDO DESTELLO
+
+const destelloRapido = document.createElement("div");
+destelloRapido.className = "destello-escaner destello-rapido";
+destelloRapido.style.display = "none";
+destelloRapido.style.width = "100px";
+destelloRapido.style.height = "100px";
+
+grid.appendChild(destelloRapido);
+  
+const tablero = document.getElementById("tablero");
+  
+// MOVIMIENTO ALEATORIO DEL DESTELLO
+
+let pezX = 10;
+let pezY = 20;
+
+let destinoX = 80;
+let destinoY = 70;
+
+let velocidadPez = 0.012;
+
+let ultimoMovimiento = 0;
+let pausaPez = false;
+
+let faseOndulacion = 0;
+let intensidadLuz = 1;
+let direccionLuz = 1;
+
+function nuevoDestino() {
+
+  destinoX = -10 + Math.random() * 110;
+  destinoY = -10 + Math.random() * 110;
+
+  velocidadPez = 0.006 + Math.random() * 0.036;
+
+  pausaPez = Math.random() < 0.15;
+
+  ultimoMovimiento =
+    performance.now() + 1500 + Math.random() * 3000;
+}
+
+function moverPez() {
+
+  if (!tablero.classList.contains("oculto") &&
+      !grid.classList.contains("cargando")) {
+
+    if (performance.now() > ultimoMovimiento) {
+      nuevoDestino();
+    }
+
+    if (!pausaPez) {
+
+      faseOndulacion += 0.055;
+
+      const distanciaX = destinoX - pezX;
+      const distanciaY = destinoY - pezY;
+
+      pezX += distanciaX * velocidadPez;
+      pezY += distanciaY * velocidadPez;
+
+      const ondulacionX =
+        Math.sin(faseOndulacion) * 2.5 +
+        Math.sin(faseOndulacion * 0.45) * 1.5;
+      
+      const ondulacionY =
+        Math.cos(faseOndulacion * 0.7) * 2.5 +
+        Math.sin(faseOndulacion * 0.35) * 1.5;
+
+      destello.style.left = (pezX + ondulacionX) + "%";
+      destello.style.top = (pezY + ondulacionY) + "%";
+    }
+
+    // LUMINOSIDAD CONSTANTE
+    
+    destello.style.opacity = 1;
+    
+    destello.style.filter =
+      "brightness(1.2) drop-shadow(0 0 7px white) drop-shadow(0 0 16px #38d9a9)";
+  }
+
+  requestAnimationFrame(moverPez);
+}
+
+
+// SEGUNDO DESTELLO: MOVIMIENTO RAPIDO E INDEPENDIENTE
+
+let rapidoX = 0;
+let rapidoY = 0;
+let rapidoDestinoX = 0;
+let rapidoDestinoY = 0;
+
+let velocidadRapida = 0.04;
+let proximaAparicion = performance.now() + 2000;
+let destelloVisible = false;
+
+function iniciarRecorridoRapido() {
+
+  const lado = Math.floor(Math.random() * 4);
+
+  if (lado === 0) {
+    rapidoX = -15;
+    rapidoY = Math.random() * 100;
+    rapidoDestinoX = 115;
+    rapidoDestinoY = Math.random() * 100;
+  }
+
+  if (lado === 1) {
+    rapidoX = 115;
+    rapidoY = Math.random() * 100;
+    rapidoDestinoX = -15;
+    rapidoDestinoY = Math.random() * 100;
+  }
+
+  if (lado === 2) {
+    rapidoX = Math.random() * 100;
+    rapidoY = -15;
+    rapidoDestinoX = Math.random() * 100;
+    rapidoDestinoY = 115;
+  }
+
+  if (lado === 3) {
+    rapidoX = Math.random() * 100;
+    rapidoY = 115;
+    rapidoDestinoX = Math.random() * 100;
+    rapidoDestinoY = -15;
+  }
+
+  velocidadRapida = 0.015 + Math.random() * 0.015;
+
+  destelloRapido.style.left = rapidoX + "%";
+  destelloRapido.style.top = rapidoY + "%";
+
+  destelloRapido.style.display = "block";
+
+  destelloVisible = true;
+}
+
+function moverDestelloRapido() {
+
+  const ahora = performance.now();
+
+  if (!tablero.classList.contains("oculto") &&
+      !grid.classList.contains("cargando")) {
+
+    if (!destelloVisible && ahora >= proximaAparicion) {
+      iniciarRecorridoRapido();
+    }
+
+    if (destelloVisible) {
+
+      rapidoX += (rapidoDestinoX - rapidoX) * velocidadRapida;
+      rapidoY += (rapidoDestinoY - rapidoY) * velocidadRapida;
+
+      destelloRapido.style.left = rapidoX + "%";
+      destelloRapido.style.top = rapidoY + "%";
+
+      const distancia = Math.hypot(
+        rapidoDestinoX - rapidoX,
+        rapidoDestinoY - rapidoY
+      );
+
+      if (distancia < 1) {
+
+        destelloRapido.style.display = "none";
+
+        destelloVisible = false;
+
+        proximaAparicion =
+          ahora + 5000 + Math.random() * 7000;
+      }
+    }
+  }
+
+  requestAnimationFrame(moverDestelloRapido);
+}
+
+moverDestelloRapido();
+
+
+// =================================
+// TERCER DESTELLO
+// =================================
+
+const destelloTercero = document.createElement("div");
+destelloTercero.className = "destello-tercero";
+grid.appendChild(destelloTercero);
+
+let terceroX = -15;
+let terceroY = 50;
+
+let terceroDestinoX = 50;
+let terceroDestinoY = 50;
+
+let terceroVelocidad = 30;
+let terceroModo = "entrando";
+let terceroPausaHasta = 0;
+let terceroProximoCambio = 0;
+let terceroUltimoTiempo = performance.now();
+
+function destinoAleatorioTercero() {
+  terceroDestinoX = 8 + Math.random() * 84;
+  terceroDestinoY = 8 + Math.random() * 84;
+
+  terceroVelocidad = 18 + Math.random() * 22;
+  terceroModo = "moviendo";
+
+  terceroProximoCambio =
+    performance.now() + 2500 + Math.random() * 3500;
+}
+
+function entrarTercero() {
+  const lado = Math.floor(Math.random() * 4);
+
+  if (lado === 0) {
+    terceroX = -15;
+    terceroY = Math.random() * 100;
+  } else if (lado === 1) {
+    terceroX = 115;
+    terceroY = Math.random() * 100;
+  } else if (lado === 2) {
+    terceroX = Math.random() * 100;
+    terceroY = -15;
+  } else {
+    terceroX = Math.random() * 100;
+    terceroY = 115;
+  }
+
+  terceroDestinoX = 8 + Math.random() * 84;
+  terceroDestinoY = 8 + Math.random() * 84;
+
+  terceroVelocidad = 30;
+  terceroModo = "entrando";
+}
+
+function salirTercero() {
+  const lado = Math.floor(Math.random() * 4);
+
+  if (lado === 0) {
+    terceroDestinoX = -15;
+    terceroDestinoY = Math.random() * 100;
+  } else if (lado === 1) {
+    terceroDestinoX = 115;
+    terceroDestinoY = Math.random() * 100;
+  } else if (lado === 2) {
+    terceroDestinoX = Math.random() * 100;
+    terceroDestinoY = -15;
+  } else {
+    terceroDestinoX = Math.random() * 100;
+    terceroDestinoY = 115;
+  }
+
+  terceroVelocidad = 35;
+  terceroModo = "saliendo";
+}
+
+function dirigirTerceroA(boton) {
+  if (!boton || !boton.isConnected) return;
+
+  const rect = boton.getBoundingClientRect();
+  const tableroRect = grid.getBoundingClientRect();
+
+  if (!tableroRect.width || !tableroRect.height) return;
+
+  terceroDestinoX =
+    ((rect.left + rect.width / 2 - tableroRect.left) /
+    tableroRect.width) * 100;
+
+  terceroDestinoY =
+    ((rect.top + rect.height / 2 - tableroRect.top) /
+    tableroRect.height) * 100;
+
+  terceroVelocidad = 200;
+  terceroModo = "persiguiendo";
+}
+
+function moverTercero() {
+  const ahora = performance.now();
+
+  const delta = Math.min(
+    (ahora - terceroUltimoTiempo) / 1000,
+    0.05
+  );
+
+  terceroUltimoTiempo = ahora;
+
+  if (
+    !tablero.classList.contains("oculto") &&
+    !grid.classList.contains("cargando")
+  ) {
+
+    if (terceroModo === "esperando") {
+
+      if (ahora >= terceroPausaHasta) {
+        destinoAleatorioTercero();
+      }
+
+    } else {
+
+      if (
+        terceroModo === "moviendo" &&
+        ahora >= terceroProximoCambio
+      ) {
+        if (Math.random() < 0.25) {
+          salirTercero();
+        } else {
+          destinoAleatorioTercero();
+        }
+      }
+
+      const dx = terceroDestinoX - terceroX;
+      const dy = terceroDestinoY - terceroY;
+      const distancia = Math.hypot(dx, dy);
+      const paso = terceroVelocidad * delta;
+
+      if (distancia <= paso || distancia < 0.01) {
+
+        terceroX = terceroDestinoX;
+        terceroY = terceroDestinoY;
+
+        if (terceroModo === "saliendo") {
+          entrarTercero();
+
+        } else if (terceroModo === "persiguiendo") {
+          terceroModo = "esperando";
+          terceroPausaHasta = ahora + 500;
+
+        } else {
+          destinoAleatorioTercero();
+        }
+
+      } else {
+        terceroX += (dx / distancia) * paso;
+        terceroY += (dy / distancia) * paso;
+      }
+    }
+
+    destelloTercero.style.left = terceroX + "%";
+    destelloTercero.style.top = terceroY + "%";
+  }
+
+  requestAnimationFrame(moverTercero);
+}
+
+entrarTercero();
+requestAnimationFrame(moverTercero);
+  
+nuevoDestino();
+moverPez();
+  
 const mensaje = document.getElementById("mensaje");
 const reservar = document.getElementById("reservar");
 
 const portada = document.getElementById("portada");
-const tablero = document.getElementById("tablero");
-
+  
 // NORMALIZAR IMÁGENES
 
 function normalizarImagen(valor) {
@@ -736,7 +1167,10 @@ async function abrirRifa(id) {
   grid.classList.add("cargando");
   grid.style.backgroundImage = "none";
   grid.querySelectorAll("*").forEach(elemento => {
-    if (!elemento.classList.contains("destello-escaner")) {
+    if (
+      !elemento.classList.contains("destello-escaner") &&
+      !elemento.classList.contains("destello-tercero")
+    ) {
       elemento.remove();
     }
   });
@@ -800,7 +1234,9 @@ async function cargarNumeros() {
 
     /* OCULTAR EL TABLERO ANTES DE CARGAR */
 
-    grid.classList.add("cargando");
+    if (grid.children.length <= 3) {
+      grid.classList.add("cargando");
+    }
     grid.style.backgroundImage = "none";
 
     const respuesta = await fetch(
@@ -869,7 +1305,7 @@ function dibujarTablero() {
 
   grid.style.backgroundImage = "none";
   grid.querySelectorAll(
-    "button.numero, .ripple-wave, .particula"
+    "button.numero"
   ).forEach(elemento => elemento.remove());
 
   for (let i = 0; i < 100; i++) {
@@ -893,6 +1329,7 @@ function dibujarTablero() {
     if (status === "sold") {
       b.classList.add("vendido");
       b.disabled = true;
+      b.style.visibility = "hidden";
     }
 
     if (seleccionados.includes(n)) {
@@ -910,8 +1347,11 @@ function dibujarTablero() {
       }
 
       dibujarTablero();
-      const botonRipple = grid.children[Number(n)];
+      const botonRipple = [...grid.querySelectorAll("button.numero")]
+      .find(b => b.textContent === n);
+      
       crearRipple(botonRipple);
+      dirigirTerceroA(botonRipple);
     };
 
     grid.appendChild(b);
@@ -1078,15 +1518,18 @@ document.getElementById("telefono").addEventListener(
 setInterval(comprobarReservaPendiente, 10000);
 
 function crearParticula() {
+
   if (
     grid.classList.contains("cargando") ||
     tablero.classList.contains("oculto") ||
     grid.classList.contains("completado")
   ) return;
 
-  if (grid.querySelectorAll(".particula").length >= 10000) return;
+  // Límite de seguridad para evitar sobrecargar el navegador
+  if (grid.querySelectorAll(".particula").length >= 120) return;
 
   const particula = document.createElement("div");
+
   particula.className = "particula";
 
   particula.style.left = Math.random() * 100 + "%";
@@ -1094,17 +1537,17 @@ function crearParticula() {
 
   particula.style.setProperty(
     "--duracion",
-    (3 + Math.random() * 3) + "s"
+    (5 + Math.random() * 3) + "s"
   );
 
   particula.style.setProperty(
     "--movimiento",
-    (Math.random() * 70 - 35) + "px"
+    (Math.random() * 100 - 50) + "px"
   );
 
   particula.style.setProperty(
     "--altura",
-    (-30 - Math.random() * 70) + "px"
+    (-40 - Math.random() * 100) + "px"
   );
 
   grid.appendChild(particula);
@@ -1114,7 +1557,7 @@ function crearParticula() {
   }, { once: true });
 }
 
-setInterval(crearParticula, 0.1);
+setInterval(crearParticula, 65);
 
 // INICIO
 
