@@ -365,8 +365,8 @@ input {
 /* Partículas */
 .particula {
   position: absolute;
-  width: 5px;
-  height: 5px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #38d9a9;
   box-shadow: 0 0 7px #38d9a9, 0 0 12px white;
@@ -402,7 +402,6 @@ button.numero {
   width: 65px;
   height: 50px;
   pointer-events: none;
-  will-change: top, left;
 
   background: radial-gradient(
     ellipse at center,
@@ -420,7 +419,19 @@ button.numero {
 
   transform: translate(-50%, -50%);
 
-  animation: nadoPez 8s ease-in-out infinite;
+  animation:
+    destelloVertical 5s linear infinite,
+    destelloHorizontal 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes destelloVertical {
+  from { top: -20%; }
+  to { top: 120%; }
+}
+
+@keyframes destelloHorizontal {
+  from { left: 5%; }
+  to { left: 95%; }
 }
   
 </style>
@@ -527,64 +538,12 @@ const grid = document.getElementById("grid");
 const destello = document.createElement("div");
 destello.className = "destello-escaner";
 grid.appendChild(destello);
-const tablero = document.getElementById("tablero");
-  
-// MOVIMIENTO ALEATORIO DEL DESTELLO
-
-let pezX = 10;
-let pezY = 20;
-
-let destinoX = 80;
-let destinoY = 70;
-
-let velocidadPez = 0.025;
-
-let ultimoMovimiento = 0;
-let pausaPez = false;
-
-function nuevoDestino() {
-
-  destinoX = 5 + Math.random() * 90;
-  destinoY = 5 + Math.random() * 90;
-
-  velocidadPez = 0.008 + Math.random() * 0.025;
-
-  pausaPez = Math.random() < 0.2;
-
-  ultimoMovimiento =
-    performance.now() + 1000 + Math.random() * 2500;
-}
-
-function moverPez() {
-
-  if (!tablero.classList.contains("oculto") &&
-      !grid.classList.contains("cargando")) {
-
-    if (performance.now() > ultimoMovimiento) {
-      nuevoDestino();
-    }
-
-    if (!pausaPez) {
-
-      pezX += (destinoX - pezX) * velocidadPez;
-      pezY += (destinoY - pezY) * velocidadPez;
-
-      destello.style.left = pezX + "%";
-      destello.style.top = pezY + "%";
-    }
-  }
-
-  requestAnimationFrame(moverPez);
-}
-
-nuevoDestino();
-moverPez();
-  
 const mensaje = document.getElementById("mensaje");
 const reservar = document.getElementById("reservar");
 
 const portada = document.getElementById("portada");
-  
+const tablero = document.getElementById("tablero");
+
 // NORMALIZAR IMÁGENES
 
 function normalizarImagen(valor) {
