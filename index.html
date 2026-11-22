@@ -377,50 +377,31 @@ input {
   to { top: 120%; }
 }
 
-/* PARTÍCULAS CONTINUAS */
-
+/* Partículas */
 .particula {
   position: absolute;
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: #38d9a9;
-
-  box-shadow:
-    0 0 5px #38d9a9,
-    0 0 10px #38d9a9,
-    0 0 15px rgba(255,255,255,.8);
-
+  box-shadow: 0 0 7px #38d9a9, 0 0 12px white;
   pointer-events: none;
   z-index: 1;
-
-  will-change: transform, opacity;
-
-  animation: flotar var(--duracion) linear forwards;
+  animation: flotar var(--duracion) ease-out forwards;
 }
 
 @keyframes flotar {
   0% {
-    transform: translate3d(0, 0, 0) scale(.3);
+    transform: translate(0, 0) scale(.4);
     opacity: 0;
   }
-
-  12% {
-    opacity: 1;
-  }
-
-  85% {
-    opacity: .85;
-  }
-
+  20% { opacity: 1; }
   100% {
-    transform:
-      translate3d(var(--movimiento), var(--altura), 0)
-      scale(1.5);
+    transform: translate(var(--movimiento), var(--altura)) scale(1.4);
     opacity: 0;
   }
 }
-  
+
 /* Números por encima de los efectos */
 button.numero {
   z-index: 2;
@@ -1481,18 +1462,15 @@ document.getElementById("telefono").addEventListener(
 setInterval(comprobarReservaPendiente, 10000);
 
 function crearParticula() {
-
   if (
     grid.classList.contains("cargando") ||
     tablero.classList.contains("oculto") ||
     grid.classList.contains("completado")
   ) return;
 
-  // Límite de seguridad para evitar sobrecargar el navegador
-  if (grid.querySelectorAll(".particula").length >= 120) return;
+  if (grid.querySelectorAll(".particula").length >= 10000) return;
 
   const particula = document.createElement("div");
-
   particula.className = "particula";
 
   particula.style.left = Math.random() * 100 + "%";
@@ -1500,17 +1478,17 @@ function crearParticula() {
 
   particula.style.setProperty(
     "--duracion",
-    (5 + Math.random() * 3) + "s"
+    (3 + Math.random() * 3) + "s"
   );
 
   particula.style.setProperty(
     "--movimiento",
-    (Math.random() * 100 - 50) + "px"
+    (Math.random() * 70 - 35) + "px"
   );
 
   particula.style.setProperty(
     "--altura",
-    (-40 - Math.random() * 100) + "px"
+    (-30 - Math.random() * 70) + "px"
   );
 
   grid.appendChild(particula);
@@ -1520,7 +1498,7 @@ function crearParticula() {
   }, { once: true });
 }
 
-setInterval(crearParticula, 65);
+setInterval(crearParticula, 150);
 
 // INICIO
 
@@ -1538,4 +1516,3 @@ setInterval(() => {
 
 </body>
 </html>
-
