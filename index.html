@@ -1644,10 +1644,39 @@ reservar.onclick = async () => {
 
     const confirmacion = document.createElement("p");
 
-    confirmacion.textContent =
-      "¡Reserva creada! Código: " +
-      resultado.reservation.reservation_code +
-      ". Tienes 72 horas para realizar el pago.";
+    
+const numerosTexto = numerosComprados.join(", ");
+
+const fechaVencimiento = new Date(
+  resultado.reservation.expires_at.replace(" ", "T") + "Z"
+);
+
+const fecha = fechaVencimiento.toLocaleDateString("es-MX", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  timeZone: "America/Mexico_City"
+});
+
+const hora = fechaVencimiento.toLocaleTimeString("es-MX", {
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: true,
+  timeZone: "America/Mexico_City"
+});
+
+confirmacion.textContent =
+  "Hola " + nombre + ", ¡Gracias por participar!\n\n" +
+  "Los números " + numerosTexto +
+  " están reservados para ti con el código " +
+  resultado.reservation.reservation_code +
+  " hasta el día " + fecha + " a las " + hora + ".";
+
+if (resultado.admin_whatsapp_url) {
+  confirmacion.textContent +=
+    "\n\n¿Quieres más puestos? Cancela el pago e informa al link:\n" +
+    resultado.admin_whatsapp_url;
+}
 
     mensaje.appendChild(confirmacion);
 
