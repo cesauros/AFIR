@@ -966,6 +966,86 @@ function moverTercero() {
 
 entrarTercero();
 requestAnimationFrame(moverTercero);
+
+// =================================
+// COLISIONES ENTRE LOS TRES DESTELLOS
+// =================================
+
+let ultimaColision = 0;
+const distanciaColision = 7;
+const enfriamientoColision = 700;
+
+function detectarColisiones() {
+
+  if (
+    tablero.classList.contains("oculto") ||
+    grid.classList.contains("cargando")
+  ) {
+    requestAnimationFrame(detectarColisiones);
+    return;
+  }
+
+  const ahora = performance.now();
+
+  if (ahora - ultimaColision > enfriamientoColision) {
+
+    const destellos = [
+      {
+        x: pezX,
+        y: pezY,
+        activo: true,
+        cambiar: () => nuevoDestino()
+      },
+      {
+        x: rapidoX,
+        y: rapidoY,
+        activo: destelloVisible,
+        cambiar: () => iniciarRecorridoRapido()
+      },
+      {
+        x: terceroX,
+        y: terceroY,
+        activo: true,
+        cambiar: () => destinoAleatorioTercero()
+      }
+    ];
+
+    let colisionados = new Set();
+
+    for (let i = 0; i < destellos.length; i++) {
+      for (let j = i + 1; j < destellos.length; j++) {
+
+        const a = destellos[i];
+        const b = destellos[j];
+
+        if (!a.activo || !b.activo) continue;
+
+        const distancia = Math.hypot(
+          a.x - b.x,
+          a.y - b.y
+        );
+
+        if (distancia < distanciaColision) {
+          colisionados.add(i);
+          colisionados.add(j);
+        }
+      }
+    }
+
+    if (colisionados.size > 0) {
+
+      ultimaColision = ahora;
+
+      colisionados.forEach(indice => {
+        destellos[indice].cambiar();
+      });
+    }
+  }
+
+  requestAnimationFrame(detectarColisiones);
+}
+
+requestAnimationFrame(detectarColisiones);
   
 nuevoDestino();
 moverPez();
