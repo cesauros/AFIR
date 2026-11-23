@@ -1636,6 +1636,12 @@ reservar.onclick = async () => {
     const resultado = await respuesta.json();
 
     if (!respuesta.ok) {
+      if (respuesta.status === 409 && resultado.message) {
+        mensaje.textContent = resultado.message;
+        await comprobarReservaPendiente();
+        return;
+      }
+    
       throw new Error(
         resultado.error || "No se pudo completar la reserva"
       );
