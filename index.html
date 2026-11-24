@@ -146,9 +146,10 @@ button.numero.reservado {
 
 button.numero.vendido {
   background: transparent;
-  color: transparent;
+  color: white;
   border-color: transparent;
   cursor: default;
+  box-shadow: none;
 }
 
 button.numero:disabled {
@@ -1500,7 +1501,6 @@ function dibujarTablero() {
     if (status === "sold") {
       b.classList.add("vendido");
       b.disabled = true;
-      b.style.visibility = "hidden";
     }
 
     if (seleccionados.includes(n)) {
