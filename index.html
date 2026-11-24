@@ -6,426 +6,535 @@
 <title>AFIR - Rifa Online</title>
 
 <style>
-
-/* =========================================
-   AFIR - INTERFAZ HOLOGRAFICA FUTURISTA
-   TABLERO 10 X 10
-========================================= */
-
-* {
-  box-sizing: border-box;
-}
-
-:root {
-  --holo-cyan: #48f5ff;
-  --holo-blue: #247bff;
-  --holo-purple: #a76aff;
-  --holo-gold: #ffe09a;
-  --holo-red: #ff365f;
-  --holo-bg: #050a18;
-}
+* { box-sizing: border-box; }
 
 body {
   font-family: Arial, sans-serif;
-  background:
-    radial-gradient(ellipse at 50% 35%, #14294a 0%, #080f20 48%, #030711 100%);
-  color: #e8faff;
+  background: #101827;
+  color: white;
   text-align: center;
   padding: 20px;
   margin: 0;
-  min-height: 100vh;
 }
 
-h1, h2 {
-  color: #a8faff;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  text-shadow:
-    0 0 8px rgba(72,245,255,.8),
-    0 0 25px rgba(36,123,255,.5);
+h1 { color: #38d9a9; }
+
+.estado {
+  margin: 15px;
+  color: #b8c5d6;
+  font-size: 14px;
 }
 
-.estado,
 #datosRifa {
-  color: #a6c8e8;
+  color: #b8c5d6;
   margin: 15px;
   line-height: 1.7;
 }
 
-#portada,
-#tablero {
+#portada, #tablero {
   max-width: 600px;
   margin: auto;
 }
 
-.oculto {
-  display: none !important;
+#imagenPremio {
+  display: block;
+  width: 100%;
+  max-height: 55vh;
+  object-fit: contain;
+  margin: 20px auto;
+  border-radius: 12px;
 }
 
-/* =========================================
-   PANEL HOLOGRAFICO PRINCIPAL
-========================================= */
+#selectorRifa {
+  display: block;
+  width: 90%;
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 13px;
+  border-radius: 7px;
+  border: 0;
+  font-size: 16px;
+  background: #263449;
+  color: white;
+}
+
+#participar {
+  background: #25d366;
+  color: white;
+  border: 0;
+  padding: 17px 35px;
+  border-radius: 9px;
+  font-size: 19px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 20px;
+}
+
+#volver {
+  background: #263449;
+  color: white;
+  border: 1px solid #526078;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  margin: 12px;
+}
+
+.oculto { display: none !important; }
 
 .grid {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
-
-  gap: 5px;
+  gap: 0.5px;
   width: 100%;
   max-width: 500px;
-  aspect-ratio: 1;
-
-  margin: 30px auto;
-  padding: 10px;
-
-  border: 1px solid rgba(72,245,255,.65);
-  border-radius: 18px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(18,44,75,.88),
-      rgba(5,12,29,.94)
-    );
-
-  box-shadow:
-    0 0 12px rgba(72,245,255,.35),
-    0 0 35px rgba(36,123,255,.25),
-    0 0 80px rgba(36,123,255,.12),
-    inset 0 0 25px rgba(72,245,255,.08);
-
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  aspect-ratio: 1 / 1;
+  margin: 25px auto;
+  background-color: #263449;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid #526078;
 }
+
+/* OCULTAR EL TABLERO DURANTE LA CARGA */
 
 .grid.cargando {
   visibility: hidden;
 }
 
-/* =========================================
-   HOLOGRAMA DEL PREMIO
-========================================= */
-
-.grid::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-
-  background-image: var(--puzzle);
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  opacity: .75;
-  filter: brightness(.75) saturate(1.2);
-
-  transform: scale(1.035);
-
-  pointer-events: none;
-}
-
-.grid.completado::before {
-  filter: none;
-  opacity: 1;
-}
-
-/* =========================================
-   NUMEROS FLOTANTES DE CRISTAL
-========================================= */
-
 button.numero {
   position: relative;
   z-index: 2;
-
   min-width: 0;
-  aspect-ratio: 1;
+  aspect-ratio: 1 / 1;
   padding: 0;
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: 50%;
 
-  overflow: hidden;
-
-  border: 1px solid rgba(105,239,255,.55);
-  border-radius: 9px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(140,240,255,.22),
-      rgba(35,105,165,.20) 35%,
-      rgba(8,22,48,.78) 75%,
-      rgba(3,10,25,.92)
-    );
-
-  color: #d9faff;
+  color: white;
   font-size: clamp(10px, 3.2vw, 17px);
   font-weight: bold;
-
   cursor: pointer;
 
-  text-shadow:
-    0 0 6px rgba(72,245,255,.8);
+  background:
+    radial-gradient(
+      circle at 35% 28%,
+      rgba(255,255,255,.65),
+      transparent 23%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      #17283b 0%,
+      #263e52 45%,
+      #101827 72%,
+      #344b60 100%
+    );
 
   box-shadow:
-    inset 1px 1px 2px rgba(255,255,255,.35),
-    inset -2px -2px 5px rgba(0,0,0,.45),
-    0 0 7px rgba(72,245,255,.16),
-    0 5px 12px rgba(0,0,0,.45);
+    inset 0 3px 5px rgba(255,255,255,.45),
+    inset 0 -5px 8px rgba(0,0,0,.8),
+    0 3px 5px rgba(0,0,0,.6);
 
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
-
-  transition:
-    transform .25s ease,
-    box-shadow .25s ease,
-    border-color .25s ease,
-    background .25s ease;
+  overflow: hidden;
+  isolation: isolate;
 }
 
-/* REFLEJO ANIMADO DE CADA PLACA */
+/* CONCAVIDAD CIRCULAR 3D */
 
 button.numero::before {
   content: "";
   position: absolute;
-
-  top: -100%;
-  left: -120%;
-
-  width: 65%;
-  height: 300%;
-
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255,255,255,.25),
-    rgba(72,245,255,.35),
-    transparent
-  );
-
-  transform: rotate(28deg);
-
-  animation: reflejoPlaca 6s ease-in-out infinite;
+  inset: 12%;
+  border-radius: 50%;
   pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at 50% 65%,
+      #101827 0%,
+      #192c40 48%,
+      #263e52 72%,
+      rgba(255,255,255,.4) 100%
+    );
+
+  box-shadow:
+    inset 0 5px 9px rgba(0,0,0,.85),
+    inset 0 -2px 4px rgba(255,255,255,.35),
+    0 0 3px rgba(255,255,255,.5);
+
+  z-index: -1;
 }
 
-@keyframes reflejoPlaca {
-  0%, 65% {
-    left: -120%;
-  }
-
-  100% {
-    left: 180%;
-  }
-}
-
-/* LUZ EN LOS BORDES */
+/* BORDE CIRCULAR LUMINOSO */
 
 button.numero::after {
   content: "";
   position: absolute;
-  inset: 0;
-
-  border-radius: inherit;
-
-  border: 1px solid rgba(255,255,255,.10);
-
-  background: linear-gradient(
-    135deg,
-    rgba(255,255,255,.10),
-    transparent 40%,
-    rgba(72,245,255,.08)
-  );
-
+  inset: 7%;
+  border-radius: 50%;
   pointer-events: none;
-}
 
-/* MOVIMIENTO AL PASAR EL CURSOR */
-
-button.numero:hover:not(:disabled) {
-  transform: translateY(-5px) scale(1.04);
-
-  border-color: #b7ffff;
+  border: 1px solid rgba(56,217,169,.65);
 
   box-shadow:
-    0 0 12px rgba(72,245,255,.8),
-    0 0 28px rgba(36,123,255,.55),
-    0 8px 18px rgba(0,0,0,.5),
-    inset 0 0 12px rgba(72,245,255,.25);
-}
+    0 0 4px rgba(56,217,169,.5),
+    inset 0 0 5px rgba(56,217,169,.35);
 
-/* =========================================
-   NUMEROS SELECCIONADOS
-========================================= */
-
-button.numero.seleccionado {
   background:
     linear-gradient(
-      145deg,
-      rgba(255,239,170,.95),
-      rgba(255,183,64,.85),
-      rgba(150,85,15,.95)
+      135deg,
+      rgba(255,255,255,.25),
+      transparent 35%,
+      transparent 70%,
+      rgba(56,217,169,.2)
     );
-
-  color: #251500;
-
-  border-color: #fff0ad;
-
-  text-shadow: 0 0 5px white;
-
-  box-shadow:
-    0 0 10px #ffe09a,
-    0 0 25px rgba(255,190,70,.8),
-    0 0 45px rgba(255,160,40,.3),
-    inset 0 0 12px rgba(255,255,255,.65);
 }
 
-/* =========================================
-   NUMEROS RESERVADOS - ROJO RUBI
-========================================= */
+/* TECLA SELECCIONADA */
+
+button.numero.seleccionado {
+  color: #101827;
+
+  background:
+    radial-gradient(
+      circle,
+      #baffeb 0%,
+      #38d9a9 55%,
+      #087c5c 100%
+    );
+
+  box-shadow:
+    inset 0 5px 10px rgba(0,0,0,.45),
+    inset 0 -3px 5px rgba(255,255,255,.6),
+    0 0 10px #38d9a9,
+    0 0 20px rgba(56,217,169,.8);
+}
+
+/* TECLA RESERVADA */
 
 button.numero.reservado {
   background:
-    linear-gradient(
-      145deg,
-      rgba(255,110,140,.95),
-      rgba(190,15,65,.9) 50%,
-      rgba(75,5,30,.98)
+    radial-gradient(
+      circle,
+      #ffaaaa,
+      #e05252 60%,
+      #8d2020
     );
 
   color: white;
-
-  border-color: #ff789b;
-
-  text-shadow:
-    0 0 6px white,
-    0 0 12px #ff365f;
-
-  box-shadow:
-    0 0 10px rgba(255,54,95,.7),
-    0 0 22px rgba(255,20,75,.35),
-    inset 0 0 12px rgba(255,255,255,.25);
-
-  cursor: default;
+  border-color: rgba(255,255,255,.4);
 }
 
-/* =========================================
-   NUMEROS VENDIDOS
-========================================= */
+/* TECLA VENDIDA */
 
 button.numero.vendido {
   background: transparent;
   color: transparent;
   border-color: transparent;
   box-shadow: none;
-  cursor: default;
 }
 
 button.numero:disabled {
   opacity: 1;
 }
 
-/* =========================================
-   ESCANER HOLOGRAFICO
-========================================= */
+/* CIRCULO CONCAVO DENTRO DE CADA TECLA */
 
-.grid::after {
+button.numero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+button.numero::before {
   content: "";
   position: absolute;
+  width: 76%;
+  height: 76%;
+  left: 12%;
+  top: 12%;
+  border-radius: 50%;
+  z-index: -1;
 
-  left: 0;
-  top: -20%;
-
-  width: 100%;
-  height: 55px;
-
-  z-index: 1;
-  pointer-events: none;
-
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(72,245,255,.04) 15%,
-    rgba(72,245,255,.28) 35%,
-    rgba(255,255,255,.85) 48%,
-    rgba(72,245,255,.55) 55%,
-    rgba(36,123,255,.2) 75%,
-    transparent 100%
+  background: radial-gradient(
+    circle at 35% 25%,
+    #526b7d,
+    #263449 45%,
+    #101827 85%
   );
 
   box-shadow:
-    0 0 15px rgba(72,245,255,.5),
-    0 0 30px rgba(36,123,255,.25);
-
-  animation: escanerHolografico 5s linear infinite;
+    inset 0 5px 9px rgba(0,0,0,.9),
+    inset 0 -2px 4px rgba(255,255,255,.4),
+    0 0 5px rgba(56,217,169,.5);
 }
 
-@keyframes escanerHolografico {
-  from {
-    top: -20%;
-  }
-
-  to {
-    top: 120%;
-  }
+button.numero.seleccionado::before {
+  background: radial-gradient(
+    circle at 35% 25%,
+    #c0ffeb,
+    #38d9a9 55%,
+    #087c5c
+  );
 }
 
-/* =========================================
-   ONDAS HOLOGRAFICAS
-========================================= */
+/* RESERVADO */
+
+button.numero.reservado {
+  background: linear-gradient(145deg,#ff9999,#e05252,#791d27);
+  color: white;
+}
+
+/* VENDIDO */
+
+button.numero.vendido {
+  background: transparent;
+  color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+input {
+  display: block;
+  width: 90%;
+  max-width: 350px;
+  margin: 12px auto;
+  padding: 13px;
+  border-radius: 7px;
+  border: 0;
+  font-size: 16px;
+}
+
+#reservar {
+  background: #25d366;
+  color: white;
+  border: 0;
+  padding: 15px 25px;
+  border-radius: 8px;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+#reservar:disabled {
+  opacity: .5;
+  cursor: wait;
+}
+
+#mensaje {
+  margin: 18px auto;
+  max-width: 450px;
+  line-height: 1.5;
+}
+
+#progreso {
+  color: #38d9a9;
+  font-size: 15px;
+  margin: 12px;
+}
+
+@media(max-width:450px) {
+  body { padding: 12px; }
+}
+  .grid {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background-image: none !important;
+}
+
+.grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--puzzle);
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(5px) brightness(0.5);
+  transform: scale(1.05);
+  z-index: -1;
+}
+
+.grid.completado::before {
+  filter: none;
+}
+
+.galeria-rifas {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding: 15px 5px 25px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tarjeta-rifa {
+  flex: 0 0 82%;
+  max-width: 340px;
+  background: #192638;
+  border: 1px solid #39485b;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  scroll-snap-align: center;
+}
+
+.tarjeta-rifa img {
+  width: 100%;
+  height: 230px;
+  object-fit: contain;
+  background: #263449;
+}
+
+.tarjeta-rifa .info-rifa {
+  padding: 14px;
+}
+
+.tarjeta-rifa h3 {
+  color: #38d9a9;
+  margin: 5px 0 10px;
+}
+
+.tarjeta-rifa p {
+  color: #b8c5d6;
+  margin: 6px 0;
+}
+
+.tarjeta-rifa button {
+  background: #25d366;
+  color: white;
+  border: 0;
+  padding: 12px;
+  border-radius: 7px;
+  font-weight: bold;
+  width: 100%;
+}
+
+.tarjeta-rifa .abrir-rifa {
+  display: block;
+  background: #25d366;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  border-radius: 7px;
+  font-weight: bold;
+}
+
+.tarjeta-rifa:hover {
+  border-color: #38d9a9;
+}
+
+/* RIPPLE LUMINOSO */
+
+.grid {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
 
 .ripple-wave {
   position: absolute;
   z-index: 1;
-
   pointer-events: none;
   border-radius: 50%;
-
   background: radial-gradient(
     circle,
     transparent 42%,
-    rgba(72,245,255,.45) 47%,
+    rgba(56,217,169,.5) 47%,
     white 50%,
-    rgba(72,245,255,.75) 53%,
-    rgba(36,123,255,.25) 57%,
+    rgba(56,217,169,.7) 53%,
     transparent 62%
   );
-
-  transform: translate(-50%,-50%) scale(0);
-
+  transform: translate(-50%, -50%) scale(0);
   animation: rippleExpand 1.35s ease-out forwards;
 }
 
 @keyframes rippleExpand {
   to {
-    transform: translate(-50%,-50%) scale(1);
+    transform: translate(-50%, -50%) scale(1);
     opacity: 0;
   }
 }
 
-/* =========================================
-   PARTICULAS HOLOGRAFICAS
-========================================= */
+.grid {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Fondo */
+.grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--puzzle);
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(1px) brightness(1);
+  transform: scale(1.05);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.grid.completado::before {
+  filter: none;
+}
+
+/* ESCÁNER VERTICAL */
+.grid::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -20%;
+  width: 100%;
+  height: 50px;
+
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(56,217,169,.12) 20%,
+    rgba(56,217,169,.7) 38%,
+    white 45%,
+    rgba(56,217,169,.7) 48%,
+    white 50%,
+    rgba(56,217,169,.7) 52%,
+    white 55%,
+    rgba(56,217,169,.7) 62%,
+    transparent 100%
+  );
+
+  box-shadow: 0 0 15px rgba(56,217,169,.7);
+  z-index: 1;
+  pointer-events: none;
+
+  animation: escaner 5s linear infinite;
+}
+
+@keyframes escaner {
+  from { top: -20%; }
+  to { top: 120%; }
+}
+
+/* PARTÍCULAS CONTINUAS */
 
 .particula {
   position: absolute;
-  z-index: 1;
-
-  width: 6px;
-  height: 6px;
-
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-
-  background: #8ffaff;
+  background: #ffd700;
 
   box-shadow:
-    0 0 6px #48f5ff,
-    0 0 14px #247bff,
-    0 0 24px #a76aff;
+    0 0 7px #ffd700,
+    0 0 15px #ffbf00,
+    0 0 25px #fff2a0,
+    0 0 35px #ffd700;
 
   pointer-events: none;
+  z-index: 1;
 
   will-change: transform, opacity;
 
@@ -434,7 +543,7 @@ button.numero:disabled {
 
 @keyframes flotar {
   0% {
-    transform: translate3d(0,0,0) scale(.3);
+    transform: translate3d(0, 0, 0) scale(.3);
     opacity: 0;
   }
 
@@ -448,60 +557,56 @@ button.numero:disabled {
 
   100% {
     transform:
-      translate3d(var(--movimiento),var(--altura),0)
+      translate3d(var(--movimiento), var(--altura), 0)
       scale(1.5);
-
     opacity: 0;
   }
 }
+  
+/* Números por encima de los efectos */
+button.numero {
+  z-index: 2;
+}
 
-/* =========================================
-   DESTELLO 1 - RUBI HOLOGRAFICO
-========================================= */
+/* DESTELLO LUMINOSO */
 
 .grid .destello-escaner {
   position: absolute;
   z-index: 3;
-
   left: 50%;
   top: 0;
-
   width: 65px;
   height: 50px;
-
   pointer-events: none;
+  will-change: top, left;
 
   background: radial-gradient(
     ellipse at center,
     white 0%,
-    rgba(255,255,255,.9) 5%,
-    rgba(255,80,100,.9) 15%,
-    rgba(255,0,70,.7) 38%,
+    white 4%,
+    rgba(255,255,255,.9) 9%,
+    rgba(56,217,169,.9) 22%,
+    rgba(56,217,169,.35) 42%,
     transparent 70%
   );
 
   filter:
-    drop-shadow(0 0 6px white)
-    drop-shadow(0 0 15px #ff174f);
+    drop-shadow(0 0 5px white)
+    drop-shadow(0 0 12px #38d9a9);
 
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
 
   animation: nadoPez 8s ease-in-out infinite;
 }
 
-/* =========================================
-   DESTELLO 3 - TURQUESA
-========================================= */
+/* TERCER DESTELLO */
 
 .destello-tercero {
   position: absolute;
   z-index: 4;
-
   width: 55px;
   height: 42px;
-
   pointer-events: none;
-
   background: radial-gradient(
     ellipse at center,
     white 0%,
@@ -510,21 +615,35 @@ button.numero:disabled {
     rgba(56,217,169,.4) 48%,
     transparent 72%
   );
-
   filter:
     drop-shadow(0 0 6px white)
     drop-shadow(0 0 15px #38d9a9);
-
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   will-change: left, top;
 }
 
-/* =========================================
-   DESTELLO 2 - PARPADEO
-========================================= */
+button.numero:hover:not(:disabled) {
+  transform: translateY(-4px);
+  transition: transform 0.2s ease;
+}
+
+button.numero:hover:not(:disabled) {
+  transform: translateY(-4px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  box-shadow:
+    0 0 8px #38d9a9,
+    0 0 16px #38d9a9,
+    0 0 25px rgba(56,217,169,.8),
+    inset 0 0 10px rgba(255,255,255,.5);
+
+  border-color: white;
+}
+
+/* PARPADEO DEL SEGUNDO DESTELLO */
 
 .grid .destello-rapido {
-  animation: parpadeoRapido .10s steps(2,end) infinite;
+  animation: parpadeoRapido 0.10s steps(2, end) infinite;
 }
 
 @keyframes parpadeoRapido {
@@ -533,373 +652,11 @@ button.numero:disabled {
   }
 
   50% {
-    opacity: .12;
-  }
-}
-
-/* =========================================
-   BOTONES Y FORMULARIOS
-========================================= */
-
-#volver {
-  background: rgba(15,35,65,.8);
-  color: #a8faff;
-  border: 1px solid #48f5ff;
-  padding: 12px 22px;
-  border-radius: 9px;
-  cursor: pointer;
-  box-shadow: 0 0 12px rgba(72,245,255,.2);
-}
-
-#reservar,
-#participar {
-  background: linear-gradient(
-    135deg,
-    #48f5ff,
-    #247bff
-  );
-
-  color: #03101f;
-
-  border: 1px solid #b7ffff;
-
-  padding: 15px 25px;
-  border-radius: 9px;
-
-  font-size: 17px;
-  font-weight: bold;
-
-  cursor: pointer;
-
-  box-shadow:
-    0 0 12px rgba(72,245,255,.45),
-    0 0 25px rgba(36,123,255,.2);
-}
-
-#reservar:disabled {
-  opacity: .5;
-  cursor: wait;
-}
-
-input,
-#selectorRifa {
-  display: block;
-  width: 90%;
-  max-width: 350px;
-
-  margin: 12px auto;
-  padding: 13px;
-
-  border-radius: 8px;
-  border: 1px solid rgba(72,245,255,.55);
-
-  background: rgba(9,23,45,.9);
-  color: white;
-
-  font-size: 16px;
-
-  box-shadow: inset 0 0 12px rgba(72,245,255,.08);
-}
-
-input::placeholder {
-  color: #8eafc8;
-}
-
-#mensaje {
-  margin: 18px auto;
-  max-width: 450px;
-  line-height: 1.5;
-}
-
-#progreso {
-  color: #72faff;
-  font-size: 15px;
-  margin: 12px;
-  text-shadow: 0 0 10px rgba(72,245,255,.5);
-}
-
-/* =========================================
-   GALERIA DE RIFAS
-========================================= */
-
-.galeria-rifas {
-  display: flex;
-  gap: 15px;
-  overflow-x: auto;
-  padding: 15px 5px 25px;
-
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-}
-
-.tarjeta-rifa {
-  flex: 0 0 82%;
-  max-width: 340px;
-
-  background: rgba(12,28,53,.85);
-
-  border: 1px solid rgba(72,245,255,.5);
-  border-radius: 14px;
-
-  overflow: hidden;
-  cursor: pointer;
-
-  scroll-snap-align: center;
-
-  box-shadow: 0 0 20px rgba(36,123,255,.15);
-}
-
-.tarjeta-rifa img {
-  width: 100%;
-  height: 230px;
-  object-fit: contain;
-  background: #0b172c;
-}
-
-.tarjeta-rifa .info-rifa {
-  padding: 14px;
-}
-
-.tarjeta-rifa h3 {
-  color: #72faff;
-}
-
-.tarjeta-rifa p {
-  color: #a6c8e8;
-}
-
-.tarjeta-rifa:hover {
-  border-color: #a8faff;
-  box-shadow: 0 0 20px rgba(72,245,255,.35);
-}
-
-/* =========================================
-   MOVIL
-========================================= */
-
-@media(max-width:450px) {
-  body {
-    padding: 12px;
-  }
-
-  .grid {
-    gap: 3px;
-    padding: 6px;
-  }
-}
-
-
-/* ==========================================
-   AFIR — TABLERO HOLOGRÁFICO 3D
-   CAPAS DE CRISTAL Y PROFUNDIDAD
-========================================== */
-
-/* ESCENARIO 3D */
-
-.grid {
-  perspective: 1100px;
-  transform-style: preserve-3d;
-  transform: rotateX(7deg);
-  border-radius: 24px;
-  padding: 12px;
-  gap: 5px;
-
-  background:
-    radial-gradient(ellipse at 50% 50%,
-      rgba(25,110,170,.28),
-      transparent 72%),
-    linear-gradient(145deg,
-      rgba(12,35,68,.96),
-      rgba(2,8,24,.98));
-
-  box-shadow:
-    0 25px 55px rgba(0,0,0,.65),
-    0 0 25px rgba(72,245,255,.25),
-    0 0 70px rgba(36,123,255,.18),
-    inset 0 0 35px rgba(72,245,255,.13);
-}
-
-/* PLACAS DE CRISTAL */
-
-button.numero {
-  transform-style: preserve-3d;
-  transform: translateZ(8px);
-
-  border-radius: 7px;
-  border: 1px solid rgba(115,245,255,.55);
-
-  background:
-    linear-gradient(135deg,
-      rgba(180,250,255,.25),
-      rgba(30,115,180,.12) 35%,
-      rgba(4,17,40,.88) 100%);
-
-  box-shadow:
-    0 1px 0 rgba(255,255,255,.45),
-    0 4px 0 rgba(15,100,150,.55),
-    0 7px 12px rgba(0,0,0,.55),
-    0 0 10px rgba(72,245,255,.16),
-    inset 0 0 12px rgba(72,245,255,.12);
-
-  animation: cristalFlotante 4s ease-in-out infinite;
-}
-
-/* MOVIMIENTO INDEPENDIENTE */
-
-@keyframes cristalFlotante {
-  0%, 100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: 0 -2px;
-  }
-}
-
-button.numero:nth-child(3n) {
-  animation-delay: -1s;
-}
-
-button.numero:nth-child(4n) {
-  animation-delay: -2s;
-}
-
-button.numero:nth-child(7n) {
-  animation-delay: -3s;
-}
-
-/* REFLEJO DE CRISTAL */
-
-button.numero::before {
-  background:
-    linear-gradient(110deg,
-      transparent 15%,
-      rgba(255,255,255,.04) 35%,
-      rgba(120,250,255,.55) 48%,
-      rgba(255,255,255,.18) 53%,
-      transparent 70%);
-}
-
-/* BORDES LUMINOSOS */
-
-button.numero::after {
-  border: 1px solid rgba(180,250,255,.35);
-
-  box-shadow:
-    inset 0 0 8px rgba(72,245,255,.12);
-}
-
-/* HOVER: PLACA QUE EMERGE */
-
-button.numero:hover:not(:disabled) {
-  transform: translateZ(24px) scale(1.09);
-
-  border-color: white;
-
-  background:
-    linear-gradient(145deg,
-      rgba(180,255,255,.55),
-      rgba(30,140,220,.35),
-      rgba(5,20,50,.95));
-
-  box-shadow:
-    0 0 12px white,
-    0 0 25px rgba(72,245,255,.85),
-    0 0 45px rgba(36,123,255,.55),
-    0 12px 20px rgba(0,0,0,.65),
-    inset 0 0 18px rgba(72,245,255,.3);
-
-  z-index: 10;
-}
-
-/* SELECCIONADO: ORO LÍQUIDO */
-
-button.numero.seleccionado {
-  transform: translateZ(15px);
-
-  background:
-    linear-gradient(145deg,
-      #fff8d5,
-      #ffd36b 30%,
-      #d88b22 70%,
-      #75400b);
-
-  border: 1px solid #fff4bd;
-
-  box-shadow:
-    0 0 12px #ffe9a5,
-    0 0 28px rgba(255,190,65,.9),
-    0 0 55px rgba(255,150,30,.4),
-    0 6px 0 rgba(115,65,10,.6),
-    inset 0 0 15px white;
-
-  color: #281500;
-}
-
-/* RESERVADO: RUBÍ 3D */
-
-button.numero.reservado {
-  transform: translateZ(5px);
-
-  background:
-    linear-gradient(145deg,
-      #ffb2c5,
-      #ed315f 35%,
-      #8c092f 75%,
-      #390519);
-
-  box-shadow:
-    0 0 12px rgba(255,40,95,.8),
-    0 0 25px rgba(255,0,65,.4),
-    0 5px 0 rgba(75,0,25,.8),
-    inset 0 0 12px rgba(255,255,255,.4);
-}
-
-/* TABLERO COMPLETADO */
-
-.grid.completado {
-  box-shadow:
-    0 0 25px rgba(255,220,120,.5),
-    0 0 70px rgba(255,180,50,.3),
-    inset 0 0 35px rgba(255,220,120,.2);
-}
-
-/* MOVIMIENTO MÁS PROFUNDO EN ESCRITORIO */
-
-@media (min-width: 700px) {
-  .grid {
-    max-width: 540px;
-    transform: rotateX(9deg) scale(.98);
-  }
-
-  .grid:hover {
-    transform: rotateX(4deg) scale(1);
-    transition: transform .5s ease;
-  }
-}
-
-/* MÓVILES */
-
-@media (max-width: 450px) {
-  .grid {
-    transform: rotateX(4deg);
-    padding: 7px;
-  }
-
-  button.numero {
-    border-radius: 5px;
-  }
-}
-
-/* RESPETAR REDUCCIÓN DE MOVIMIENTO */
-
-@media (prefers-reduced-motion: reduce) {
-  button.numero {
-    animation: none;
+    opacity: 0.12;
   }
 }
   
 </style>
-  
 </head>
 
 <body>
