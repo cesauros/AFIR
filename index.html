@@ -185,42 +185,6 @@ button.numero {
     background .25s ease;
 }
 
-/* REFLEJO ANIMADO DE CADA PLACA */
-
-button.numero::before {
-  content: "";
-  position: absolute;
-
-  top: -100%;
-  left: -120%;
-
-  width: 65%;
-  height: 300%;
-
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255,255,255,.25),
-    rgba(72,245,255,.35),
-    transparent
-  );
-
-  transform: rotate(28deg);
-
-  animation: reflejoPlaca 6s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes reflejoPlaca {
-  0%, 65% {
-    left: -120%;
-  }
-
-  100% {
-    left: 180%;
-  }
-}
-
 /* LUZ EN LOS BORDES */
 
 button.numero::after {
