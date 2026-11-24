@@ -145,11 +145,14 @@ button.numero.reservado {
 }
 
 button.numero.vendido {
-  background: transparent;
-  color: white;
-  border-color: transparent;
+  background: transparent !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   cursor: default;
-  box-shadow: none;
+  pointer-events: none;
 }
 
 button.numero:disabled {
