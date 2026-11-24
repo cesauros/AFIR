@@ -240,6 +240,46 @@ button.numero:disabled {
   opacity: 1;
 }
 
+/* CIRCULO CONCAVO DENTRO DE CADA TECLA */
+
+button.numero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+button.numero::before {
+  content: "";
+  position: absolute;
+  width: 76%;
+  height: 76%;
+  left: 12%;
+  top: 12%;
+  border-radius: 50%;
+  z-index: -1;
+
+  background: radial-gradient(
+    circle at 35% 25%,
+    #526b7d,
+    #263449 45%,
+    #101827 85%
+  );
+
+  box-shadow:
+    inset 0 5px 9px rgba(0,0,0,.9),
+    inset 0 -2px 4px rgba(255,255,255,.4),
+    0 0 5px rgba(56,217,169,.5);
+}
+
+button.numero.seleccionado::before {
+  background: radial-gradient(
+    circle at 35% 25%,
+    #c0ffeb,
+    #38d9a9 55%,
+    #087c5c
+  );
+}
+
 input {
   display: block;
   width: 90%;
