@@ -240,112 +240,44 @@ button.numero:disabled {
   opacity: 1;
 }
 
-/* =================================
-   TECLAS CASINO PREMIUM 3D
-================================= */
+/* CIRCULO CONCAVO DENTRO DE CADA TECLA */
 
 button.numero {
   position: relative;
-  isolation: isolate;
   overflow: hidden;
-  border-radius: 8px;
-  border: 1px solid rgba(220,245,255,.65);
-
-  background:
-    linear-gradient(145deg,
-      #526579,
-      #172638 55%,
-      #080e18
-    );
-
-  box-shadow:
-    inset 2px 2px 3px rgba(255,255,255,.45),
-    inset -3px -3px 6px rgba(0,0,0,.9),
-    0 3px 6px rgba(0,0,0,.65);
+  isolation: isolate;
 }
-
-/* LENTE CÓNCAVA CENTRAL */
 
 button.numero::before {
   content: "";
   position: absolute;
-  z-index: -1;
   width: 76%;
   height: 76%;
   left: 12%;
   top: 12%;
   border-radius: 50%;
+  z-index: -1;
 
-  background:
-    radial-gradient(
-      ellipse at 35% 25%,
-      rgba(255,255,255,.65) 0%,
-      rgba(56,217,169,.28) 12%,
-      #263e4c 35%,
-      #101827 72%,
-      #050a12 100%
-    );
+  background: radial-gradient(
+    circle at 35% 25%,
+    #526b7d,
+    #263449 45%,
+    #101827 85%
+  );
 
   box-shadow:
-    inset 0 6px 10px rgba(0,0,0,.95),
-    inset 0 -2px 4px rgba(255,255,255,.35),
-    0 0 3px rgba(255,255,255,.6),
-    0 0 9px rgba(56,217,169,.45);
-}
-
-/* ARO METÁLICO */
-
-button.numero::after {
-  content: "";
-  position: absolute;
-  width: 82%;
-  height: 82%;
-  left: 9%;
-  top: 9%;
-  border-radius: 50%;
-  pointer-events: none;
-
-  border: 2px solid transparent;
-
-  background:
-    linear-gradient(135deg,
-      rgba(255,255,255,.8),
-      rgba(56,217,169,.7),
-      rgba(20,35,48,.8),
-      rgba(255,255,255,.65)
-    ) border-box;
-
-  -webkit-mask:
-    linear-gradient(#fff 0 0) padding-box,
-    linear-gradient(#fff 0 0);
-
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-
-  filter: drop-shadow(0 0 3px #38d9a9);
-}
-
-/* SELECCIONADO */
-
-button.numero.seleccionado {
-  color: #061b16;
-  background: linear-gradient(145deg,#c5ffeb,#38d9a9,#087c5c);
-
-  box-shadow:
-    inset 0 3px 7px rgba(0,0,0,.5),
-    0 0 8px #38d9a9,
-    0 0 18px rgba(56,217,169,.9);
+    inset 0 5px 9px rgba(0,0,0,.9),
+    inset 0 -2px 4px rgba(255,255,255,.4),
+    0 0 5px rgba(56,217,169,.5);
 }
 
 button.numero.seleccionado::before {
-  background:
-    radial-gradient(
-      ellipse at 35% 25%,
-      white,
-      #aaffdf 18%,
-      #38d9a9 55%,
-      #075c47 100%
-    );
+  background: radial-gradient(
+    circle at 35% 25%,
+    #c0ffeb,
+    #38d9a9 55%,
+    #087c5c
+  );
 }
 
 /* RESERVADO */
