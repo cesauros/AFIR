@@ -240,44 +240,116 @@ button.numero:disabled {
   opacity: 1;
 }
 
-/* CIRCULO CONCAVO DENTRO DE CADA TECLA */
+/* CASINO CRISTAL CONCAVO */
 
 button.numero {
   position: relative;
-  overflow: hidden;
   isolation: isolate;
+  overflow: hidden;
+  border-radius: 8px;
+
+  background: linear-gradient(
+    145deg,
+    #40576b,
+    #172638 65%,
+    #080f19
+  );
+
+  border: 1px solid rgba(190,235,230,.65);
+
+  box-shadow:
+    inset 1px 1px 2px rgba(255,255,255,.4),
+    inset -2px -2px 3px rgba(0,0,0,.8),
+    0 2px 4px rgba(0,0,0,.5);
 }
+
+/* CAVIDAD CIRCULAR */
 
 button.numero::before {
   content: "";
   position: absolute;
+  z-index: -1;
   width: 76%;
   height: 76%;
   left: 12%;
   top: 12%;
   border-radius: 50%;
-  z-index: -1;
 
   background: radial-gradient(
-    circle at 35% 25%,
-    #526b7d,
-    #263449 45%,
-    #101827 85%
+    circle at 35% 28%,
+    #536c79 0%,
+    #263b49 32%,
+    #101b29 70%,
+    #050a12 100%
   );
 
   box-shadow:
-    inset 0 5px 9px rgba(0,0,0,.9),
-    inset 0 -2px 4px rgba(255,255,255,.4),
-    0 0 5px rgba(56,217,169,.5);
+    inset 0 4px 7px rgba(0,0,0,.9),
+    inset 0 -2px 3px rgba(255,255,255,.3),
+    0 0 0 2px rgba(56,217,169,.55),
+    0 0 5px rgba(56,217,169,.35);
+}
+
+/* REFLEJO DE CRISTAL */
+
+button.numero {
+  background-image:
+    radial-gradient(
+      ellipse at 35% 18%,
+      rgba(255,255,255,.28),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      #40576b,
+      #172638 65%,
+      #080f19
+    );
+}
+
+/* NÚMERO SELECCIONADO */
+
+button.numero.seleccionado {
+  color: #06251b;
+  background: linear-gradient(
+    145deg,
+    #baffeb,
+    #38d9a9 65%,
+    #087c5c
+  );
+
+  box-shadow:
+    inset 0 3px 6px rgba(0,0,0,.4),
+    0 0 7px rgba(56,217,169,.8);
 }
 
 button.numero.seleccionado::before {
   background: radial-gradient(
-    circle at 35% 25%,
-    #c0ffeb,
-    #38d9a9 55%,
-    #087c5c
+    circle at 35% 28%,
+    #e0fff4,
+    #38d9a9 48%,
+    #087c5c 100%
   );
+}
+
+/* RESERVADOS */
+
+button.numero.reservado {
+  background: linear-gradient(
+    145deg,
+    #ff9999,
+    #e05252 65%,
+    #791d27
+  );
+}
+
+/* VENDIDOS */
+
+button.numero.vendido {
+  background: transparent;
+  color: transparent;
+  border-color: transparent;
+  box-shadow: none;
 }
 
 /* RESERVADO */
