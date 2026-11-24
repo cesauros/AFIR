@@ -687,6 +687,216 @@ input::placeholder {
     padding: 6px;
   }
 }
+
+
+/* ==========================================
+   AFIR — TABLERO HOLOGRÁFICO 3D
+   CAPAS DE CRISTAL Y PROFUNDIDAD
+========================================== */
+
+/* ESCENARIO 3D */
+
+.grid {
+  perspective: 1100px;
+  transform-style: preserve-3d;
+  transform: rotateX(7deg);
+  border-radius: 24px;
+  padding: 12px;
+  gap: 5px;
+
+  background:
+    radial-gradient(ellipse at 50% 50%,
+      rgba(25,110,170,.28),
+      transparent 72%),
+    linear-gradient(145deg,
+      rgba(12,35,68,.96),
+      rgba(2,8,24,.98));
+
+  box-shadow:
+    0 25px 55px rgba(0,0,0,.65),
+    0 0 25px rgba(72,245,255,.25),
+    0 0 70px rgba(36,123,255,.18),
+    inset 0 0 35px rgba(72,245,255,.13);
+}
+
+/* PLACAS DE CRISTAL */
+
+button.numero {
+  transform-style: preserve-3d;
+  transform: translateZ(8px);
+
+  border-radius: 7px;
+  border: 1px solid rgba(115,245,255,.55);
+
+  background:
+    linear-gradient(135deg,
+      rgba(180,250,255,.25),
+      rgba(30,115,180,.12) 35%,
+      rgba(4,17,40,.88) 100%);
+
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.45),
+    0 4px 0 rgba(15,100,150,.55),
+    0 7px 12px rgba(0,0,0,.55),
+    0 0 10px rgba(72,245,255,.16),
+    inset 0 0 12px rgba(72,245,255,.12);
+
+  animation: cristalFlotante 4s ease-in-out infinite;
+}
+
+/* MOVIMIENTO INDEPENDIENTE */
+
+@keyframes cristalFlotante {
+  0%, 100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -2px;
+  }
+}
+
+button.numero:nth-child(3n) {
+  animation-delay: -1s;
+}
+
+button.numero:nth-child(4n) {
+  animation-delay: -2s;
+}
+
+button.numero:nth-child(7n) {
+  animation-delay: -3s;
+}
+
+/* REFLEJO DE CRISTAL */
+
+button.numero::before {
+  background:
+    linear-gradient(110deg,
+      transparent 15%,
+      rgba(255,255,255,.04) 35%,
+      rgba(120,250,255,.55) 48%,
+      rgba(255,255,255,.18) 53%,
+      transparent 70%);
+}
+
+/* BORDES LUMINOSOS */
+
+button.numero::after {
+  border: 1px solid rgba(180,250,255,.35);
+
+  box-shadow:
+    inset 0 0 8px rgba(72,245,255,.12);
+}
+
+/* HOVER: PLACA QUE EMERGE */
+
+button.numero:hover:not(:disabled) {
+  transform: translateZ(24px) scale(1.09);
+
+  border-color: white;
+
+  background:
+    linear-gradient(145deg,
+      rgba(180,255,255,.55),
+      rgba(30,140,220,.35),
+      rgba(5,20,50,.95));
+
+  box-shadow:
+    0 0 12px white,
+    0 0 25px rgba(72,245,255,.85),
+    0 0 45px rgba(36,123,255,.55),
+    0 12px 20px rgba(0,0,0,.65),
+    inset 0 0 18px rgba(72,245,255,.3);
+
+  z-index: 10;
+}
+
+/* SELECCIONADO: ORO LÍQUIDO */
+
+button.numero.seleccionado {
+  transform: translateZ(15px);
+
+  background:
+    linear-gradient(145deg,
+      #fff8d5,
+      #ffd36b 30%,
+      #d88b22 70%,
+      #75400b);
+
+  border: 1px solid #fff4bd;
+
+  box-shadow:
+    0 0 12px #ffe9a5,
+    0 0 28px rgba(255,190,65,.9),
+    0 0 55px rgba(255,150,30,.4),
+    0 6px 0 rgba(115,65,10,.6),
+    inset 0 0 15px white;
+
+  color: #281500;
+}
+
+/* RESERVADO: RUBÍ 3D */
+
+button.numero.reservado {
+  transform: translateZ(5px);
+
+  background:
+    linear-gradient(145deg,
+      #ffb2c5,
+      #ed315f 35%,
+      #8c092f 75%,
+      #390519);
+
+  box-shadow:
+    0 0 12px rgba(255,40,95,.8),
+    0 0 25px rgba(255,0,65,.4),
+    0 5px 0 rgba(75,0,25,.8),
+    inset 0 0 12px rgba(255,255,255,.4);
+}
+
+/* TABLERO COMPLETADO */
+
+.grid.completado {
+  box-shadow:
+    0 0 25px rgba(255,220,120,.5),
+    0 0 70px rgba(255,180,50,.3),
+    inset 0 0 35px rgba(255,220,120,.2);
+}
+
+/* MOVIMIENTO MÁS PROFUNDO EN ESCRITORIO */
+
+@media (min-width: 700px) {
+  .grid {
+    max-width: 540px;
+    transform: rotateX(9deg) scale(.98);
+  }
+
+  .grid:hover {
+    transform: rotateX(4deg) scale(1);
+    transition: transform .5s ease;
+  }
+}
+
+/* MÓVILES */
+
+@media (max-width: 450px) {
+  .grid {
+    transform: rotateX(4deg);
+    padding: 7px;
+  }
+
+  button.numero {
+    border-radius: 5px;
+  }
+}
+
+/* RESPETAR REDUCCIÓN DE MOVIMIENTO */
+
+@media (prefers-reduced-motion: reduce) {
+  button.numero {
+    animation: none;
+  }
+}
   
 </style>
   
