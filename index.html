@@ -6,28 +6,48 @@
 <title>AFIR - Rifa Online</title>
 
 <style>
+
+/* =========================================
+   AFIR - INTERFAZ HOLOGRAFICA FUTURISTA
+   TABLERO 10 X 10
+========================================= */
+
 * {
   box-sizing: border-box;
 }
 
+:root {
+  --holo-cyan: #48f5ff;
+  --holo-blue: #247bff;
+  --holo-purple: #a76aff;
+  --holo-gold: #ffe09a;
+  --holo-red: #ff365f;
+  --holo-bg: #050a18;
+}
+
 body {
   font-family: Arial, sans-serif;
-  background: #080c14;
-  color: #f5ead0;
+  background:
+    radial-gradient(ellipse at 50% 35%, #14294a 0%, #080f20 48%, #030711 100%);
+  color: #e8faff;
   text-align: center;
   padding: 20px;
   margin: 0;
+  min-height: 100vh;
 }
 
 h1, h2 {
-  color: #e8c778;
-  letter-spacing: 2px;
+  color: #a8faff;
   text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow:
+    0 0 8px rgba(72,245,255,.8),
+    0 0 25px rgba(36,123,255,.5);
 }
 
 .estado,
 #datosRifa {
-  color: #b8c5d6;
+  color: #a6c8e8;
   margin: 15px;
   line-height: 1.7;
 }
@@ -42,7 +62,9 @@ h1, h2 {
   display: none !important;
 }
 
-/* TABLERO */
+/* =========================================
+   PANEL HOLOGRAFICO PRINCIPAL
+========================================= */
 
 .grid {
   position: relative;
@@ -51,30 +73,42 @@ h1, h2 {
 
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 5px;
 
+  gap: 5px;
   width: 100%;
   max-width: 500px;
   aspect-ratio: 1;
 
-  margin: 25px auto;
-  padding: 8px;
+  margin: 30px auto;
+  padding: 10px;
 
-  background: #101722;
-  border: 1px solid #b9974b;
-  border-radius: 15px;
+  border: 1px solid rgba(72,245,255,.65);
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(18,44,75,.88),
+      rgba(5,12,29,.94)
+    );
 
   box-shadow:
-    0 0 12px rgba(218,174,78,.25),
-    0 0 35px rgba(218,174,78,.12),
-    inset 0 0 25px rgba(0,0,0,.9);
+    0 0 12px rgba(72,245,255,.35),
+    0 0 35px rgba(36,123,255,.25),
+    0 0 80px rgba(36,123,255,.12),
+    inset 0 0 25px rgba(72,245,255,.08);
+
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
 }
 
 .grid.cargando {
   visibility: hidden;
 }
 
-/* IMAGEN HOLOGRÁFICA */
+/* =========================================
+   HOLOGRAMA DEL PREMIO
+========================================= */
 
 .grid::before {
   content: "";
@@ -87,16 +121,22 @@ h1, h2 {
   background-position: center;
   background-repeat: no-repeat;
 
-  filter: blur(2px) brightness(.65);
-  transform: scale(1.04);
+  opacity: .75;
+  filter: brightness(.75) saturate(1.2);
+
+  transform: scale(1.035);
+
   pointer-events: none;
 }
 
 .grid.completado::before {
   filter: none;
+  opacity: 1;
 }
 
-/* NÚMEROS */
+/* =========================================
+   NUMEROS FLOTANTES DE CRISTAL
+========================================= */
 
 button.numero {
   position: relative;
@@ -106,89 +146,174 @@ button.numero {
   aspect-ratio: 1;
   padding: 0;
 
-  border: 1px solid rgba(224,190,112,.65);
-  border-radius: 7px;
+  overflow: hidden;
 
-  background: linear-gradient(
-    145deg,
-    rgba(255,255,255,.17),
-    rgba(34,42,53,.82) 45%,
-    rgba(7,12,20,.96)
-  );
+  border: 1px solid rgba(105,239,255,.55);
+  border-radius: 9px;
 
-  color: #f5e5bc;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(140,240,255,.22),
+      rgba(35,105,165,.20) 35%,
+      rgba(8,22,48,.78) 75%,
+      rgba(3,10,25,.92)
+    );
+
+  color: #d9faff;
   font-size: clamp(10px, 3.2vw, 17px);
   font-weight: bold;
 
   cursor: pointer;
 
-  box-shadow:
-    inset 1px 1px 3px rgba(255,255,255,.2),
-    inset -2px -2px 5px rgba(0,0,0,.8),
-    0 2px 5px rgba(0,0,0,.7);
+  text-shadow:
+    0 0 6px rgba(72,245,255,.8);
 
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  box-shadow:
+    inset 1px 1px 2px rgba(255,255,255,.35),
+    inset -2px -2px 5px rgba(0,0,0,.45),
+    0 0 7px rgba(72,245,255,.16),
+    0 5px 12px rgba(0,0,0,.45);
+
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
 
   transition:
-    transform .2s ease,
-    box-shadow .2s ease,
-    background .2s ease;
+    transform .25s ease,
+    box-shadow .25s ease,
+    border-color .25s ease,
+    background .25s ease;
 }
 
-/* HOVER */
+/* REFLEJO ANIMADO DE CADA PLACA */
+
+button.numero::before {
+  content: "";
+  position: absolute;
+
+  top: -100%;
+  left: -120%;
+
+  width: 65%;
+  height: 300%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.25),
+    rgba(72,245,255,.35),
+    transparent
+  );
+
+  transform: rotate(28deg);
+
+  animation: reflejoPlaca 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes reflejoPlaca {
+  0%, 65% {
+    left: -120%;
+  }
+
+  100% {
+    left: 180%;
+  }
+}
+
+/* LUZ EN LOS BORDES */
+
+button.numero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  border-radius: inherit;
+
+  border: 1px solid rgba(255,255,255,.10);
+
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,.10),
+    transparent 40%,
+    rgba(72,245,255,.08)
+  );
+
+  pointer-events: none;
+}
+
+/* MOVIMIENTO AL PASAR EL CURSOR */
 
 button.numero:hover:not(:disabled) {
-  transform: translateY(-3px);
+  transform: translateY(-5px) scale(1.04);
 
-  border-color: #ffe5a0;
+  border-color: #b7ffff;
 
   box-shadow:
-    0 0 8px rgba(255,211,119,.7),
-    0 0 18px rgba(255,190,70,.35),
-    inset 0 0 8px rgba(255,255,255,.25);
+    0 0 12px rgba(72,245,255,.8),
+    0 0 28px rgba(36,123,255,.55),
+    0 8px 18px rgba(0,0,0,.5),
+    inset 0 0 12px rgba(72,245,255,.25);
 }
 
-/* SELECCIONADOS */
+/* =========================================
+   NUMEROS SELECCIONADOS
+========================================= */
 
 button.numero.seleccionado {
-  background: linear-gradient(
-    145deg,
-    #fff0b3,
-    #d8a83e 45%,
-    #805515
-  );
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,239,170,.95),
+      rgba(255,183,64,.85),
+      rgba(150,85,15,.95)
+    );
 
-  color: #211707;
-  border-color: #fff0b3;
+  color: #251500;
+
+  border-color: #fff0ad;
+
+  text-shadow: 0 0 5px white;
 
   box-shadow:
-    0 0 8px #e8bd58,
-    0 0 20px rgba(255,193,65,.65),
-    inset 0 0 8px rgba(255,255,255,.6);
+    0 0 10px #ffe09a,
+    0 0 25px rgba(255,190,70,.8),
+    0 0 45px rgba(255,160,40,.3),
+    inset 0 0 12px rgba(255,255,255,.65);
 }
 
-/* RESERVADOS */
+/* =========================================
+   NUMEROS RESERVADOS - ROJO RUBI
+========================================= */
 
 button.numero.reservado {
-  background: linear-gradient(
-    145deg,
-    #ff7777,
-    #a81425 50%,
-    #4c0712
-  );
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,110,140,.95),
+      rgba(190,15,65,.9) 50%,
+      rgba(75,5,30,.98)
+    );
 
   color: white;
-  border-color: #ff7777;
+
+  border-color: #ff789b;
+
+  text-shadow:
+    0 0 6px white,
+    0 0 12px #ff365f;
 
   box-shadow:
-    0 0 8px rgba(255,40,55,.65),
-    inset 0 0 7px rgba(255,255,255,.2);
+    0 0 10px rgba(255,54,95,.7),
+    0 0 22px rgba(255,20,75,.35),
+    inset 0 0 12px rgba(255,255,255,.25);
 
   cursor: default;
 }
 
-/* VENDIDOS */
+/* =========================================
+   NUMEROS VENDIDOS
+========================================= */
 
 button.numero.vendido {
   background: transparent;
@@ -202,86 +327,108 @@ button.numero:disabled {
   opacity: 1;
 }
 
-/* ESCÁNER DORADO */
+/* =========================================
+   ESCANER HOLOGRAFICO
+========================================= */
 
 .grid::after {
   content: "";
   position: absolute;
-  z-index: 1;
-  pointer-events: none;
 
   left: 0;
   top: -20%;
 
   width: 100%;
-  height: 45px;
+  height: 55px;
+
+  z-index: 1;
+  pointer-events: none;
 
   background: linear-gradient(
     to bottom,
-    transparent,
-    rgba(255,195,75,.12),
-    rgba(255,215,125,.7),
-    white,
-    rgba(255,195,75,.5),
-    transparent
+    transparent 0%,
+    rgba(72,245,255,.04) 15%,
+    rgba(72,245,255,.28) 35%,
+    rgba(255,255,255,.85) 48%,
+    rgba(72,245,255,.55) 55%,
+    rgba(36,123,255,.2) 75%,
+    transparent 100%
   );
 
-  box-shadow: 0 0 18px rgba(255,190,70,.6);
+  box-shadow:
+    0 0 15px rgba(72,245,255,.5),
+    0 0 30px rgba(36,123,255,.25);
 
-  animation: escaner 6s linear infinite;
+  animation: escanerHolografico 5s linear infinite;
 }
 
-@keyframes escaner {
-  from { top: -20%; }
-  to { top: 120%; }
+@keyframes escanerHolografico {
+  from {
+    top: -20%;
+  }
+
+  to {
+    top: 120%;
+  }
 }
 
-/* RIPPLE */
+/* =========================================
+   ONDAS HOLOGRAFICAS
+========================================= */
 
 .ripple-wave {
   position: absolute;
   z-index: 1;
+
   pointer-events: none;
   border-radius: 50%;
 
   background: radial-gradient(
     circle,
     transparent 42%,
-    rgba(255,210,115,.5) 47%,
+    rgba(72,245,255,.45) 47%,
     white 50%,
-    rgba(255,190,70,.7) 53%,
+    rgba(72,245,255,.75) 53%,
+    rgba(36,123,255,.25) 57%,
     transparent 62%
   );
 
-  transform: translate(-50%, -50%) scale(0);
+  transform: translate(-50%,-50%) scale(0);
+
   animation: rippleExpand 1.35s ease-out forwards;
 }
 
 @keyframes rippleExpand {
   to {
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%,-50%) scale(1);
     opacity: 0;
   }
 }
 
-/* PARTÍCULAS */
+/* =========================================
+   PARTICULAS HOLOGRAFICAS
+========================================= */
 
 .particula {
   position: absolute;
   z-index: 1;
 
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
+
   border-radius: 50%;
 
-  background: #ffd783;
+  background: #8ffaff;
 
   box-shadow:
-    0 0 7px #ffd700,
-    0 0 15px #ffbf00,
-    0 0 25px #fff2a0;
+    0 0 6px #48f5ff,
+    0 0 14px #247bff,
+    0 0 24px #a76aff;
 
   pointer-events: none;
+
+  will-change: transform, opacity;
+
   animation: flotar var(--duracion) linear forwards;
 }
 
@@ -291,19 +438,26 @@ button.numero:disabled {
     opacity: 0;
   }
 
-  12% { opacity: 1; }
+  12% {
+    opacity: 1;
+  }
 
-  85% { opacity: .85; }
+  85% {
+    opacity: .85;
+  }
 
   100% {
     transform:
       translate3d(var(--movimiento),var(--altura),0)
       scale(1.5);
+
     opacity: 0;
   }
 }
 
-/* DESTELLO 1: RUBÍ */
+/* =========================================
+   DESTELLO 1 - RUBI HOLOGRAFICO
+========================================= */
 
 .grid .destello-escaner {
   position: absolute;
@@ -321,20 +475,23 @@ button.numero:disabled {
     ellipse at center,
     white 0%,
     rgba(255,255,255,.9) 5%,
-    rgba(255,80,80,.9) 15%,
-    rgba(190,0,35,.7) 38%,
+    rgba(255,80,100,.9) 15%,
+    rgba(255,0,70,.7) 38%,
     transparent 70%
   );
 
   filter:
     drop-shadow(0 0 6px white)
-    drop-shadow(0 0 15px #d40028);
+    drop-shadow(0 0 15px #ff174f);
 
-  transform: translate(-50%, -50%);
+  transform: translate(-50%,-50%);
+
   animation: nadoPez 8s ease-in-out infinite;
 }
 
-/* DESTELLO 3: HOLOGRAMA TURQUESA */
+/* =========================================
+   DESTELLO 3 - TURQUESA
+========================================= */
 
 .destello-tercero {
   position: absolute;
@@ -358,40 +515,65 @@ button.numero:disabled {
     drop-shadow(0 0 6px white)
     drop-shadow(0 0 15px #38d9a9);
 
-  transform: translate(-50%, -50%);
+  transform: translate(-50%,-50%);
+  will-change: left, top;
 }
 
-/* DESTELLO 2: PARPADEO */
+/* =========================================
+   DESTELLO 2 - PARPADEO
+========================================= */
 
 .grid .destello-rapido {
   animation: parpadeoRapido .10s steps(2,end) infinite;
 }
 
 @keyframes parpadeoRapido {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .12; }
+  0%, 100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .12;
+  }
 }
 
-/* BOTONES Y FORMULARIOS */
+/* =========================================
+   BOTONES Y FORMULARIOS
+========================================= */
 
 #volver {
-  background: #172233;
-  color: #e8c778;
-  border: 1px solid #a88745;
+  background: rgba(15,35,65,.8);
+  color: #a8faff;
+  border: 1px solid #48f5ff;
   padding: 12px 22px;
-  border-radius: 8px;
+  border-radius: 9px;
   cursor: pointer;
+  box-shadow: 0 0 12px rgba(72,245,255,.2);
 }
 
 #reservar,
 #participar {
-  background: linear-gradient(145deg,#e8c778,#a87926);
-  color: #17110a;
-  border: 1px solid #ffe6a0;
+  background: linear-gradient(
+    135deg,
+    #48f5ff,
+    #247bff
+  );
+
+  color: #03101f;
+
+  border: 1px solid #b7ffff;
+
   padding: 15px 25px;
-  border-radius: 8px;
+  border-radius: 9px;
+
+  font-size: 17px;
   font-weight: bold;
+
   cursor: pointer;
+
+  box-shadow:
+    0 0 12px rgba(72,245,255,.45),
+    0 0 25px rgba(36,123,255,.2);
 }
 
 #reservar:disabled {
@@ -404,13 +586,23 @@ input,
   display: block;
   width: 90%;
   max-width: 350px;
+
   margin: 12px auto;
   padding: 13px;
-  border-radius: 7px;
-  border: 1px solid #8e7444;
-  background: #172233;
+
+  border-radius: 8px;
+  border: 1px solid rgba(72,245,255,.55);
+
+  background: rgba(9,23,45,.9);
   color: white;
+
   font-size: 16px;
+
+  box-shadow: inset 0 0 12px rgba(72,245,255,.08);
+}
+
+input::placeholder {
+  color: #8eafc8;
 }
 
 #mensaje {
@@ -420,37 +612,48 @@ input,
 }
 
 #progreso {
-  color: #e8c778;
+  color: #72faff;
   font-size: 15px;
   margin: 12px;
+  text-shadow: 0 0 10px rgba(72,245,255,.5);
 }
 
-/* GALERÍA */
+/* =========================================
+   GALERIA DE RIFAS
+========================================= */
 
 .galeria-rifas {
   display: flex;
   gap: 15px;
   overflow-x: auto;
   padding: 15px 5px 25px;
+
   scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tarjeta-rifa {
   flex: 0 0 82%;
   max-width: 340px;
-  background: #111c2b;
-  border: 1px solid #a88745;
-  border-radius: 12px;
+
+  background: rgba(12,28,53,.85);
+
+  border: 1px solid rgba(72,245,255,.5);
+  border-radius: 14px;
+
   overflow: hidden;
   cursor: pointer;
+
   scroll-snap-align: center;
+
+  box-shadow: 0 0 20px rgba(36,123,255,.15);
 }
 
 .tarjeta-rifa img {
   width: 100%;
   height: 230px;
   object-fit: contain;
-  background: #172233;
+  background: #0b172c;
 }
 
 .tarjeta-rifa .info-rifa {
@@ -458,16 +661,31 @@ input,
 }
 
 .tarjeta-rifa h3 {
-  color: #e8c778;
+  color: #72faff;
 }
 
 .tarjeta-rifa p {
-  color: #b8c5d6;
+  color: #a6c8e8;
 }
 
+.tarjeta-rifa:hover {
+  border-color: #a8faff;
+  box-shadow: 0 0 20px rgba(72,245,255,.35);
+}
+
+/* =========================================
+   MOVIL
+========================================= */
+
 @media(max-width:450px) {
-  body { padding: 12px; }
-  .grid { gap: 3px; padding: 5px; }
+  body {
+    padding: 12px;
+  }
+
+  .grid {
+    gap: 3px;
+    padding: 6px;
+  }
 }
   
 </style>
