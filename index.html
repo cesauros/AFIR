@@ -568,57 +568,45 @@ button.numero {
   z-index: 2;
 }
 
-/* ==========================================
-   SISTEMA DE DESTELLOS — APARIENCIA GENERAL
-========================================== */
+/* DESTELLO LUMINOSO */
 
-.destello-escaner,
-.destello-tercero {
+.grid .destello-escaner {
   position: absolute;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  will-change: left, top, opacity;
-}
-
-/* DESTELLO 1 */
-
-.destello-escaner {
   z-index: 3;
+  left: 50%;
+  top: 0;
   width: 65px;
   height: 50px;
+  pointer-events: none;
+  will-change: top, left;
+
   background: radial-gradient(
     ellipse at center,
     white 0%,
+    white 4%,
     rgba(255,255,255,.9) 9%,
     rgba(56,217,169,.9) 22%,
     rgba(56,217,169,.35) 42%,
     transparent 70%
   );
+
   filter:
     drop-shadow(0 0 5px white)
     drop-shadow(0 0 12px #38d9a9);
+
+  transform: translate(-50%, -50%);
+
+  animation: nadoPez 8s ease-in-out infinite;
 }
 
-/* DESTELLO 2 */
-
-.destello-rapido {
-  z-index: 3;
-  width: 100px;
-  height: 100px;
-  animation: parpadeoRapido 0.10s steps(2, end) infinite;
-}
-
-@keyframes parpadeoRapido {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.12; }
-}
-
-/* DESTELLO 3 */
+/* TERCER DESTELLO */
 
 .destello-tercero {
+  position: absolute;
   z-index: 4;
   width: 55px;
   height: 42px;
+  pointer-events: none;
   background: radial-gradient(
     ellipse at center,
     white 0%,
@@ -630,6 +618,42 @@ button.numero {
   filter:
     drop-shadow(0 0 6px white)
     drop-shadow(0 0 15px #38d9a9);
+  transform: translate(-50%, -50%);
+  will-change: left, top;
+}
+
+button.numero:hover:not(:disabled) {
+  transform: translateY(-4px);
+  transition: transform 0.2s ease;
+}
+
+button.numero:hover:not(:disabled) {
+  transform: translateY(-4px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  box-shadow:
+    0 0 8px #38d9a9,
+    0 0 16px #38d9a9,
+    0 0 25px rgba(56,217,169,.8),
+    inset 0 0 10px rgba(255,255,255,.5);
+
+  border-color: white;
+}
+
+/* PARPADEO DEL SEGUNDO DESTELLO */
+
+.grid .destello-rapido {
+  animation: parpadeoRapido 0.10s steps(2, end) infinite;
+}
+
+@keyframes parpadeoRapido {
+  0%, 100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.12;
+  }
 }
   
 </style>
@@ -739,132 +763,25 @@ async function comprobarReservaPendiente() {
   }
 }
 
-
-/* ==========================================
-   SISTEMA DE EFECTOS AFIR
-   CONFIGURACIÓN INDEPENDIENTE
-========================================== */
-
-
-/* ==========================================
-   1. CONFIGURACIÓN DESTELLO 1
-========================================== */
-
-const CONFIG_DESTELLO_1 = {
-
-  visual: {
-    width: 65,
-    height: 50,
-    zIndex: 3,
-    color: "#38d9a9",
-    intensidad: 1.2,
-    sombraBlanca: 7,
-    sombraColor: 16
-  },
-
-  movimiento: {
-    velocidadMin: 0.006,
-    velocidadMax: 0.042,
-    ondulacion: true,
-    pausas: true,
-    probabilidadPausa: 0.15,
-    tiempoPausaMin: 1500,
-    tiempoPausaMax: 4500,
-    amplitudX: 2.5,
-    amplitudY: 2.5
-  },
-
-  comportamiento: {
-    colisiones: true
-  }
-};
-
-
-/* ==========================================
-   2. CONFIGURACIÓN DESTELLO 2
-========================================== */
-
-const CONFIG_DESTELLO_2 = {
-
-  visual: {
-    width: 100,
-    height: 100,
-    zIndex: 3,
-    parpadeo: true,
-    velocidadParpadeo: "0.10s"
-  },
-
-  movimiento: {
-    velocidadMin: 0.015,
-    velocidadMax: 0.030,
-    tiempoEsperaMin: 5000,
-    tiempoEsperaMax: 12000
-  },
-
-  comportamiento: {
-    colisiones: true
-  }
-};
-
-
-/* ==========================================
-   3. CONFIGURACIÓN DESTELLO 3
-========================================== */
-
-const CONFIG_DESTELLO_3 = {
-
-  visual: {
-    width: 55,
-    height: 42,
-    zIndex: 4,
-    color: "#38d9a9"
-  },
-
-  movimiento: {
-    velocidadEntrada: 30,
-    velocidadSalida: 35,
-    velocidadMin: 18,
-    velocidadMax: 40,
-    velocidadPersecucion: 200,
-    velocidadColisionMin: 35,
-    velocidadColisionMax: 55,
-    tiempoCambioMin: 2500,
-    tiempoCambioMax: 6000,
-    tiempoEspera: 500
-  },
-
-  comportamiento: {
-    colisiones: true,
-    perseguirNumero: true
-  }
-};
-
-
-/* ==========================================
-   4. ELEMENTOS VISUALES
-========================================== */
-
 const grid = document.getElementById("grid");
-
-const tablero = document.getElementById("tablero");
-
+  
 const destello = document.createElement("div");
 destello.className = "destello-escaner";
 grid.appendChild(destello);
 
+// SEGUNDO DESTELLO
+
 const destelloRapido = document.createElement("div");
 destelloRapido.className = "destello-escaner destello-rapido";
 destelloRapido.style.display = "none";
+destelloRapido.style.width = "100px";
+destelloRapido.style.height = "100px";
+
 grid.appendChild(destelloRapido);
-
-const destelloTercero = document.createElement("div");
-destelloTercero.className = "destello-tercero";
-grid.appendChild(destelloTercero);
-
-
-/* ==========================================
-   5. ESTADO INTERNO DESTELLO 1
-========================================== */
+  
+const tablero = document.getElementById("tablero");
+  
+// MOVIMIENTO ALEATORIO DEL DESTELLO
 
 let pezX = 10;
 let pezY = 20;
@@ -878,41 +795,32 @@ let ultimoMovimiento = 0;
 let pausaPez = false;
 
 let faseOndulacion = 0;
+let intensidadLuz = 1;
+let direccionLuz = 1;
 
 function nuevoDestino() {
-
-  const config = CONFIG_DESTELLO_1.movimiento;
 
   destinoX = -10 + Math.random() * 110;
   destinoY = -10 + Math.random() * 110;
 
-  velocidadPez =
-    config.velocidadMin +
-    Math.random() * (config.velocidadMax - config.velocidadMin);
+  velocidadPez = 0.006 + Math.random() * 0.036;
 
-  pausaPez = config.pausas &&
-    Math.random() < config.probabilidadPausa;
+  pausaPez = Math.random() < 0.15;
 
   ultimoMovimiento =
-    performance.now() +
-    config.tiempoPausaMin +
-    Math.random() * (config.tiempoPausaMax - config.tiempoPausaMin);
+    performance.now() + 1500 + Math.random() * 3000;
 }
 
 function moverPez() {
 
-  if (
-    !tablero.classList.contains("oculto") &&
-    !grid.classList.contains("cargando")
-  ) {
+  if (!tablero.classList.contains("oculto") &&
+      !grid.classList.contains("cargando")) {
 
     if (performance.now() > ultimoMovimiento) {
       nuevoDestino();
     }
 
     if (!pausaPez) {
-
-      const config = CONFIG_DESTELLO_1.movimiento;
 
       faseOndulacion += 0.055;
 
@@ -922,48 +830,38 @@ function moverPez() {
       pezX += distanciaX * velocidadPez;
       pezY += distanciaY * velocidadPez;
 
-      const ondulacionX = config.ondulacion
-        ? Math.sin(faseOndulacion) * config.amplitudX +
-          Math.sin(faseOndulacion * 0.45) * 1.5
-        : 0;
-
-      const ondulacionY = config.ondulacion
-        ? Math.cos(faseOndulacion * 0.7) * config.amplitudY +
-          Math.sin(faseOndulacion * 0.35) * 1.5
-        : 0;
+      const ondulacionX =
+        Math.sin(faseOndulacion) * 2.5 +
+        Math.sin(faseOndulacion * 0.45) * 1.5;
+      
+      const ondulacionY =
+        Math.cos(faseOndulacion * 0.7) * 2.5 +
+        Math.sin(faseOndulacion * 0.35) * 1.5;
 
       destello.style.left = (pezX + ondulacionX) + "%";
       destello.style.top = (pezY + ondulacionY) + "%";
     }
 
+    // LUMINOSIDAD CONSTANTE
+    
     destello.style.opacity = 1;
-
-    const visual = CONFIG_DESTELLO_1.visual;
-
+    
     destello.style.filter =
-      `brightness(${visual.intensidad})
-      drop-shadow(0 0 ${visual.sombraBlanca}px white)
-      drop-shadow(0 0 ${visual.sombraColor}px ${visual.color})`;
+      "brightness(1.2) drop-shadow(0 0 7px white) drop-shadow(0 0 16px #38d9a9)";
   }
 
   requestAnimationFrame(moverPez);
 }
 
-
-/* ==========================================
-   6. ESTADO INTERNO DESTELLO 2
-========================================== */
+// SEGUNDO DESTELLO: MOVIMIENTO RAPIDO E INDEPENDIENTE
 
 let rapidoX = 0;
 let rapidoY = 0;
-
 let rapidoDestinoX = 0;
 let rapidoDestinoY = 0;
 
 let velocidadRapida = 0.04;
-
 let proximaAparicion = performance.now() + 2000;
-
 let destelloVisible = false;
 
 function iniciarRecorridoRapido() {
@@ -998,14 +896,11 @@ function iniciarRecorridoRapido() {
     rapidoDestinoY = -15;
   }
 
-  const config = CONFIG_DESTELLO_2.movimiento;
-
-  velocidadRapida =
-    config.velocidadMin +
-    Math.random() * (config.velocidadMax - config.velocidadMin);
+  velocidadRapida = 0.015 + Math.random() * 0.015;
 
   destelloRapido.style.left = rapidoX + "%";
   destelloRapido.style.top = rapidoY + "%";
+
   destelloRapido.style.display = "block";
 
   destelloVisible = true;
@@ -1015,10 +910,8 @@ function moverDestelloRapido() {
 
   const ahora = performance.now();
 
-  if (
-    !tablero.classList.contains("oculto") &&
-    !grid.classList.contains("cargando")
-  ) {
+  if (!tablero.classList.contains("oculto") &&
+      !grid.classList.contains("cargando")) {
 
     if (!destelloVisible && ahora >= proximaAparicion) {
       iniciarRecorridoRapido();
@@ -1040,14 +933,11 @@ function moverDestelloRapido() {
       if (distancia < 1) {
 
         destelloRapido.style.display = "none";
+
         destelloVisible = false;
 
-        const config = CONFIG_DESTELLO_2.movimiento;
-
         proximaAparicion =
-          ahora +
-          config.tiempoEsperaMin +
-          Math.random() * (config.tiempoEsperaMax - config.tiempoEsperaMin);
+          ahora + 5000 + Math.random() * 7000;
       }
     }
   }
@@ -1055,10 +945,16 @@ function moverDestelloRapido() {
   requestAnimationFrame(moverDestelloRapido);
 }
 
+moverDestelloRapido();
 
-/* ==========================================
-   7. ESTADO INTERNO DESTELLO 3
-========================================== */
+
+// =================================
+// TERCER DESTELLO
+// =================================
+
+const destelloTercero = document.createElement("div");
+destelloTercero.className = "destello-tercero";
+grid.appendChild(destelloTercero);
 
 let terceroX = -15;
 let terceroY = 50;
@@ -1067,40 +963,23 @@ let terceroDestinoX = 50;
 let terceroDestinoY = 50;
 
 let terceroVelocidad = 30;
-
 let terceroModo = "entrando";
-
 let terceroPausaHasta = 0;
 let terceroProximoCambio = 0;
-
 let terceroUltimoTiempo = performance.now();
 
-
-/* ==========================================
-   8. MOVIMIENTOS DEL DESTELLO 3
-========================================== */
-
 function destinoAleatorioTercero() {
-
-  const config = CONFIG_DESTELLO_3.movimiento;
-
   terceroDestinoX = 8 + Math.random() * 84;
   terceroDestinoY = 8 + Math.random() * 84;
 
-  terceroVelocidad =
-    config.velocidadMin +
-    Math.random() * (config.velocidadMax - config.velocidadMin);
-
+  terceroVelocidad = 18 + Math.random() * 22;
   terceroModo = "moviendo";
 
   terceroProximoCambio =
-    performance.now() +
-    config.tiempoCambioMin +
-    Math.random() * (config.tiempoCambioMax - config.tiempoCambioMin);
+    performance.now() + 2500 + Math.random() * 3500;
 }
 
 function entrarTercero() {
-
   const lado = Math.floor(Math.random() * 4);
 
   if (lado === 0) {
@@ -1120,14 +999,11 @@ function entrarTercero() {
   terceroDestinoX = 8 + Math.random() * 84;
   terceroDestinoY = 8 + Math.random() * 84;
 
-  terceroVelocidad =
-    CONFIG_DESTELLO_3.movimiento.velocidadEntrada;
-
+  terceroVelocidad = 30;
   terceroModo = "entrando";
 }
 
 function salirTercero() {
-
   const lado = Math.floor(Math.random() * 4);
 
   if (lado === 0) {
@@ -1144,24 +1020,12 @@ function salirTercero() {
     terceroDestinoY = 115;
   }
 
-  terceroVelocidad =
-    CONFIG_DESTELLO_3.movimiento.velocidadSalida;
-
+  terceroVelocidad = 35;
   terceroModo = "saliendo";
 }
 
-
-/* ==========================================
-   9. INTERACCIÓN CON LOS NÚMEROS
-========================================== */
-
 function dirigirTerceroA(boton) {
-
-  if (
-    !CONFIG_DESTELLO_3.comportamiento.perseguirNumero ||
-    !boton ||
-    !boton.isConnected
-  ) return;
+  if (!boton || !boton.isConnected) return;
 
   const rect = boton.getBoundingClientRect();
   const tableroRect = grid.getBoundingClientRect();
@@ -1176,19 +1040,11 @@ function dirigirTerceroA(boton) {
     ((rect.top + rect.height / 2 - tableroRect.top) /
     tableroRect.height) * 100;
 
-  terceroVelocidad =
-    CONFIG_DESTELLO_3.movimiento.velocidadPersecucion;
-
+  terceroVelocidad = 200;
   terceroModo = "persiguiendo";
 }
 
-
-/* ==========================================
-   10. ANIMACIÓN DEL DESTELLO 3
-========================================== */
-
 function moverTercero() {
-
   const ahora = performance.now();
 
   const delta = Math.min(
@@ -1215,7 +1071,6 @@ function moverTercero() {
         terceroModo === "moviendo" &&
         ahora >= terceroProximoCambio
       ) {
-
         if (Math.random() < 0.25) {
           salirTercero();
         } else {
@@ -1225,7 +1080,6 @@ function moverTercero() {
 
       const dx = terceroDestinoX - terceroX;
       const dy = terceroDestinoY - terceroY;
-
       const distancia = Math.hypot(dx, dy);
       const paso = terceroVelocidad * delta;
 
@@ -1235,23 +1089,17 @@ function moverTercero() {
         terceroY = terceroDestinoY;
 
         if (terceroModo === "saliendo") {
-
           entrarTercero();
 
         } else if (terceroModo === "persiguiendo") {
-
           terceroModo = "esperando";
-
-          terceroPausaHasta =
-            ahora + CONFIG_DESTELLO_3.movimiento.tiempoEspera;
+          terceroPausaHasta = ahora + 500;
 
         } else {
-
           destinoAleatorioTercero();
         }
 
       } else {
-
         terceroX += (dx / distancia) * paso;
         terceroY += (dy / distancia) * paso;
       }
@@ -1264,28 +1112,26 @@ function moverTercero() {
   requestAnimationFrame(moverTercero);
 }
 
+entrarTercero();
+requestAnimationFrame(moverTercero);
 
-/* ==========================================
-   11. COLISIONES ENTRE DESTELLOS
-========================================== */
+// =================================
+// SISTEMA DE COLISIONES ENTRE DESTELLOS
+// =================================
 
 const distanciaColision = 0.3;
 const colisionesActivas = new Set();
 
-function cambiarDireccionPorColision(destelloInfo, x, y) {
+function cambiarDireccionPorColision(destello, x, y) {
 
-  const dx = destelloInfo.x - x;
-  const dy = destelloInfo.y - y;
-
+  const dx = destello.x - x;
+  const dy = destello.y - y;
   const distancia = Math.hypot(dx, dy) || 1;
 
   const vx = dx / distancia;
   const vy = dy / distancia;
 
-  if (
-    destelloInfo.id === 0 &&
-    CONFIG_DESTELLO_1.comportamiento.colisiones
-  ) {
+  if (destello.id === 0) {
 
     destinoX = Math.max(-10, Math.min(110, pezX + vx * 65));
     destinoY = Math.max(-10, Math.min(110, pezY + vy * 65));
@@ -1293,40 +1139,23 @@ function cambiarDireccionPorColision(destelloInfo, x, y) {
     pausaPez = false;
     ultimoMovimiento = performance.now() + 3000;
 
-  } else if (
-    destelloInfo.id === 1 &&
-    CONFIG_DESTELLO_2.comportamiento.colisiones
-  ) {
+  } else if (destello.id === 1) {
 
     rapidoDestinoX = Math.max(-15, Math.min(115, rapidoX + vx * 100));
     rapidoDestinoY = Math.max(-15, Math.min(115, rapidoY + vy * 100));
 
     velocidadRapida = 0.025 + Math.random() * 0.015;
 
-  } else if (
-    destelloInfo.id === 2 &&
-    CONFIG_DESTELLO_3.comportamiento.colisiones
-  ) {
+  } else if (destello.id === 2) {
 
     terceroDestinoX = Math.max(8, Math.min(84, terceroX + vx * 65));
     terceroDestinoY = Math.max(8, Math.min(84, terceroY + vy * 65));
 
-    const config = CONFIG_DESTELLO_3.movimiento;
-
-    terceroVelocidad =
-      config.velocidadColisionMin +
-      Math.random() *
-      (config.velocidadColisionMax - config.velocidadColisionMin);
-
+    terceroVelocidad = 35 + Math.random() * 20;
     terceroModo = "moviendo";
     terceroProximoCambio = performance.now() + 3000;
   }
 }
-
-
-/* ==========================================
-   12. DETECCIÓN DE COLISIONES
-========================================== */
 
 function detectarColisiones() {
 
@@ -1343,7 +1172,8 @@ function detectarColisiones() {
 
     const posiciones = elementos.map((elemento, id) => {
 
-      const visible = id !== 1 || destelloVisible;
+      const visible =
+        id !== 1 || destelloVisible;
 
       if (!visible) return null;
 
@@ -1360,6 +1190,7 @@ function detectarColisiones() {
     });
 
     const colisionados = new Set();
+
     const paresDetectados = new Set();
 
     for (let i = 0; i < posiciones.length; i++) {
@@ -1375,6 +1206,7 @@ function detectarColisiones() {
         const dy = a.y - b.y;
 
         const distancia = Math.hypot(dx, dy);
+
         const limite = a.radio + b.radio;
 
         const par = i + "-" + j;
@@ -1384,12 +1216,15 @@ function detectarColisiones() {
           paresDetectados.add(par);
 
           if (!colisionesActivas.has(par)) {
+
             colisionados.add(i);
             colisionados.add(j);
           }
         }
       }
     }
+
+    // LIBERAR COLISIONES CUANDO SE SEPARAN
 
     for (const par of colisionesActivas) {
 
@@ -1398,9 +1233,13 @@ function detectarColisiones() {
       }
     }
 
+    // REGISTRAR NUEVAS COLISIONES
+
     for (const par of paresDetectados) {
       colisionesActivas.add(par);
     }
+
+    // CAMBIAR DIRECCIÓN DE TODOS LOS IMPLICADOS
 
     if (colisionados.size > 0) {
 
@@ -1419,14 +1258,17 @@ function detectarColisiones() {
 
         const p = posiciones[id];
 
+        const x = centroX;
+        const y = centroY;
+
         cambiarDireccionPorColision(
           {
             id,
             x: p.x,
             y: p.y
           },
-          centroX,
-          centroY
+          x,
+          y
         );
       });
     }
@@ -1435,19 +1277,10 @@ function detectarColisiones() {
   requestAnimationFrame(detectarColisiones);
 }
 
-
-/* ==========================================
-   13. INICIALIZACIÓN DEL SISTEMA
-========================================== */
-
-nuevoDestino();
-entrarTercero();
-
-moverPez();
-moverDestelloRapido();
-
-requestAnimationFrame(moverTercero);
 requestAnimationFrame(detectarColisiones);
+  
+nuevoDestino();
+moverPez();
   
 const mensaje = document.getElementById("mensaje");
 const reservar = document.getElementById("reservar");
