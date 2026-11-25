@@ -590,6 +590,7 @@ let celebracionActiva = false;
 let notificacionEnviada = false;
 
 let anguloDanza = 0;
+let aparicionDanza = 0;
 let separacionDanza = 0;
 let tiempoColision = 0;
   
@@ -720,7 +721,7 @@ function moverPez() {
       
       } else if (danzaActiva) {
       
-        anguloDanza += 0.035;
+        anguloDanza += 0.085;
       
         const radio = 5 + separacionDanza;
       
@@ -1642,6 +1643,10 @@ function dibujarTablero() {
 
       // ACTIVAR DANZA DE LOS DOS PRIMEROS DESTELLOS
 
+      if (seleccionados.length > 0 && !danzaActiva) {
+        aparicionDanza = performance.now();
+      }
+      
       danzaActiva = seleccionados.length > 0;
       
       if (!danzaActiva) {
