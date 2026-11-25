@@ -6,11 +6,6 @@
 <title>AFIR - Rifa Online</title>
 
 <style>
-
-/* =====================================================
-   01. CONFIGURACIÓN GENERAL
-===================================================== */
-
 * {
   box-sizing: border-box;
 }
@@ -47,51 +42,7 @@ h1, h2 {
   display: none !important;
 }
 
-/* =====================================================
-   02. GALERÍA
-===================================================== */
-
-.galeria-rifas {
-  display: flex;
-  gap: 15px;
-  overflow-x: auto;
-  padding: 15px 5px 25px;
-  scroll-snap-type: x mandatory;
-}
-
-.tarjeta-rifa {
-  flex: 0 0 82%;
-  max-width: 340px;
-  background: #111c2b;
-  border: 1px solid #a88745;
-  border-radius: 12px;
-  overflow: hidden;
-  cursor: pointer;
-  scroll-snap-align: center;
-}
-
-.tarjeta-rifa img {
-  width: 100%;
-  height: 230px;
-  object-fit: contain;
-  background: #172233;
-}
-
-.tarjeta-rifa .info-rifa {
-  padding: 14px;
-}
-
-.tarjeta-rifa h3 {
-  color: #e8c778;
-}
-
-.tarjeta-rifa p {
-  color: #b8c5d6;
-}
-
-/* =====================================================
-   03. TABLERO
-===================================================== */
+/* TABLERO */
 
 .grid {
   position: relative;
@@ -123,6 +74,8 @@ h1, h2 {
   visibility: hidden;
 }
 
+/* IMAGEN HOLOGRÁFICA */
+
 .grid::before {
   content: "";
   position: absolute;
@@ -143,9 +96,7 @@ h1, h2 {
   filter: none;
 }
 
-/* =====================================================
-   04. NÚMEROS
-===================================================== */
+/* NÚMEROS */
 
 button.numero {
   position: relative;
@@ -185,8 +136,11 @@ button.numero {
     background .2s ease;
 }
 
+/* HOVER */
+
 button.numero:hover:not(:disabled) {
   transform: translateY(-3px);
+
   border-color: #ffe5a0;
 
   box-shadow:
@@ -194,6 +148,8 @@ button.numero:hover:not(:disabled) {
     0 0 18px rgba(255,190,70,.35),
     inset 0 0 8px rgba(255,255,255,.25);
 }
+
+/* SELECCIONADOS */
 
 button.numero.seleccionado {
   background: linear-gradient(
@@ -211,6 +167,8 @@ button.numero.seleccionado {
     0 0 20px rgba(255,193,65,.65),
     inset 0 0 8px rgba(255,255,255,.6);
 }
+
+/* RESERVADOS */
 
 button.numero.reservado {
   background: linear-gradient(
@@ -230,6 +188,8 @@ button.numero.reservado {
   cursor: default;
 }
 
+/* VENDIDOS */
+
 button.numero.vendido {
   background: transparent;
   color: transparent;
@@ -242,11 +202,7 @@ button.numero:disabled {
   opacity: 1;
 }
 
-/* =====================================================
-   05. EFECTOS DEL TABLERO
-===================================================== */
-
-/* Escáner */
+/* ESCÁNER DORADO */
 
 .grid::after {
   content: "";
@@ -280,7 +236,7 @@ button.numero:disabled {
   to { top: 120%; }
 }
 
-/* Ripple */
+/* RIPPLE */
 
 .ripple-wave {
   position: absolute;
@@ -308,7 +264,7 @@ button.numero:disabled {
   }
 }
 
-/* Partículas */
+/* PARTÍCULAS */
 
 .particula {
   position: absolute;
@@ -336,6 +292,7 @@ button.numero:disabled {
   }
 
   12% { opacity: 1; }
+
   85% { opacity: .85; }
 
   100% {
@@ -346,11 +303,9 @@ button.numero:disabled {
   }
 }
 
-/* =====================================================
-   06. DESTELLO 1: RUBÍ
-===================================================== */
+/* DESTELLO 1: RUBÍ */
 
-.destello-rubi {
+.grid .destello-escaner {
   position: absolute;
   z-index: 3;
 
@@ -379,47 +334,9 @@ button.numero:disabled {
   animation: nadoPez 8s ease-in-out infinite;
 }
 
-/* =====================================================
-   07. DESTELLO 2: PARPADEANTE
-===================================================== */
+/* DESTELLO 3: HOLOGRAMA TURQUESA */
 
-.destello-rapido {
-  position: absolute;
-  z-index: 3;
-
-  width: 100px;
-  height: 100px;
-
-  pointer-events: none;
-
-  background: radial-gradient(
-    ellipse at center,
-    white 0%,
-    rgba(255,255,255,.9) 5%,
-    rgba(255,80,80,.9) 15%,
-    rgba(190,0,35,.7) 38%,
-    transparent 70%
-  );
-
-  filter:
-    drop-shadow(0 0 6px white)
-    drop-shadow(0 0 15px #d40028);
-
-  transform: translate(-50%, -50%);
-
-  animation: parpadeoRapido .10s steps(2,end) infinite;
-}
-
-@keyframes parpadeoRapido {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .12; }
-}
-
-/* =====================================================
-   08. DESTELLO 3: TURQUESA
-===================================================== */
-
-.destello-turquesa {
+.destello-tercero {
   position: absolute;
   z-index: 4;
 
@@ -444,9 +361,18 @@ button.numero:disabled {
   transform: translate(-50%, -50%);
 }
 
-/* =====================================================
-   09. BOTONES Y FORMULARIOS
-===================================================== */
+/* DESTELLO 2: PARPADEO */
+
+.grid .destello-rapido {
+  animation: parpadeoRapido .10s steps(2,end) infinite;
+}
+
+@keyframes parpadeoRapido {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .12; }
+}
+
+/* BOTONES Y FORMULARIOS */
 
 #volver {
   background: #172233;
@@ -499,23 +425,58 @@ input,
   margin: 12px;
 }
 
-/* =====================================================
-   10. RESPONSIVE
-===================================================== */
+/* GALERÍA */
+
+.galeria-rifas {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding: 15px 5px 25px;
+  scroll-snap-type: x mandatory;
+}
+
+.tarjeta-rifa {
+  flex: 0 0 82%;
+  max-width: 340px;
+  background: #111c2b;
+  border: 1px solid #a88745;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  scroll-snap-align: center;
+}
+
+.tarjeta-rifa img {
+  width: 100%;
+  height: 230px;
+  object-fit: contain;
+  background: #172233;
+}
+
+.tarjeta-rifa .info-rifa {
+  padding: 14px;
+}
+
+.tarjeta-rifa h3 {
+  color: #e8c778;
+}
+
+.tarjeta-rifa p {
+  color: #b8c5d6;
+}
 
 @media(max-width:450px) {
   body { padding: 12px; }
   .grid { gap: 3px; padding: 5px; }
 }
-
+  
 </style>
+  
 </head>
 
 <body>
 
-<!-- =====================================================
-     11. HTML
-===================================================== -->
+<!-- PORTADA -->
 
 <section id="portada">
 
@@ -525,9 +486,13 @@ input,
 
 </section>
 
+<!-- TABLERO -->
+
 <section id="tablero" class="oculto">
 
-  <button id="volver">← Volver a la portada</button>
+  <button id="volver">
+    ← Volver a la portada
+  </button>
 
   <h2>adivina la imagen</h2>
 
@@ -551,31 +516,24 @@ input,
     autocomplete="off"
   >
 
-  <button id="reservar">confirmar reserva</button>
+  <button id="reservar">
+    confirmar reserva
+  </button>
 
   <p id="mensaje"></p>
 
 </section>
 
-
 <script>
 
-/* =====================================================
-   12. CONFIGURACIÓN GLOBAL
-===================================================== */
-
 const API = "https://blue-poetry-7c73.cesauro.workers.dev";
-
-const grid = document.getElementById("grid");
-const tablero = document.getElementById("tablero");
-const portada = document.getElementById("portada");
-const mensaje = document.getElementById("mensaje");
-const reservar = document.getElementById("reservar");
 
 let seleccionados = [];
 let numeros = [];
 let imagenPuzzle = "";
 let raffleId = null;
+
+/* IDENTIFICADOR PARA EVITAR CARGAS ANTIGUAS */
 
 let cargaNumerosId = 0;
 let enlaceNotificacion = null;
@@ -583,711 +541,570 @@ let reservaCreada = false;
 let telefonoPendiente = "";
 let comprobandoReserva = false;
 
+async function comprobarReservaPendiente() {
+  const telefono = document.getElementById("telefono").value.trim();
 
-/* =====================================================
-   13. MÓDULO INDEPENDIENTE: DESTELLO RUBÍ
-===================================================== */
+  if (!telefono || !raffleId || comprobandoReserva) return;
 
-const DestelloRubi = (() => {
+  comprobandoReserva = true;
 
-  /* Estado privado */
-
-  const elemento = document.createElement("div");
-  elemento.className = "destello-rubi";
-
-  grid.appendChild(elemento);
-
-  let x = 10;
-  let y = 20;
-
-  let destinoX = 80;
-  let destinoY = 70;
-
-  let velocidad = 0.012;
-
-  let ultimoMovimiento = 0;
-  let pausa = false;
-
-  let faseOndulacion = 0;
-
-  /* Destino aleatorio */
-
-  function nuevoDestino() {
-
-    destinoX = -10 + Math.random() * 110;
-    destinoY = -10 + Math.random() * 110;
-
-    velocidad = 0.006 + Math.random() * 0.036;
-
-    pausa = Math.random() < 0.15;
-
-    ultimoMovimiento =
-      performance.now() + 1500 + Math.random() * 3000;
-  }
-
-  /* Movimiento independiente */
-
-  function actualizar() {
-
-    if (
-      !tablero.classList.contains("oculto") &&
-      !grid.classList.contains("cargando")
-    ) {
-
-      if (performance.now() > ultimoMovimiento) {
-        nuevoDestino();
-      }
-
-      if (!pausa) {
-
-        faseOndulacion += 0.055;
-
-        const distanciaX = destinoX - x;
-        const distanciaY = destinoY - y;
-
-        x += distanciaX * velocidad;
-        y += distanciaY * velocidad;
-
-        const ondulacionX =
-          Math.sin(faseOndulacion) * 2.5 +
-          Math.sin(faseOndulacion * 0.45) * 1.5;
-
-        const ondulacionY =
-          Math.cos(faseOndulacion * 0.7) * 2.5 +
-          Math.sin(faseOndulacion * 0.35) * 1.5;
-
-        elemento.style.left = (x + ondulacionX) + "%";
-        elemento.style.top = (y + ondulacionY) + "%";
-      }
-
-      elemento.style.opacity = 1;
-
-      elemento.style.filter =
-        "brightness(1.2) drop-shadow(0 0 7px white) drop-shadow(0 0 16px #38d9a9)";
-    }
-
-    requestAnimationFrame(actualizar);
-  }
-
-  /* Interfaz pública para colisiones */
-
-  function obtenerPosicion() {
-    return {
-      elemento,
-      visible: true
-    };
-  }
-
-  function recibirColision(vx, vy) {
-
-    destinoX = Math.max(-10, Math.min(110, x + vx * 65));
-    destinoY = Math.max(-10, Math.min(110, y + vy * 65));
-
-    pausa = false;
-
-    ultimoMovimiento = performance.now() + 3000;
-  }
-
-  function iniciar() {
-    nuevoDestino();
-    actualizar();
-  }
-
-  return {
-    iniciar,
-    obtenerPosicion,
-    recibirColision
-  };
-
-})();
-
-
-/* =====================================================
-   14. MÓDULO INDEPENDIENTE: DESTELLO PARPADEANTE
-===================================================== */
-
-const DestelloRapido = (() => {
-
-  /* Estado privado */
-
-  const elemento = document.createElement("div");
-  elemento.className = "destello-rapido";
-  elemento.style.display = "none";
-
-  grid.appendChild(elemento);
-
-  let x = 0;
-  let y = 0;
-
-  let destinoX = 0;
-  let destinoY = 0;
-
-  let velocidad = 0.04;
-
-  let proximaAparicion = performance.now() + 2000;
-  let visible = false;
-
-  /* Comenzar recorrido */
-
-  function iniciarRecorrido() {
-
-    const lado = Math.floor(Math.random() * 4);
-
-    if (lado === 0) {
-
-      x = -15;
-      y = Math.random() * 100;
-
-      destinoX = 115;
-      destinoY = Math.random() * 100;
-
-    } else if (lado === 1) {
-
-      x = 115;
-      y = Math.random() * 100;
-
-      destinoX = -15;
-      destinoY = Math.random() * 100;
-
-    } else if (lado === 2) {
-
-      x = Math.random() * 100;
-      y = -15;
-
-      destinoX = Math.random() * 100;
-      destinoY = 115;
-
-    } else {
-
-      x = Math.random() * 100;
-      y = 115;
-
-      destinoX = Math.random() * 100;
-      destinoY = -15;
-    }
-
-    velocidad = 0.015 + Math.random() * 0.015;
-
-    elemento.style.left = x + "%";
-    elemento.style.top = y + "%";
-
-    elemento.style.display = "block";
-
-    visible = true;
-  }
-
-  /* Movimiento independiente */
-
-  function actualizar() {
-
-    const ahora = performance.now();
-
-    if (
-      !tablero.classList.contains("oculto") &&
-      !grid.classList.contains("cargando")
-    ) {
-
-      if (!visible && ahora >= proximaAparicion) {
-        iniciarRecorrido();
-      }
-
-      if (visible) {
-
-        x += (destinoX - x) * velocidad;
-        y += (destinoY - y) * velocidad;
-
-        elemento.style.left = x + "%";
-        elemento.style.top = y + "%";
-
-        const distancia = Math.hypot(
-          destinoX - x,
-          destinoY - y
-        );
-
-        if (distancia < 1) {
-
-          elemento.style.display = "none";
-
-          visible = false;
-
-          proximaAparicion =
-            ahora + 5000 + Math.random() * 7000;
-        }
-      }
-    }
-
-    requestAnimationFrame(actualizar);
-  }
-
-  /* Interfaz pública */
-
-  function obtenerPosicion() {
-    return {
-      elemento,
-      visible
-    };
-  }
-
-  function recibirColision(vx, vy) {
-
-    destinoX = Math.max(-15, Math.min(115, x + vx * 100));
-    destinoY = Math.max(-15, Math.min(115, y + vy * 100));
-
-    velocidad = 0.025 + Math.random() * 0.015;
-  }
-
-  function iniciar() {
-    actualizar();
-  }
-
-  return {
-    iniciar,
-    obtenerPosicion,
-    recibirColision
-  };
-
-})();
-
-
-/* =====================================================
-   15. MÓDULO INDEPENDIENTE: DESTELLO TURQUESA
-===================================================== */
-
-const DestelloTurquesa = (() => {
-
-  /* Estado privado */
-
-  const elemento = document.createElement("div");
-  elemento.className = "destello-turquesa";
-
-  grid.appendChild(elemento);
-
-  let x = -15;
-  let y = 50;
-
-  let destinoX = 50;
-  let destinoY = 50;
-
-  let velocidad = 30;
-
-  let modo = "entrando";
-
-  let pausaHasta = 0;
-  let proximoCambio = 0;
-
-  let ultimoTiempo = performance.now();
-
-  /* Destino aleatorio */
-
-  function destinoAleatorio() {
-
-    destinoX = 8 + Math.random() * 84;
-    destinoY = 8 + Math.random() * 84;
-
-    velocidad = 18 + Math.random() * 22;
-
-    modo = "moviendo";
-
-    proximoCambio =
-      performance.now() + 2500 + Math.random() * 3500;
-  }
-
-  /* Entrada desde los bordes */
-
-  function entrar() {
-
-    const lado = Math.floor(Math.random() * 4);
-
-    if (lado === 0) {
-
-      x = -15;
-      y = Math.random() * 100;
-
-    } else if (lado === 1) {
-
-      x = 115;
-      y = Math.random() * 100;
-
-    } else if (lado === 2) {
-
-      x = Math.random() * 100;
-      y = -15;
-
-    } else {
-
-      x = Math.random() * 100;
-      y = 115;
-    }
-
-    destinoX = 8 + Math.random() * 84;
-    destinoY = 8 + Math.random() * 84;
-
-    velocidad = 30;
-    modo = "entrando";
-  }
-
-  /* Salida hacia los bordes */
-
-  function salir() {
-
-    const lado = Math.floor(Math.random() * 4);
-
-    if (lado === 0) {
-
-      destinoX = -15;
-      destinoY = Math.random() * 100;
-
-    } else if (lado === 1) {
-
-      destinoX = 115;
-      destinoY = Math.random() * 100;
-
-    } else if (lado === 2) {
-
-      destinoX = Math.random() * 100;
-      destinoY = -15;
-
-    } else {
-
-      destinoX = Math.random() * 100;
-      destinoY = 115;
-    }
-
-    velocidad = 35;
-    modo = "saliendo";
-  }
-
-  /* Perseguir un número */
-
-  function perseguir(boton) {
-
-    if (!boton || !boton.isConnected) return;
-
-    const rect = boton.getBoundingClientRect();
-    const tableroRect = grid.getBoundingClientRect();
-
-    if (!tableroRect.width || !tableroRect.height) return;
-
-    destinoX =
-      ((rect.left + rect.width / 2 - tableroRect.left) /
-      tableroRect.width) * 100;
-
-    destinoY =
-      ((rect.top + rect.height / 2 - tableroRect.top) /
-      tableroRect.height) * 100;
-
-    velocidad = 200;
-    modo = "persiguiendo";
-  }
-
-  /* Movimiento independiente */
-
-  function actualizar() {
-
-    const ahora = performance.now();
-
-    const delta = Math.min(
-      (ahora - ultimoTiempo) / 1000,
-      0.05
+  try {
+    const respuesta = await fetch(
+      API + "/api/reservations/status?raffle_id=" +
+      raffleId + "&phone=" + encodeURIComponent(telefono)
     );
 
-    ultimoTiempo = ahora;
+    const resultado = await respuesta.json();
 
-    if (
-      !tablero.classList.contains("oculto") &&
-      !grid.classList.contains("cargando")
-    ) {
+    if (!respuesta.ok) return;
 
-      if (modo === "esperando") {
+    if (!enlaceNotificacion) {
+      reservar.hidden = resultado.pending;
+    }
+    if (!resultado.pending && enlaceNotificacion) {
+      enlaceNotificacion = null;
+      reservar.textContent = "Confirmar reserva";
+      reservar.disabled = false;
+    }
 
-        if (ahora >= pausaHasta) {
-          destinoAleatorio();
+    mensaje.textContent = resultado.pending
+      ? resultado.message
+      : "";
+
+  } catch(error) {
+    console.error(error);
+  } finally {
+    comprobandoReserva = false;
+  }
+}
+
+const grid = document.getElementById("grid");
+  
+const destello = document.createElement("div");
+destello.className = "destello-escaner";
+grid.appendChild(destello);
+
+// SEGUNDO DESTELLO
+
+const destelloRapido = document.createElement("div");
+destelloRapido.className = "destello-escaner destello-rapido";
+destelloRapido.style.display = "none";
+destelloRapido.style.width = "100px";
+destelloRapido.style.height = "100px";
+
+grid.appendChild(destelloRapido);
+  
+const tablero = document.getElementById("tablero");
+  
+// MOVIMIENTO ALEATORIO DEL DESTELLO
+
+let pezX = 10;
+let pezY = 20;
+
+let destinoX = 80;
+let destinoY = 70;
+
+let velocidadPez = 0.012;
+
+let ultimoMovimiento = 0;
+let pausaPez = false;
+
+let faseOndulacion = 0;
+let intensidadLuz = 1;
+let direccionLuz = 1;
+
+function nuevoDestino() {
+
+  destinoX = -10 + Math.random() * 110;
+  destinoY = -10 + Math.random() * 110;
+
+  velocidadPez = 0.006 + Math.random() * 0.036;
+
+  pausaPez = Math.random() < 0.15;
+
+  ultimoMovimiento =
+    performance.now() + 1500 + Math.random() * 3000;
+}
+
+function moverPez() {
+
+  if (!tablero.classList.contains("oculto") &&
+      !grid.classList.contains("cargando")) {
+
+    if (performance.now() > ultimoMovimiento) {
+      nuevoDestino();
+    }
+
+    if (!pausaPez) {
+
+      faseOndulacion += 0.055;
+
+      const distanciaX = destinoX - pezX;
+      const distanciaY = destinoY - pezY;
+
+      pezX += distanciaX * velocidadPez;
+      pezY += distanciaY * velocidadPez;
+
+      const ondulacionX =
+        Math.sin(faseOndulacion) * 2.5 +
+        Math.sin(faseOndulacion * 0.45) * 1.5;
+      
+      const ondulacionY =
+        Math.cos(faseOndulacion * 0.7) * 2.5 +
+        Math.sin(faseOndulacion * 0.35) * 1.5;
+
+      destello.style.left = (pezX + ondulacionX) + "%";
+      destello.style.top = (pezY + ondulacionY) + "%";
+    }
+
+    // LUMINOSIDAD CONSTANTE
+    
+    destello.style.opacity = 1;
+    
+    destello.style.filter =
+      "brightness(1.2) drop-shadow(0 0 7px white) drop-shadow(0 0 16px #38d9a9)";
+  }
+
+  requestAnimationFrame(moverPez);
+}
+
+// SEGUNDO DESTELLO: MOVIMIENTO RAPIDO E INDEPENDIENTE
+
+let rapidoX = 0;
+let rapidoY = 0;
+let rapidoDestinoX = 0;
+let rapidoDestinoY = 0;
+
+let velocidadRapida = 0.04;
+let proximaAparicion = performance.now() + 2000;
+let destelloVisible = false;
+
+function iniciarRecorridoRapido() {
+
+  const lado = Math.floor(Math.random() * 4);
+
+  if (lado === 0) {
+    rapidoX = -15;
+    rapidoY = Math.random() * 100;
+    rapidoDestinoX = 115;
+    rapidoDestinoY = Math.random() * 100;
+  }
+
+  if (lado === 1) {
+    rapidoX = 115;
+    rapidoY = Math.random() * 100;
+    rapidoDestinoX = -15;
+    rapidoDestinoY = Math.random() * 100;
+  }
+
+  if (lado === 2) {
+    rapidoX = Math.random() * 100;
+    rapidoY = -15;
+    rapidoDestinoX = Math.random() * 100;
+    rapidoDestinoY = 115;
+  }
+
+  if (lado === 3) {
+    rapidoX = Math.random() * 100;
+    rapidoY = 115;
+    rapidoDestinoX = Math.random() * 100;
+    rapidoDestinoY = -15;
+  }
+
+  velocidadRapida = 0.015 + Math.random() * 0.015;
+
+  destelloRapido.style.left = rapidoX + "%";
+  destelloRapido.style.top = rapidoY + "%";
+
+  destelloRapido.style.display = "block";
+
+  destelloVisible = true;
+}
+
+function moverDestelloRapido() {
+
+  const ahora = performance.now();
+
+  if (!tablero.classList.contains("oculto") &&
+      !grid.classList.contains("cargando")) {
+
+    if (!destelloVisible && ahora >= proximaAparicion) {
+      iniciarRecorridoRapido();
+    }
+
+    if (destelloVisible) {
+
+      rapidoX += (rapidoDestinoX - rapidoX) * velocidadRapida;
+      rapidoY += (rapidoDestinoY - rapidoY) * velocidadRapida;
+
+      destelloRapido.style.left = rapidoX + "%";
+      destelloRapido.style.top = rapidoY + "%";
+
+      const distancia = Math.hypot(
+        rapidoDestinoX - rapidoX,
+        rapidoDestinoY - rapidoY
+      );
+
+      if (distancia < 1) {
+
+        destelloRapido.style.display = "none";
+
+        destelloVisible = false;
+
+        proximaAparicion =
+          ahora + 5000 + Math.random() * 7000;
+      }
+    }
+  }
+
+  requestAnimationFrame(moverDestelloRapido);
+}
+
+moverDestelloRapido();
+
+
+// =================================
+// TERCER DESTELLO
+// =================================
+
+const destelloTercero = document.createElement("div");
+destelloTercero.className = "destello-tercero";
+grid.appendChild(destelloTercero);
+
+let terceroX = -15;
+let terceroY = 50;
+
+let terceroDestinoX = 50;
+let terceroDestinoY = 50;
+
+let terceroVelocidad = 30;
+let terceroModo = "entrando";
+let terceroPausaHasta = 0;
+let terceroProximoCambio = 0;
+let terceroUltimoTiempo = performance.now();
+
+function destinoAleatorioTercero() {
+  terceroDestinoX = 8 + Math.random() * 84;
+  terceroDestinoY = 8 + Math.random() * 84;
+
+  terceroVelocidad = 18 + Math.random() * 22;
+  terceroModo = "moviendo";
+
+  terceroProximoCambio =
+    performance.now() + 2500 + Math.random() * 3500;
+}
+
+function entrarTercero() {
+  const lado = Math.floor(Math.random() * 4);
+
+  if (lado === 0) {
+    terceroX = -15;
+    terceroY = Math.random() * 100;
+  } else if (lado === 1) {
+    terceroX = 115;
+    terceroY = Math.random() * 100;
+  } else if (lado === 2) {
+    terceroX = Math.random() * 100;
+    terceroY = -15;
+  } else {
+    terceroX = Math.random() * 100;
+    terceroY = 115;
+  }
+
+  terceroDestinoX = 8 + Math.random() * 84;
+  terceroDestinoY = 8 + Math.random() * 84;
+
+  terceroVelocidad = 30;
+  terceroModo = "entrando";
+}
+
+function salirTercero() {
+  const lado = Math.floor(Math.random() * 4);
+
+  if (lado === 0) {
+    terceroDestinoX = -15;
+    terceroDestinoY = Math.random() * 100;
+  } else if (lado === 1) {
+    terceroDestinoX = 115;
+    terceroDestinoY = Math.random() * 100;
+  } else if (lado === 2) {
+    terceroDestinoX = Math.random() * 100;
+    terceroDestinoY = -15;
+  } else {
+    terceroDestinoX = Math.random() * 100;
+    terceroDestinoY = 115;
+  }
+
+  terceroVelocidad = 35;
+  terceroModo = "saliendo";
+}
+
+function dirigirTerceroA(boton) {
+  if (!boton || !boton.isConnected) return;
+
+  const rect = boton.getBoundingClientRect();
+  const tableroRect = grid.getBoundingClientRect();
+
+  if (!tableroRect.width || !tableroRect.height) return;
+
+  terceroDestinoX =
+    ((rect.left + rect.width / 2 - tableroRect.left) /
+    tableroRect.width) * 100;
+
+  terceroDestinoY =
+    ((rect.top + rect.height / 2 - tableroRect.top) /
+    tableroRect.height) * 100;
+
+  terceroVelocidad = 200;
+  terceroModo = "persiguiendo";
+}
+
+function moverTercero() {
+  const ahora = performance.now();
+
+  const delta = Math.min(
+    (ahora - terceroUltimoTiempo) / 1000,
+    0.05
+  );
+
+  terceroUltimoTiempo = ahora;
+
+  if (
+    !tablero.classList.contains("oculto") &&
+    !grid.classList.contains("cargando")
+  ) {
+
+    if (terceroModo === "esperando") {
+
+      if (ahora >= terceroPausaHasta) {
+        destinoAleatorioTercero();
+      }
+
+    } else {
+
+      if (
+        terceroModo === "moviendo" &&
+        ahora >= terceroProximoCambio
+      ) {
+        if (Math.random() < 0.25) {
+          salirTercero();
+        } else {
+          destinoAleatorioTercero();
+        }
+      }
+
+      const dx = terceroDestinoX - terceroX;
+      const dy = terceroDestinoY - terceroY;
+      const distancia = Math.hypot(dx, dy);
+      const paso = terceroVelocidad * delta;
+
+      if (distancia <= paso || distancia < 0.01) {
+
+        terceroX = terceroDestinoX;
+        terceroY = terceroDestinoY;
+
+        if (terceroModo === "saliendo") {
+          entrarTercero();
+
+        } else if (terceroModo === "persiguiendo") {
+          terceroModo = "esperando";
+          terceroPausaHasta = ahora + 500;
+
+        } else {
+          destinoAleatorioTercero();
         }
 
       } else {
-
-        if (
-          modo === "moviendo" &&
-          ahora >= proximoCambio
-        ) {
-
-          if (Math.random() < 0.25) {
-            salir();
-          } else {
-            destinoAleatorio();
-          }
-        }
-
-        const dx = destinoX - x;
-        const dy = destinoY - y;
-
-        const distancia = Math.hypot(dx, dy);
-        const paso = velocidad * delta;
-
-        if (distancia <= paso || distancia < 0.01) {
-
-          x = destinoX;
-          y = destinoY;
-
-          if (modo === "saliendo") {
-
-            entrar();
-
-          } else if (modo === "persiguiendo") {
-
-            modo = "esperando";
-            pausaHasta = ahora + 500;
-
-          } else {
-
-            destinoAleatorio();
-          }
-
-        } else {
-
-          x += (dx / distancia) * paso;
-          y += (dy / distancia) * paso;
-        }
+        terceroX += (dx / distancia) * paso;
+        terceroY += (dy / distancia) * paso;
       }
-
-      elemento.style.left = x + "%";
-      elemento.style.top = y + "%";
     }
 
-    requestAnimationFrame(actualizar);
+    destelloTercero.style.left = terceroX + "%";
+    destelloTercero.style.top = terceroY + "%";
   }
 
-  /* Interfaz pública */
+  requestAnimationFrame(moverTercero);
+}
 
-  function obtenerPosicion() {
-    return {
-      elemento,
-      visible: true
-    };
+entrarTercero();
+requestAnimationFrame(moverTercero);
+
+// =================================
+// SISTEMA DE COLISIONES ENTRE DESTELLOS
+// =================================
+
+const distanciaColision = 0.3;
+const colisionesActivas = new Set();
+
+function cambiarDireccionPorColision(destello, x, y) {
+
+  const dx = destello.x - x;
+  const dy = destello.y - y;
+  const distancia = Math.hypot(dx, dy) || 1;
+
+  const vx = dx / distancia;
+  const vy = dy / distancia;
+
+  if (destello.id === 0) {
+
+    destinoX = Math.max(-10, Math.min(110, pezX + vx * 65));
+    destinoY = Math.max(-10, Math.min(110, pezY + vy * 65));
+
+    pausaPez = false;
+    ultimoMovimiento = performance.now() + 3000;
+
+  } else if (destello.id === 1) {
+
+    rapidoDestinoX = Math.max(-15, Math.min(115, rapidoX + vx * 100));
+    rapidoDestinoY = Math.max(-15, Math.min(115, rapidoY + vy * 100));
+
+    velocidadRapida = 0.025 + Math.random() * 0.015;
+
+  } else if (destello.id === 2) {
+
+    terceroDestinoX = Math.max(8, Math.min(84, terceroX + vx * 65));
+    terceroDestinoY = Math.max(8, Math.min(84, terceroY + vy * 65));
+
+    terceroVelocidad = 35 + Math.random() * 20;
+    terceroModo = "moviendo";
+    terceroProximoCambio = performance.now() + 3000;
   }
+}
 
-  function recibirColision(vx, vy) {
+function detectarColisiones() {
 
-    destinoX = Math.max(8, Math.min(84, x + vx * 65));
-    destinoY = Math.max(8, Math.min(84, y + vy * 65));
+  if (
+    !tablero.classList.contains("oculto") &&
+    !grid.classList.contains("cargando")
+  ) {
 
-    velocidad = 35 + Math.random() * 20;
+    const elementos = [
+      destello,
+      destelloRapido,
+      destelloTercero
+    ];
 
-    modo = "moviendo";
+    const posiciones = elementos.map((elemento, id) => {
 
-    proximoCambio = performance.now() + 3000;
-  }
+      const visible =
+        id !== 1 || destelloVisible;
 
-  function iniciar() {
-    entrar();
-    actualizar();
-  }
+      if (!visible) return null;
 
-  return {
-    iniciar,
-    obtenerPosicion,
-    recibirColision,
-    perseguir
-  };
-
-})();
-
-
-/* =====================================================
-   16. GESTOR INDEPENDIENTE DE COLISIONES
-===================================================== */
-
-/*
-   Este gestor NO controla el movimiento interno
-   de ningún destello.
-
-   Solamente:
-   1. Obtiene sus posiciones.
-   2. Detecta colisiones.
-   3. Calcula la dirección de separación.
-   4. Comunica el resultado mediante su interfaz pública.
-*/
-
-const GestorColisiones = (() => {
-
-  const distanciaColision = 0.3;
-
-  const colisionesActivas = new Set();
-
-  const destellos = [
-    DestelloRubi,
-    DestelloRapido,
-    DestelloTurquesa
-  ];
-
-  function obtenerPosiciones() {
-
-    const gridRect = grid.getBoundingClientRect();
-
-    return destellos.map((destello, id) => {
-
-      const estado = destello.obtenerPosicion();
-
-      if (!estado.visible) return null;
-
-      const rect = estado.elemento.getBoundingClientRect();
+      const rect = elemento.getBoundingClientRect();
+      const gridRect = grid.getBoundingClientRect();
 
       return {
         id,
+        elemento,
         x: rect.left + rect.width / 2 - gridRect.left,
         y: rect.top + rect.height / 2 - gridRect.top,
         radio: Math.max(rect.width, rect.height) / 2
       };
     });
-  }
 
-  function calcularDireccion(destello, centroX, centroY) {
+    const colisionados = new Set();
 
-    const dx = destello.x - centroX;
-    const dy = destello.y - centroY;
+    const paresDetectados = new Set();
 
-    const distancia = Math.hypot(dx, dy) || 1;
+    for (let i = 0; i < posiciones.length; i++) {
 
-    return {
-      x: dx / distancia,
-      y: dy / distancia
-    };
-  }
+      for (let j = i + 1; j < posiciones.length; j++) {
 
-  function detectar() {
+        const a = posiciones[i];
+        const b = posiciones[j];
 
-    if (
-      !tablero.classList.contains("oculto") &&
-      !grid.classList.contains("cargando")
-    ) {
+        if (!a || !b) continue;
 
-      const posiciones = obtenerPosiciones();
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
 
-      const implicados = new Set();
-      const paresDetectados = new Set();
+        const distancia = Math.hypot(dx, dy);
 
-      /* Detectar pares de destellos */
+        const limite = a.radio + b.radio;
 
-      for (let i = 0; i < posiciones.length; i++) {
+        const par = i + "-" + j;
 
-        for (let j = i + 1; j < posiciones.length; j++) {
+        if (distancia < limite * distanciaColision) {
 
-          const a = posiciones[i];
-          const b = posiciones[j];
+          paresDetectados.add(par);
 
-          if (!a || !b) continue;
+          if (!colisionesActivas.has(par)) {
 
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-
-          const distancia = Math.hypot(dx, dy);
-          const limite = a.radio + b.radio;
-
-          const par = i + "-" + j;
-
-          if (distancia < limite * distanciaColision) {
-
-            paresDetectados.add(par);
-
-            if (!colisionesActivas.has(par)) {
-
-              implicados.add(i);
-              implicados.add(j);
-            }
+            colisionados.add(i);
+            colisionados.add(j);
           }
         }
       }
+    }
 
-      /* Liberar colisiones anteriores */
+    // LIBERAR COLISIONES CUANDO SE SEPARAN
 
-      for (const par of colisionesActivas) {
+    for (const par of colisionesActivas) {
 
-        if (!paresDetectados.has(par)) {
-          colisionesActivas.delete(par);
-        }
-      }
-
-      /* Registrar colisiones nuevas */
-
-      for (const par of paresDetectados) {
-        colisionesActivas.add(par);
-      }
-
-      /* Calcular centro de colisión */
-
-      if (implicados.size > 0) {
-
-        let centroX = 0;
-        let centroY = 0;
-
-        implicados.forEach(id => {
-
-          centroX += posiciones[id].x;
-          centroY += posiciones[id].y;
-        });
-
-        centroX /= implicados.size;
-        centroY /= implicados.size;
-
-        /* Comunicar a cada módulo su nueva dirección */
-
-        implicados.forEach(id => {
-
-          const direccion = calcularDireccion(
-            posiciones[id],
-            centroX,
-            centroY
-          );
-
-          destellos[id].recibirColision(
-            direccion.x,
-            direccion.y
-          );
-        });
+      if (!paresDetectados.has(par)) {
+        colisionesActivas.delete(par);
       }
     }
 
-    requestAnimationFrame(detectar);
+    // REGISTRAR NUEVAS COLISIONES
+
+    for (const par of paresDetectados) {
+      colisionesActivas.add(par);
+    }
+
+    // CAMBIAR DIRECCIÓN DE TODOS LOS IMPLICADOS
+
+    if (colisionados.size > 0) {
+
+      let centroX = 0;
+      let centroY = 0;
+
+      colisionados.forEach(id => {
+        centroX += posiciones[id].x;
+        centroY += posiciones[id].y;
+      });
+
+      centroX /= colisionados.size;
+      centroY /= colisionados.size;
+
+      colisionados.forEach(id => {
+
+        const p = posiciones[id];
+
+        const x = centroX;
+        const y = centroY;
+
+        cambiarDireccionPorColision(
+          {
+            id,
+            x: p.x,
+            y: p.y
+          },
+          x,
+          y
+        );
+      });
+    }
   }
 
-  function iniciar() {
-    detectar();
-  }
-
-  return {
-    iniciar
-  };
-
-})();
-
-
-/* =====================================================
-   17. INICIALIZACIÓN DEL SISTEMA DE DESTELLOS
-===================================================== */
-
-/*
-   Cada módulo inicia su propio ciclo de animación.
-   El gestor de colisiones tiene un ciclo independiente.
-*/
-
-function iniciarSistemaDestellos() {
-
-  DestelloRubi.iniciar();
-
-  DestelloRapido.iniciar();
-
-  DestelloTurquesa.iniciar();
-
-  GestorColisiones.iniciar();
+  requestAnimationFrame(detectarColisiones);
 }
 
+requestAnimationFrame(detectarColisiones);
+  
+nuevoDestino();
+moverPez();
+  
+const mensaje = document.getElementById("mensaje");
+const reservar = document.getElementById("reservar");
 
-/* =====================================================
-   18. GESTIÓN DE IMÁGENES
-===================================================== */
+const portada = document.getElementById("portada");
+  
+// NORMALIZAR IMÁGENES
 
 function normalizarImagen(valor) {
-
   if (!valor) return "";
 
   const imagen = String(valor);
@@ -1303,24 +1120,15 @@ function normalizarImagen(valor) {
   return "data:image/jpeg;base64," + imagen;
 }
 
-
 function crearHalftone(src) {
-
   return new Promise((resolve, reject) => {
-
     const img = new Image();
 
     img.onload = () => {
-
       const canvas = document.createElement("canvas");
-
-      const ctx = canvas.getContext(
-        "2d",
-        { willReadFrequently: true }
-      );
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
       const maxSize = 600;
-
       const scale = Math.min(1, maxSize / img.width);
 
       canvas.width = Math.round(img.width * scale);
@@ -1340,23 +1148,17 @@ function crearHalftone(src) {
       const maxRadius = cell * 0.48;
 
       for (let y = 0; y < canvas.height; y += cell) {
-
         for (let x = 0; x < canvas.width; x += cell) {
 
           let total = 0;
           let count = 0;
 
           for (let dy = 0; dy < cell; dy++) {
-
             for (let dx = 0; dx < cell; dx++) {
-
               const px = x + dx;
               const py = y + dy;
 
-              if (
-                px >= canvas.width ||
-                py >= canvas.height
-              ) continue;
+              if (px >= canvas.width || py >= canvas.height) continue;
 
               const i = (py * canvas.width + px) * 4;
 
@@ -1377,16 +1179,11 @@ function crearHalftone(src) {
           const cy = y + cell / 2;
 
           for (let dy = 0; dy < cell; dy++) {
-
             for (let dx = 0; dx < cell; dx++) {
-
               const px = x + dx;
               const py = y + dy;
 
-              if (
-                px >= canvas.width ||
-                py >= canvas.height
-              ) continue;
+              if (px >= canvas.width || py >= canvas.height) continue;
 
               const i = (py * canvas.width + px) * 4;
 
@@ -1409,7 +1206,6 @@ function crearHalftone(src) {
       }
 
       ctx.putImageData(output, 0, 0);
-
       resolve(canvas.toDataURL("image/png"));
     };
 
@@ -1418,15 +1214,10 @@ function crearHalftone(src) {
   });
 }
 
-
-/* =====================================================
-   19. GALERÍA DE RIFAS
-===================================================== */
+// CARGAR TODAS LAS RIFAS ACTIVAS
 
 async function cargarRifas() {
-
   try {
-
     const respuesta = await fetch(API + "/api/raffles", {
       cache: "no-store"
     });
@@ -1436,7 +1227,6 @@ async function cargarRifas() {
     }
 
     const rifas = await respuesta.json();
-
     const galeria = document.getElementById("galeriaRifas");
 
     galeria.replaceChildren();
@@ -1447,7 +1237,6 @@ async function cargarRifas() {
     }
 
     rifas.forEach(rifa => {
-
       const tarjeta = document.createElement("div");
       tarjeta.className = "tarjeta-rifa";
 
@@ -1464,48 +1253,32 @@ async function cargarRifas() {
       info.appendChild(nombre);
 
       if (rifa.ticket_price != null) {
-
         const precio = document.createElement("p");
-
         precio.textContent =
           "Precio por número: " + rifa.ticket_price;
-
         info.appendChild(precio);
       }
 
       if (rifa.draw_date) {
-
         const fecha = document.createElement("p");
-
         fecha.textContent = "Sorteo: " + rifa.draw_date;
-
         info.appendChild(fecha);
       }
 
       tarjeta.appendChild(img);
       tarjeta.appendChild(info);
-
       tarjeta.onclick = () => abrirRifa(rifa.id);
-
       galeria.appendChild(tarjeta);
     });
 
   } catch(error) {
-
     console.error(error);
-
     document.getElementById("galeriaRifas").textContent =
       error.message;
   }
 }
 
-
-/* =====================================================
-   20. ABRIR Y CARGAR RIFAS
-===================================================== */
-
 async function abrirRifa(id) {
-
   const nuevoId = Number(id);
 
   if (!Number.isSafeInteger(nuevoId) || nuevoId < 1) return;
@@ -1513,7 +1286,6 @@ async function abrirRifa(id) {
   raffleId = nuevoId;
 
   cargaNumerosId++;
-
   seleccionados = [];
   numeros = [];
 
@@ -1521,13 +1293,10 @@ async function abrirRifa(id) {
 
   grid.classList.add("cargando");
   grid.style.backgroundImage = "none";
-
   grid.querySelectorAll("*").forEach(elemento => {
-
     if (
-      elemento !== document.querySelector(".destello-rubi") &&
-      elemento !== document.querySelector(".destello-rapido") &&
-      elemento !== document.querySelector(".destello-turquesa")
+      !elemento.classList.contains("destello-escaner") &&
+      !elemento.classList.contains("destello-tercero")
     ) {
       elemento.remove();
     }
@@ -1539,19 +1308,18 @@ async function abrirRifa(id) {
   window.scrollTo(0, 0);
 
   try {
-
     await cargarRifa();
     await cargarNumeros();
 
   } catch(error) {
-
     console.error(error);
 
     tablero.classList.add("oculto");
     portada.classList.remove("oculto");
   }
 }
-
+  
+// CARGAR UNA RIFA ESPECÍFICA
 
 async function cargarRifa() {
 
@@ -1569,10 +1337,8 @@ async function cargarRifa() {
   const rifa = await respuesta.json();
 
   const imagenOriginal = normalizarImagen(rifa.puzzle_image);
-
   imagenPuzzle = await crearHalftone(imagenOriginal);
 }
-
 
 document.getElementById("volver").onclick = () => {
 
@@ -1582,10 +1348,7 @@ document.getElementById("volver").onclick = () => {
   window.scrollTo(0, 0);
 };
 
-
-/* =====================================================
-   21. CARGA DE NÚMEROS
-===================================================== */
+// CARGAR NÚMEROS DE LA RIFA SELECCIONADA
 
 async function cargarNumeros() {
 
@@ -1596,10 +1359,11 @@ async function cargarNumeros() {
 
   try {
 
+    /* OCULTAR EL TABLERO ANTES DE CARGAR */
+
     if (grid.children.length <= 3) {
       grid.classList.add("cargando");
     }
-
     grid.style.backgroundImage = "none";
 
     const respuesta = await fetch(
@@ -1613,6 +1377,8 @@ async function cargarNumeros() {
 
     const datos = await respuesta.json();
 
+    /* IGNORAR RESPUESTAS DE OTRAS CARGAS O RIFAS */
+
     if (
       solicitud !== cargaNumerosId ||
       idSolicitado !== raffleId
@@ -1623,7 +1389,6 @@ async function cargarNumeros() {
     numeros = datos;
 
     seleccionados = seleccionados.filter(n => {
-
       const item = numeros.find(x => x.number === n);
 
       return item && item.status === "available";
@@ -1638,6 +1403,8 @@ async function cargarNumeros() {
     document.getElementById("progreso").textContent =
       vendidos + " de 100 números vendidos";
 
+    /* MOSTRAR SOLO DESPUÉS DE DIBUJAR LOS 100 NÚMEROS */
+
     grid.classList.remove("cargando");
 
   } catch(error) {
@@ -1650,24 +1417,20 @@ async function cargarNumeros() {
     }
 
     grid.style.backgroundImage = "none";
+    
     grid.classList.add("cargando");
-
-    mensaje.textContent =
-      "No se pudo cargar el tablero. Intenta nuevamente.";
-
+    
+    mensaje.textContent = "No se pudo cargar el tablero. Intenta nuevamente.";
+    
     console.error(error);
   }
 }
 
-
-/* =====================================================
-   22. DIBUJAR TABLERO
-===================================================== */
+// DIBUJAR TABLERO
 
 function dibujarTablero() {
 
   grid.style.backgroundImage = "none";
-
   grid.querySelectorAll(
     "button.numero"
   ).forEach(elemento => elemento.remove());
@@ -1705,64 +1468,45 @@ function dibujarTablero() {
       if (status !== "available") return;
 
       if (seleccionados.includes(n)) {
-
-        seleccionados = seleccionados.filter(
-          x => x !== n
-        );
-
+        seleccionados = seleccionados.filter(x => x !== n);
       } else {
-
         seleccionados.push(n);
       }
 
       dibujarTablero();
-
-      const botonRipple = [
-        ...grid.querySelectorAll("button.numero")
-      ].find(b => b.textContent === n);
-
+      const botonRipple = [...grid.querySelectorAll("button.numero")]
+      .find(b => b.textContent === n);
+      
       crearRipple(botonRipple);
-
-      /* El tercer destello recibe la orden de persecución */
-
-      DestelloTurquesa.perseguir(botonRipple);
+      dirigirTerceroA(botonRipple);
     };
 
     grid.appendChild(b);
   }
 
+  /* APLICAR EL PUZZLE SOLO DESPUÉS DE CREAR LOS 100 BOTONES */
+
   grid.style.setProperty(
     "--puzzle",
-    imagenPuzzle
-      ? 'url("' + imagenPuzzle + '")'
-      : "none"
+    imagenPuzzle ? 'url("' + imagenPuzzle + '")' : "none"
   );
-
+  
   const vendidos = numeros.filter(
     x => x.status === "sold"
   ).length;
-
+  
   grid.classList.toggle(
     "completado",
     vendidos === 100
   );
 }
 
-
-/* =====================================================
-   23. RIPPLE
-===================================================== */
-
 function crearRipple(boton) {
-
   const rect = boton.getBoundingClientRect();
   const tableroRect = grid.getBoundingClientRect();
 
-  const x =
-    rect.left + rect.width / 2 - tableroRect.left;
-
-  const y =
-    rect.top + rect.height / 2 - tableroRect.top;
+  const x = rect.left + rect.width / 2 - tableroRect.left;
+  const y = rect.top + rect.height / 2 - tableroRect.top;
 
   const diametro = Math.hypot(
     tableroRect.width,
@@ -1772,10 +1516,8 @@ function crearRipple(boton) {
   const onda = document.createElement("div");
 
   onda.className = "ripple-wave";
-
   onda.style.width = diametro + "px";
   onda.style.height = diametro + "px";
-
   onda.style.left = x + "px";
   onda.style.top = y + "px";
 
@@ -1786,70 +1528,15 @@ function crearRipple(boton) {
   }, { once: true });
 }
 
-
-/* =====================================================
-   24. RESERVAS
-===================================================== */
-
-async function comprobarReservaPendiente() {
-
-  const telefono =
-    document.getElementById("telefono").value.trim();
-
-  if (!telefono || !raffleId || comprobandoReserva) return;
-
-  comprobandoReserva = true;
-
-  try {
-
-    const respuesta = await fetch(
-      API + "/api/reservations/status?raffle_id=" +
-      raffleId + "&phone=" + encodeURIComponent(telefono)
-    );
-
-    const resultado = await respuesta.json();
-
-    if (!respuesta.ok) return;
-
-    if (!enlaceNotificacion) {
-      reservar.hidden = resultado.pending;
-    }
-
-    if (!resultado.pending && enlaceNotificacion) {
-
-      enlaceNotificacion = null;
-
-      reservar.textContent = "Confirmar reserva";
-      reservar.disabled = false;
-    }
-
-    mensaje.textContent = resultado.pending
-      ? resultado.message
-      : "";
-
-  } catch(error) {
-
-    console.error(error);
-
-  } finally {
-
-    comprobandoReserva = false;
-  }
-}
-
-
-/* Crear reserva */
+// RESERVAR NÚMEROS
 
 reservar.onclick = async () => {
 
+  // SEGUNDO CLIC: ABRIR WHATSAPP
   if (enlaceNotificacion) {
-
     window.open(enlaceNotificacion, "_blank");
-
     enlaceNotificacion = null;
-
     reservar.textContent = "Confirmar reserva";
-
     return;
   }
 
@@ -1889,11 +1576,9 @@ reservar.onclick = async () => {
       API + "/api/reservations",
       {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json"
         },
-
         body: JSON.stringify({
           raffle_id: raffleId,
           name: nombre,
@@ -1907,45 +1592,34 @@ reservar.onclick = async () => {
     const resultado = await respuesta.json();
 
     if (!respuesta.ok) {
-
-      if (
-        respuesta.status === 409 &&
-        resultado.message
-      ) {
-
+      if (respuesta.status === 409 && resultado.message) {
         mensaje.textContent = resultado.message;
-
         await comprobarReservaPendiente();
-
         return;
       }
-
+    
       throw new Error(
-        resultado.error ||
-        "No se pudo completar la reserva"
+        resultado.error || "No se pudo completar la reserva"
       );
     }
 
     mensaje.replaceChildren();
 
     enlaceNotificacion = resultado.admin_whatsapp_url;
-
     reservar.hidden = false;
+
+    const numerosComprados = [...seleccionados];
 
     seleccionados = [];
 
     await cargarNumeros();
 
     if (enlaceNotificacion) {
-
       reservar.textContent = "Notificar por WhatsApp";
       reservar.disabled = false;
-
     } else {
-
       reservar.textContent = "Confirmar reserva";
       reservar.disabled = false;
-
       mensaje.appendChild(
         document.createTextNode(
           " No se pudo generar el enlace de WhatsApp."
@@ -1956,18 +1630,12 @@ reservar.onclick = async () => {
   } catch(error) {
 
     mensaje.textContent = error.message;
-
     reservar.textContent = "Confirmar reserva";
     reservar.disabled = false;
 
     await cargarNumeros();
   }
 };
-
-
-/* =====================================================
-   25. COMPROBACIÓN AUTOMÁTICA DE RESERVAS
-===================================================== */
 
 document.getElementById("telefono").addEventListener(
   "change",
@@ -1976,26 +1644,16 @@ document.getElementById("telefono").addEventListener(
 
 setInterval(comprobarReservaPendiente, 10000);
 
-
-/* =====================================================
-   26. PARTÍCULAS
-===================================================== */
-
 function crearParticula() {
 
   if (
     grid.classList.contains("cargando") ||
     tablero.classList.contains("oculto") ||
     grid.classList.contains("completado")
-  ) {
-    return;
-  }
+  ) return;
 
-  if (
-    grid.querySelectorAll(".particula").length >= 120
-  ) {
-    return;
-  }
+  // Límite de seguridad para evitar sobrecargar el navegador
+  if (grid.querySelectorAll(".particula").length >= 120) return;
 
   const particula = document.createElement("div");
 
@@ -2026,31 +1684,15 @@ function crearParticula() {
   }, { once: true });
 }
 
+setInterval(crearParticula, 65);
 
-/* =====================================================
-   27. INICIALIZACIÓN GENERAL
-===================================================== */
-
-/* Iniciar los cuatro componentes visuales */
-
-iniciarSistemaDestellos();
-
-/* Cargar rifas */
+// INICIO
 
 cargarRifas();
 
-/* Partículas */
-
-setInterval(crearParticula, 65);
-
-/* Actualizar tablero cada 20 segundos */
-
 setInterval(() => {
 
-  if (
-    !tablero.classList.contains("oculto") &&
-    raffleId
-  ) {
+  if (!tablero.classList.contains("oculto") && raffleId) {
     cargarNumeros();
   }
 
