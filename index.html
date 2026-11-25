@@ -721,35 +721,19 @@ function moverPez() {
           (50 + Math.sin(angulo) * 25) + "%";
       
       } else if (danzaActiva) {
-
+      
         const ahoraDanza = performance.now();
-        const deltaDanza = Math.min(
-          (ahoraDanza - ultimoFrameDanza) / 1000,
-          0.025
-        );
-      
+        const deltaDanza = Math.min((ahoraDanza - ultimoFrameDanza) / 1000, 0.05);
         ultimoFrameDanza = ahoraDanza;
-      
         anguloDanza += deltaDanza * 9;
       
-        const radio = 12 + separacionDanza;
-      
-        const objetivoX =
-          50 + Math.cos(anguloDanza) * radio;
-      
-        const objetivoY =
-          50 + Math.sin(anguloDanza) * radio;
-      
-        const actualX = parseFloat(destello.style.left) || pezX;
-        const actualY = parseFloat(destello.style.top) || pezY;
-      
-        const suavizado = 1 - Math.exp(-deltaDanza * 12);
+        const radio = 5 + separacionDanza;
       
         destello.style.left =
-          (actualX + (objetivoX - actualX) * suavizado) + "%";
+          (50 + Math.cos(anguloDanza) * radio) + "%";
       
         destello.style.top =
-          (actualY + (objetivoY - actualY) * suavizado) + "%";
+          (50 + Math.sin(anguloDanza) * radio) + "%";
       
       } else {
       
@@ -848,7 +832,7 @@ function moverDestelloRapido() {
     } else if (danzaActiva) {
 
       const angulo = anguloDanza + Math.PI;
-      const radio = 12 + separacionDanza;
+      const radio = 5 + separacionDanza;
 
       rapidoX = 50 + Math.cos(angulo) * radio;
       rapidoY = 50 + Math.sin(angulo) * radio;
@@ -1126,9 +1110,7 @@ function detectarColisiones() {
 
   if (
     !tablero.classList.contains("oculto") &&
-    !grid.classList.contains("cargando") &&
-    !danzaActiva &&
-    !celebracionActiva
+    !grid.classList.contains("cargando")
   ) {
 
     const elementos = [
@@ -1672,33 +1654,6 @@ function dibujarTablero() {
       danzaActiva = seleccionados.length > 0;
       
       if (!danzaActiva) {
-
-        pezX = parseFloat(destello.style.left) || pezX;
-        pezY = parseFloat(destello.style.top) || pezY;
-      
-        rapidoX = parseFloat(destelloRapido.style.left) || rapidoX;
-        rapidoY = parseFloat(destelloRapido.style.top) || rapidoY;
-      
-        destinoX = Math.max(-10, Math.min(110,
-          pezX + (pezX >= 50 ? 25 : -25)
-        ));
-      
-        destinoY = Math.max(-10, Math.min(110,
-          pezY + (pezY >= 50 ? 25 : -25)
-        ));
-      
-        rapidoDestinoX = Math.max(-15, Math.min(115,
-          rapidoX + (rapidoX >= 50 ? 35 : -35)
-        ));
-      
-        rapidoDestinoY = Math.max(-15, Math.min(115,
-          rapidoY + (rapidoY >= 50 ? 35 : -35)
-        ));
-      
-        velocidadRapida = 0.025;
-        destelloVisible = true;
-        ultimoFrameDanza = performance.now();
-        ultimoMovimiento = performance.now() + 2500;
         separacionDanza = 0;
       }
 
