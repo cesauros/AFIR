@@ -650,6 +650,18 @@ destello.innerHTML = `
 `;
 
 grid.appendChild(destello);
+destello.style.cssText += `
+  position: absolute;
+  display: block;
+  visibility: visible;
+  opacity: 1;
+  width: 100px;
+  height: 60px;
+  left: 50%;
+  top: 50%;
+  z-index: 100;
+  background: red;
+`;
 destello.style.left = "50%";
 destello.style.top = "50%";
 destello.style.transform = "translate(-50%, -50%)";
