@@ -469,6 +469,34 @@ input,
   body { padding: 12px; }
   .grid { gap: 3px; padding: 5px; }
 }
+
+/* PEZ KOI */
+
+.pez-koi {
+  position: absolute;
+  z-index: 3;
+  width: 75px;
+  height: 45px;
+  pointer-events: none;
+  transform-origin: center;
+  filter: drop-shadow(0 0 8px rgba(255,180,70,.8));
+}
+
+.pez-koi svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.pez-koi .cola {
+  transform-origin: 15px 22px;
+  animation: moverCola .35s ease-in-out infinite alternate;
+}
+
+@keyframes moverCola {
+  from { transform: rotate(-22deg); }
+  to { transform: rotate(22deg); }
+}
   
 </style>
   
@@ -581,7 +609,34 @@ async function comprobarReservaPendiente() {
 const grid = document.getElementById("grid");
   
 const destello = document.createElement("div");
-destello.className = "destello-escaner";
+destello.className = "pez-koi";
+
+destello.innerHTML = `
+<svg viewBox="0 0 100 50">
+  <g class="cola">
+    <path d="M18 25 Q5 5 0 3 Q8 25 0 47 Q8 45 18 25"
+      fill="#e8a13a" stroke="#fff0c0" stroke-width="1"/>
+  </g>
+
+  <path d="M15 25
+    Q30 5 55 12
+    Q80 8 94 25
+    Q80 42 55 38
+    Q30 45 15 25"
+    fill="#f4e9d5" stroke="#d9a34c" stroke-width="1.5"/>
+
+  <path d="M35 12 Q42 20 35 30 Q45 37 53 35
+    Q62 25 53 15 Z"
+    fill="#d83225"/>
+
+  <path d="M65 13 Q75 18 70 29 Q78 34 85 29
+    Q90 23 82 17 Z"
+    fill="#d83225"/>
+
+  <circle cx="83" cy="20" r="2" fill="#17110a"/>
+</svg>
+`;
+
 grid.appendChild(destello);
 
 // SEGUNDO DESTELLO
@@ -646,12 +701,12 @@ function moverPez() {
       pezY += distanciaY * velocidadPez;
 
       const ondulacionX =
-        Math.sin(faseOndulacion) * 2.5 +
-        Math.sin(faseOndulacion * 0.45) * 1.5;
+        Math.sin(faseOndulacion) * 8 +
+        Math.sin(faseOndulacion * 0.45) * 5;
       
       const ondulacionY =
-        Math.cos(faseOndulacion * 0.7) * 2.5 +
-        Math.sin(faseOndulacion * 0.35) * 1.5;
+        Math.cos(faseOndulacion * 0.7) * 8 +
+        Math.sin(faseOndulacion * 0.35) * 5;
 
       destello.style.left = (pezX + ondulacionX) + "%";
       destello.style.top = (pezY + ondulacionY) + "%";
@@ -662,7 +717,7 @@ function moverPez() {
     destello.style.opacity = 1;
     
     destello.style.filter =
-      "brightness(1.2) drop-shadow(0 0 7px white) drop-shadow(0 0 16px #38d9a9)";
+      "brightness(1.2) drop-shadow(0 0 7px #ffd783) drop-shadow(0 0 16px #e8a13a)";
   }
 
   requestAnimationFrame(moverPez);
