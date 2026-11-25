@@ -361,43 +361,15 @@ button.numero:disabled {
   transform: translate(-50%, -50%);
 }
 
-/* DESTELLO 2: DORADO PARPADEANTE */
+/* DESTELLO 2: PARPADEO */
 
 .grid .destello-rapido {
-  position: absolute;
-  z-index: 5;
-
-  width: 100px;
-  height: 100px;
-
-  pointer-events: none;
-
-  background: radial-gradient(
-    ellipse at center,
-    white 0%,
-    rgba(255,255,255,.95) 8%,
-    rgba(255,215,125,.95) 20%,
-    rgba(255,190,70,.7) 42%,
-    transparent 72%
-  );
-
-  filter:
-    drop-shadow(0 0 6px white)
-    drop-shadow(0 0 15px #ffbf00);
-
-  transform: translate(-50%, -50%);
-
   animation: parpadeoRapido .10s steps(2,end) infinite;
 }
 
 @keyframes parpadeoRapido {
-  0%, 100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: .12;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: .12; }
 }
 
 /* BOTONES Y FORMULARIOS */
@@ -615,7 +587,7 @@ grid.appendChild(destello);
 // SEGUNDO DESTELLO
 
 const destelloRapido = document.createElement("div");
-destelloRapido.className = "destello-rapido";
+destelloRapido.className = "destello-escaner destello-rapido";
 destelloRapido.style.display = "none";
 destelloRapido.style.width = "100px";
 destelloRapido.style.height = "100px";
