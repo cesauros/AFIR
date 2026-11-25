@@ -660,7 +660,7 @@ destello.style.cssText += `
   left: 50%;
   top: 50%;
   z-index: 100;
-  background: red;
+  pointer-events: none;
 `;
 destello.style.left = "50%";
 destello.style.top = "50%";
@@ -1381,13 +1381,19 @@ async function abrirRifa(id) {
 
   grid.classList.add("cargando");
   grid.style.backgroundImage = "none";
-  grid.querySelectorAll("*").forEach(elemento => {
+  
+  // LIMPIAR EL TABLERO SIN ELIMINAR LOS EFECTOS
+
+  [...grid.children].forEach(elemento => {
+  
     if (
+      !elemento.classList.contains("pez-koi") &&
       !elemento.classList.contains("destello-escaner") &&
       !elemento.classList.contains("destello-tercero")
     ) {
       elemento.remove();
     }
+  
   });
 
   portada.classList.add("oculto");
