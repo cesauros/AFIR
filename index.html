@@ -391,15 +391,13 @@ button.numero:disabled {
 }
 
 @keyframes parpadeoRapido {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .12; }
-}
+  0%, 100% {
+    opacity: 1;
+  }
 
-  filter:
-    drop-shadow(0 0 6px white)
-    drop-shadow(0 0 15px #ffbf00);
-
-  animation: parpadeoRapido .10s steps(2,end) infinite;
+  50% {
+    opacity: .12;
+  }
 }
 
 /* BOTONES Y FORMULARIOS */
