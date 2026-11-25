@@ -470,44 +470,59 @@ input,
   .grid { gap: 3px; padding: 5px; }
 }
 
-/* PEZ KOI */
+/* KOI - VISTA DORSAL */
 
 .pez-koi {
   position: absolute;
-  z-index: 3;
-  width: 75px;
-  height: 45px;
+  z-index: 10;
+  width: 100px;
+  height: 65px;
   pointer-events: none;
-  transform-origin: center;
-  filter: drop-shadow(0 0 8px rgba(255,180,70,.8));
-  display: block;
-  opacity: 1;
-  visibility: visible;
+  transform-origin: 50% 50%;
+  overflow: visible;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,.65))
+          drop-shadow(0 0 5px rgba(232,193,120,.35));
 }
 
 .pez-koi svg {
+  display: block;
   width: 100%;
   height: 100%;
   overflow: visible;
 }
 
 .pez-koi .cola {
-  transform-origin: 18px 25px;
-  animation: moverCola .22s ease-in-out infinite alternate;
+  transform-origin: 18px 32px;
+  animation: koiCola .32s ease-in-out infinite alternate;
 }
 
-.pez-koi > svg {
-  animation: ondularCuerpo .7s ease-in-out infinite alternate;
+.pez-koi .aleta-izquierda {
+  transform-origin: 40px 35px;
+  animation: koiAleta .65s ease-in-out infinite alternate;
 }
 
-@keyframes moverCola {
-  from { transform: rotate(-30deg); }
-  to { transform: rotate(30deg); }
+.pez-koi .aleta-derecha {
+  transform-origin: 40px 35px;
+  animation: koiAleta .65s ease-in-out infinite alternate-reverse;
 }
 
-@keyframes ondularCuerpo {
-  from { translate: 0 -1px; }
-  to { translate: 0 1px; }
+.pez-koi .cuerpo {
+  animation: koiCuerpo .8s ease-in-out infinite alternate;
+}
+
+@keyframes koiCola {
+  from { transform: rotate(-24deg); }
+  to { transform: rotate(24deg); }
+}
+
+@keyframes koiAleta {
+  from { transform: rotate(-8deg); }
+  to { transform: rotate(8deg); }
+}
+
+@keyframes koiCuerpo {
+  from { transform: translateX(-1px); }
+  to { transform: translateX(1px); }
 }
   
 </style>
@@ -624,28 +639,87 @@ const destello = document.createElement("div");
 destello.className = "pez-koi";
 
 destello.innerHTML = `
-<svg viewBox="0 0 100 50">
+<svg viewBox="0 0 100 65" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Cola -->
   <g class="cola">
-    <path d="M18 25 Q5 5 0 3 Q8 25 0 47 Q8 45 18 25"
-      fill="#e8a13a" stroke="#fff0c0" stroke-width="1"/>
+    <path d="M19 32
+      C10 23 3 12 0 5
+      C12 10 20 19 23 29
+      C20 40 12 52 0 60
+      C4 48 11 39 19 32Z"
+      fill="#fff0d5" stroke="#c28b43" stroke-width="1.2"/>
+    <path d="M18 32 Q9 18 3 9 M18 32 Q9 46 3 56"
+      fill="none" stroke="#d6a65d" stroke-width=".8"/>
   </g>
 
-  <path d="M15 25
-    Q30 5 55 12
-    Q80 8 94 25
-    Q80 42 55 38
-    Q30 45 15 25"
-    fill="#f4e9d5" stroke="#d9a34c" stroke-width="1.5"/>
+  <!-- Aleta izquierda -->
+  <g class="aleta-izquierda">
+    <path d="M39 36
+      C29 39 20 47 17 56
+      C30 54 39 48 45 40Z"
+      fill="#f5e5ce" stroke="#bd914f" stroke-width="1"/>
+    <path d="M39 39 L20 54 M39 39 L28 52 M39 39 L36 50"
+      stroke="#cba76e" stroke-width=".65" fill="none"/>
+  </g>
 
-  <path d="M35 12 Q42 20 35 30 Q45 37 53 35
-    Q62 25 53 15 Z"
-    fill="#d83225"/>
+  <!-- Aleta derecha -->
+  <g class="aleta-derecha">
+    <path d="M39 29
+      C29 25 20 17 17 8
+      C30 10 39 16 45 25Z"
+      fill="#f5e5ce" stroke="#bd914f" stroke-width="1"/>
+    <path d="M39 26 L20 10 M39 26 L28 12 M39 26 L36 14"
+      stroke="#cba76e" stroke-width=".65" fill="none"/>
+  </g>
 
-  <path d="M65 13 Q75 18 70 29 Q78 34 85 29
-    Q90 23 82 17 Z"
-    fill="#d83225"/>
+  <!-- Cuerpo -->
+  <g class="cuerpo">
 
-  <circle cx="83" cy="20" r="2" fill="#17110a"/>
+    <path d="M17 32
+      C23 17 39 8 59 9
+      C79 9 91 19 97 32
+      C91 45 79 55 59 55
+      C39 56 23 47 17 32Z"
+      fill="#f8f0df" stroke="#bd965a" stroke-width="1.5"/>
+
+    <!-- Manchas Kohaku -->
+    <path d="M36 14
+      C44 8 54 11 58 17
+      C55 23 46 24 39 21Z"
+      fill="#c82f28"/>
+
+    <path d="M64 13
+      C74 10 84 17 85 24
+      C79 28 69 26 65 21Z"
+      fill="#c82f28"/>
+
+    <path d="M49 37
+      C57 30 68 32 73 39
+      C69 47 57 50 49 44Z"
+      fill="#c82f28"/>
+
+    <!-- Brillo del lomo -->
+    <path d="M27 29
+      C38 16 55 13 72 17"
+      fill="none" stroke="#fff" stroke-width="1.2"
+      opacity=".55"/>
+
+    <!-- Ojos -->
+    <circle cx="88" cy="27" r="2.1" fill="#18130e"/>
+    <circle cx="88" cy="37" r="2.1" fill="#18130e"/>
+    <circle cx="88.6" cy="26.5" r=".7" fill="white"/>
+    <circle cx="88.6" cy="36.5" r=".7" fill="white"/>
+
+    <!-- Boca -->
+    <path d="M96 30 Q100 32 96 34"
+      fill="none" stroke="#805a37" stroke-width="1"/>
+
+    <!-- Branquias -->
+    <path d="M79 27 Q75 32 79 37"
+      fill="none" stroke="#b78b59" stroke-width=".8"/>
+
+  </g>
 </svg>
 `;
 
@@ -740,8 +814,10 @@ function moverPez() {
         Math.sin(faseOndulacion * 0.35) * 5;
 
       destello.style.left = (pezX + ondulacionX) + "%";
+      const angulo = Math.atan2(distanciaY, distanciaX) * 180 / Math.PI;
+
       destello.style.transform =
-        `translate(-50%, -50%) rotate(${Math.atan2(distanciaY, distanciaX) * 180 / Math.PI}deg)`;
+        `translate(-50%, -50%) rotate(${angulo}deg)`;
       destello.style.top = (pezY + ondulacionY) + "%";
     }
 
