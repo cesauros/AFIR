@@ -469,61 +469,6 @@ input,
   body { padding: 12px; }
   .grid { gap: 3px; padding: 5px; }
 }
-
-/* KOI - VISTA DORSAL */
-
-.pez-koi {
-  position: absolute;
-  z-index: 10;
-  width: 100px;
-  height: 65px;
-  pointer-events: none;
-  transform-origin: 50% 50%;
-  overflow: visible;
-  filter: drop-shadow(0 2px 5px rgba(0,0,0,.65))
-          drop-shadow(0 0 5px rgba(232,193,120,.35));
-}
-
-.pez-koi svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.pez-koi .cola {
-  transform-origin: 18px 32px;
-  animation: koiCola .32s ease-in-out infinite alternate;
-}
-
-.pez-koi .aleta-izquierda {
-  transform-origin: 40px 35px;
-  animation: koiAleta .65s ease-in-out infinite alternate;
-}
-
-.pez-koi .aleta-derecha {
-  transform-origin: 40px 35px;
-  animation: koiAleta .65s ease-in-out infinite alternate-reverse;
-}
-
-.pez-koi .cuerpo {
-  animation: koiCuerpo .8s ease-in-out infinite alternate;
-}
-
-@keyframes koiCola {
-  from { transform: rotate(-24deg); }
-  to { transform: rotate(24deg); }
-}
-
-@keyframes koiAleta {
-  from { transform: rotate(-8deg); }
-  to { transform: rotate(8deg); }
-}
-
-@keyframes koiCuerpo {
-  from { transform: translateX(-1px); }
-  to { transform: translateX(1px); }
-}
   
 </style>
   
@@ -636,113 +581,8 @@ async function comprobarReservaPendiente() {
 const grid = document.getElementById("grid");
   
 const destello = document.createElement("div");
-destello.className = "pez-koi";
-
-destello.innerHTML = `
-<svg viewBox="0 0 100 65" xmlns="http://www.w3.org/2000/svg">
-
-  <!-- Cola -->
-  <g class="cola">
-    <path d="M19 32
-      C10 23 3 12 0 5
-      C12 10 20 19 23 29
-      C20 40 12 52 0 60
-      C4 48 11 39 19 32Z"
-      fill="#fff0d5" stroke="#c28b43" stroke-width="1.2"/>
-    <path d="M18 32 Q9 18 3 9 M18 32 Q9 46 3 56"
-      fill="none" stroke="#d6a65d" stroke-width=".8"/>
-  </g>
-
-  <!-- Aleta izquierda -->
-  <g class="aleta-izquierda">
-    <path d="M39 36
-      C29 39 20 47 17 56
-      C30 54 39 48 45 40Z"
-      fill="#f5e5ce" stroke="#bd914f" stroke-width="1"/>
-    <path d="M39 39 L20 54 M39 39 L28 52 M39 39 L36 50"
-      stroke="#cba76e" stroke-width=".65" fill="none"/>
-  </g>
-
-  <!-- Aleta derecha -->
-  <g class="aleta-derecha">
-    <path d="M39 29
-      C29 25 20 17 17 8
-      C30 10 39 16 45 25Z"
-      fill="#f5e5ce" stroke="#bd914f" stroke-width="1"/>
-    <path d="M39 26 L20 10 M39 26 L28 12 M39 26 L36 14"
-      stroke="#cba76e" stroke-width=".65" fill="none"/>
-  </g>
-
-  <!-- Cuerpo -->
-  <g class="cuerpo">
-
-    <path d="M17 32
-      C23 17 39 8 59 9
-      C79 9 91 19 97 32
-      C91 45 79 55 59 55
-      C39 56 23 47 17 32Z"
-      fill="#f8f0df" stroke="#bd965a" stroke-width="1.5"/>
-
-    <!-- Manchas Kohaku -->
-    <path d="M36 14
-      C44 8 54 11 58 17
-      C55 23 46 24 39 21Z"
-      fill="#c82f28"/>
-
-    <path d="M64 13
-      C74 10 84 17 85 24
-      C79 28 69 26 65 21Z"
-      fill="#c82f28"/>
-
-    <path d="M49 37
-      C57 30 68 32 73 39
-      C69 47 57 50 49 44Z"
-      fill="#c82f28"/>
-
-    <!-- Brillo del lomo -->
-    <path d="M27 29
-      C38 16 55 13 72 17"
-      fill="none" stroke="#fff" stroke-width="1.2"
-      opacity=".55"/>
-
-    <!-- Ojos -->
-    <circle cx="88" cy="27" r="2.1" fill="#18130e"/>
-    <circle cx="88" cy="37" r="2.1" fill="#18130e"/>
-    <circle cx="88.6" cy="26.5" r=".7" fill="white"/>
-    <circle cx="88.6" cy="36.5" r=".7" fill="white"/>
-
-    <!-- Boca -->
-    <path d="M96 30 Q100 32 96 34"
-      fill="none" stroke="#805a37" stroke-width="1"/>
-
-    <!-- Branquias -->
-    <path d="M79 27 Q75 32 79 37"
-      fill="none" stroke="#b78b59" stroke-width=".8"/>
-
-  </g>
-</svg>
-`;
-
+destello.className = "destello-escaner";
 grid.appendChild(destello);
-destello.style.cssText += `
-  position: absolute;
-  display: block;
-  visibility: visible;
-  opacity: 1;
-  width: 100px;
-  height: 60px;
-  left: 50%;
-  top: 50%;
-  z-index: 100;
-  pointer-events: none;
-`;
-destello.style.left = "50%";
-destello.style.top = "50%";
-destello.style.transform = "translate(-50%, -50%)";
-destello.style.zIndex = "10";
-destello.style.display = "block";
-destello.style.opacity = "1";
-destello.style.visibility = "visible";
 
 // SEGUNDO DESTELLO
 
@@ -806,18 +646,14 @@ function moverPez() {
       pezY += distanciaY * velocidadPez;
 
       const ondulacionX =
-        Math.sin(faseOndulacion) * 8 +
-        Math.sin(faseOndulacion * 0.45) * 5;
+        Math.sin(faseOndulacion) * 2.5 +
+        Math.sin(faseOndulacion * 0.45) * 1.5;
       
       const ondulacionY =
-        Math.cos(faseOndulacion * 0.7) * 8 +
-        Math.sin(faseOndulacion * 0.35) * 5;
+        Math.cos(faseOndulacion * 0.7) * 2.5 +
+        Math.sin(faseOndulacion * 0.35) * 1.5;
 
       destello.style.left = (pezX + ondulacionX) + "%";
-      const angulo = Math.atan2(distanciaY, distanciaX) * 180 / Math.PI;
-
-      destello.style.transform =
-        `translate(-50%, -50%) rotate(${angulo}deg)`;
       destello.style.top = (pezY + ondulacionY) + "%";
     }
 
@@ -826,7 +662,7 @@ function moverPez() {
     destello.style.opacity = 1;
     
     destello.style.filter =
-      "brightness(1.2) drop-shadow(0 0 7px #ffd783) drop-shadow(0 0 16px #e8a13a)";
+      "brightness(1.2) drop-shadow(0 0 7px white) drop-shadow(0 0 16px #38d9a9)";
   }
 
   requestAnimationFrame(moverPez);
@@ -1457,19 +1293,13 @@ async function abrirRifa(id) {
 
   grid.classList.add("cargando");
   grid.style.backgroundImage = "none";
-  
-  // LIMPIAR EL TABLERO SIN ELIMINAR LOS EFECTOS
-
-  [...grid.children].forEach(elemento => {
-  
+  grid.querySelectorAll("*").forEach(elemento => {
     if (
-      !elemento.classList.contains("pez-koi") &&
       !elemento.classList.contains("destello-escaner") &&
       !elemento.classList.contains("destello-tercero")
     ) {
       elemento.remove();
     }
-  
   });
 
   portada.classList.add("oculto");
