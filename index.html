@@ -489,13 +489,22 @@ input,
 }
 
 .pez-koi .cola {
-  transform-origin: 15px 22px;
-  animation: moverCola .35s ease-in-out infinite alternate;
+  transform-origin: 18px 25px;
+  animation: moverCola .22s ease-in-out infinite alternate;
+}
+
+.pez-koi > svg {
+  animation: ondularCuerpo .7s ease-in-out infinite alternate;
 }
 
 @keyframes moverCola {
-  from { transform: rotate(-22deg); }
-  to { transform: rotate(22deg); }
+  from { transform: rotate(-30deg); }
+  to { transform: rotate(30deg); }
+}
+
+@keyframes ondularCuerpo {
+  from { translate: 0 -1px; }
+  to { translate: 0 1px; }
 }
   
 </style>
@@ -709,6 +718,8 @@ function moverPez() {
         Math.sin(faseOndulacion * 0.35) * 5;
 
       destello.style.left = (pezX + ondulacionX) + "%";
+      destello.style.transform =
+        `translate(-50%, -50%) rotate(${Math.atan2(distanciaY, distanciaX) * 180 / Math.PI}deg)`;
       destello.style.top = (pezY + ondulacionY) + "%";
     }
 
