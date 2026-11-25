@@ -361,18 +361,17 @@ button.numero:disabled {
   transform: translate(-50%, -50%);
 }
 
-/* DESTELLO 2: PARPADEO */
+/* DESTELLO 2: DORADO PARPADEANTE */
 
 .grid .destello-rapido {
-  animation: parpadeoRapido .10s steps(2,end) infinite;
-}
+  position: absolute;
+  z-index: 5;
 
-@keyframes parpadeoRapido {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .12; }
-}
+  width: 100px;
+  height: 100px;
 
-.grid .destello-rapido {
+  pointer-events: none;
+
   background: radial-gradient(
     ellipse at center,
     white 0%,
@@ -380,11 +379,20 @@ button.numero:disabled {
     rgba(255,215,125,.95) 20%,
     rgba(255,190,70,.7) 42%,
     transparent 72%
-  ) !important;
+  );
 
   filter:
     drop-shadow(0 0 6px white)
-    drop-shadow(0 0 15px #ffbf00) !important;
+    drop-shadow(0 0 15px #ffbf00);
+
+  transform: translate(-50%, -50%);
+
+  animation: parpadeoRapido .10s steps(2,end) infinite;
+}
+
+@keyframes parpadeoRapido {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .12; }
 }
 
   filter:
