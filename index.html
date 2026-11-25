@@ -361,9 +361,24 @@ button.numero:disabled {
   transform: translate(-50%, -50%);
 }
 
-/* DESTELLO 2: PARPADEO */
+/* DESTELLO 2: DORADO Y PARPADEO */
 
 .grid .destello-rapido {
+  background: radial-gradient(
+    ellipse at center,
+    white 0%,
+    rgba(255,255,255,.95) 8%,
+    rgba(255,215,80,.95) 20%,
+    rgba(255,180,30,.8) 40%,
+    rgba(218,145,0,.4) 60%,
+    transparent 75%
+  );
+
+  filter:
+    drop-shadow(0 0 6px white)
+    drop-shadow(0 0 15px #ffd700)
+    drop-shadow(0 0 25px #ffae00);
+
   animation: parpadeoRapido .10s steps(2,end) infinite;
 }
 
