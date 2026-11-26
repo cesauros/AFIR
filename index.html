@@ -891,6 +891,8 @@ let rapidoDestinoX = 0;
 let rapidoDestinoY = 0;
 
 let velocidadRapida = 0.04;
+let ultimoFrameRapido = performance.now();
+
 let proximaAparicion = performance.now() + 2000;
 let destelloVisible = false;
 
@@ -935,10 +937,21 @@ function iniciarRecorridoRapido() {
 
   destelloVisible = true;
 }
-
+  
 function moverDestelloRapido() {
 
   const ahora = performance.now();
+  const delta = Math.min(
+    (ahora - ultimoFrameRapido) / 1000,
+    0.05
+  );
+
+  ultimoFrameRapido = ahora;
+
+  const delta = Math.min(
+    (ahora - ultimoFrameDanza) / 1000,
+    0.05
+  );
 
   if (
     !tablero.classList.contains("oculto") &&
