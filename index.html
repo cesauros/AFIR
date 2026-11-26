@@ -303,7 +303,7 @@ button.numero:disabled {
   }
 }
 
-/* DESTELLO 1: RUBÍ */
+/* DESTELLO 1: AZUL ZAFIRO */
 
 .grid .destello-escaner {
   position: absolute;
@@ -312,8 +312,9 @@ button.numero:disabled {
   left: 50%;
   top: 0;
 
-  width: 65px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
 
   pointer-events: none;
 
@@ -321,42 +322,50 @@ button.numero:disabled {
     ellipse at center,
     white 0%,
     rgba(255,255,255,.9) 5%,
-    rgba(255,80,80,.9) 15%,
-    rgba(190,0,35,.7) 38%,
+    rgba(80,170,255,.9) 15%,
+    rgba(15,75,190,.7) 38%,
     transparent 70%
   );
 
   filter:
     drop-shadow(0 0 6px white)
-    drop-shadow(0 0 15px #d40028);
+    drop-shadow(0 0 15px #1769ff);
 
   transform: translate(-50%, -50%);
   animation: nadoPez 8s ease-in-out infinite;
+  border: 1px solid rgba(100, 170, 255, .75);
+  border-radius: 50%;
+  box-shadow:
+    0 0 5px rgba(70, 145, 255, .8),
+    inset 0 0 4px rgba(255, 255, 255, .5);
+  outline: 1px solid rgba(100, 170, 255, .5);
+  outline-offset: 30px;
 }
 
-/* DESTELLO 3: HOLOGRAMA TURQUESA */
+/* DESTELLO 3: DORADO CHAMPÁN */
 
 .destello-tercero {
   position: absolute;
   z-index: 4;
 
-  width: 55px;
-  height: 42px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
 
   pointer-events: none;
 
   background: radial-gradient(
-    ellipse at center,
-    white 0%,
-    rgba(255,255,255,.95) 8%,
-    rgba(56,217,169,.9) 25%,
-    rgba(56,217,169,.4) 48%,
-    transparent 72%
-  );
+  ellipse at center,
+  white 0%,
+  rgba(255,255,255,.95) 8%,
+  rgba(232,199,120,.95) 25%,
+  rgba(232,199,120,.7) 48%,
+  transparent 72%
+);
 
-  filter:
-    drop-shadow(0 0 6px white)
-    drop-shadow(0 0 15px #38d9a9);
+filter:
+  drop-shadow(0 0 6px white)
+  drop-shadow(0 0 15px #e8c778);
 
   transform: translate(-50%, -50%);
 }
@@ -630,8 +639,8 @@ let direccionLuz = 1;
 
 function nuevoDestino() {
 
-  destinoX = -10 + Math.random() * 110;
-  destinoY = -10 + Math.random() * 110;
+  destinoX = -30 + Math.random() * 130;
+  destinoY = -30 + Math.random() * 130;
 
   velocidadPez = 0.006 + Math.random() * 0.036;
 
@@ -949,7 +958,7 @@ requestAnimationFrame(moverTercero);
 // SISTEMA DE COLISIONES ENTRE DESTELLOS
 // =================================
 
-const distanciaColision = 0.3;
+const distanciaColision = 1.0;
 const colisionesActivas = new Set();
 
 function cambiarDireccionPorColision(destello, x, y) {
