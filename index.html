@@ -752,12 +752,13 @@ function moverPez() {
     if (celebracionActiva) {
 
       const angulo = ahora * 0.0015;
-
+      const radio = 50 + 30 * Math.sin(ahora * 0.00045);
+      
       destello.style.left =
-        (50 + Math.cos(angulo) * 25) + "%";
-
+        (50 + Math.cos(angulo) * radio) + "%";
+      
       destello.style.top =
-        (50 + Math.sin(angulo) * 25) + "%";
+        (50 + Math.sin(angulo) * radio) + "%";
 
     // DANZA Y TRANSICIONES
     } else if (danzaActiva ||
@@ -916,14 +917,15 @@ function moverDestelloRapido() {
     if (celebracionActiva) {
 
       const angulo = ahora * 0.0015 + 2.094;
-
-      rapidoX = 50 + Math.cos(angulo) * 25;
-      rapidoY = 50 + Math.sin(angulo) * 25;
-
+      const radio = 50 + 30 * Math.sin(ahora * 0.00053);
+      
+      rapidoX = 50 + Math.cos(angulo) * radio;
+      rapidoY = 50 + Math.sin(angulo) * radio;
+      
       destelloRapido.style.display = "block";
       destelloRapido.style.left = rapidoX + "%";
       destelloRapido.style.top = rapidoY + "%";
-
+      
       destelloVisible = true;
 
     } else if (danzaActiva ||
@@ -1151,8 +1153,10 @@ function moverTercero() {
     
           const angulo = ahora * 0.0015 + 4.188;
     
-          const objetivoX = 50 + Math.cos(angulo) * 25;
-          const objetivoY = 50 + Math.sin(angulo) * 25;
+          const radio = 50 + 30 * Math.sin(ahora * 0.00061);
+
+          const objetivoX = 50 + Math.cos(angulo) * radio;
+          const objetivoY = 50 + Math.sin(angulo) * radio;
     
           terceroX = terceroCelebracionDesde.x +
             (objetivoX - terceroCelebracionDesde.x) * suavizado;
