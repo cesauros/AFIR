@@ -590,6 +590,7 @@ let celebracionActiva = false;
 let notificacionEnviada = false;
 
 let anguloDanza = 0;
+let ultimoFrameDanza = performance.now();
 let aparicionDanza = 0;
 let separacionDanza = 0;
 let tiempoColision = 0;
@@ -721,7 +722,10 @@ function moverPez() {
       
       } else if (danzaActiva) {
       
-        anguloDanza += 0.085;
+        const ahoraDanza = performance.now();
+        const deltaDanza = Math.min((ahoraDanza - ultimoFrameDanza) / 1000, 0.05);
+        ultimoFrameDanza = ahoraDanza;
+        anguloDanza += deltaDanza * 9;
       
         const radio = 5 + separacionDanza;
       
