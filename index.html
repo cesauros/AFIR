@@ -600,6 +600,96 @@ let radioOrbitalInicial = 40;
 const RADIO_ORBITAL_MINIMO = 40;
 const DURACION_TRANSICION = 800;
 
+// =================================
+// SISTEMA ORBITAL DE CELEBRACIÓN
+// =================================
+
+const RADIO_ORBITAL_MIN = 0.20;
+const RADIO_ORBITAL_MAX = 0.80;
+const RADIO_ORBITAL_TABLERO = 40;
+
+const DURACION_CICLO_ORBITAL = 2600;
+const VELOCIDAD_ANGULAR_BASE = 0.0015;
+const ACELERACION_CENTRO = 0.75;
+const DURACION_ENTRADA_ORBITAL = 1100;
+
+let inicioOrbitaCelebracion = 0;
+let origenOrbital = [];
+
+const desfasesOrbitales = [
+  0,
+  (Math.PI * 2) / 3,
+  (Math.PI * 4) / 3
+];
+
+function iniciarCelebracionOrbital() {
+
+  inicioOrbitaCelebracion = performance.now();
+
+  origenOrbital = [
+    { x: pezX, y: pezY },
+    { x: rapidoX, y: rapidoY },
+    { x: terceroX, y: terceroY }
+  ];
+}
+
+function calcularPosicionOrbital(indice, ahora) {
+
+  const tiempo = ahora - inicioOrbitaCelebracion;
+
+  const frecuencia =
+    (Math.PI * 2) / DURACION_CICLO_ORBITAL;
+
+  const ciclo = tiempo * frecuencia;
+
+  const cercania = (1 + Math.cos(ciclo)) / 2;
+
+  const radioNormalizado =
+    RADIO_ORBITAL_MIN +
+    (RADIO_ORBITAL_MAX - RADIO_ORBITAL_MIN) *
+    ((1 - Math.cos(ciclo)) / 2);
+
+  const radio =
+    radioNormalizado * RADIO_ORBITAL_TABLERO;
+
+  // INTEGRACIÓN DE LA VELOCIDAD ANGULAR
+
+  const tiempoAngular =
+    tiempo +
+    ACELERACION_CENTRO *
+    (
+      tiempo / 2 +
+      Math.sin(ciclo) / (2 * frecuencia)
+    );
+
+  const angulo =
+    tiempoAngular * VELOCIDAD_ANGULAR_BASE +
+    desfasesOrbitales[indice];
+
+  const destinoX =
+    50 + Math.cos(angulo) * radio;
+
+  const destinoY =
+    50 + Math.sin(angulo) * radio;
+
+  // TRANSICIÓN INDIVIDUAL DESDE LA POSICIÓN REAL
+
+  const progreso = Math.min(
+    tiempo / DURACION_ENTRADA_ORBITAL,
+    1
+  );
+
+  const suavizado =
+    progreso * progreso * (3 - 2 * progreso);
+
+  const origen = origenOrbital[indice];
+
+  return {
+    x: origen.x + (destinoX - origen.x) * suavizado,
+    y: origen.y + (destinoY - origen.y) * suavizado
+  };
+}
+
 function posicionDestello(elemento, x, y) {
   return {
     x: parseFloat(elemento.style.left) || x,
@@ -751,13 +841,13 @@ function moverPez() {
     // CELEBRACIÓN
     if (celebracionActiva) {
 
-      const angulo = ahora * 0.0015;
-
-      destello.style.left =
-        (50 + Math.cos(angulo) * 25) + "%";
-
-      destello.style.top =
-        (50 + Math.sin(angulo) * 25) + "%";
+      const posicion = calcularPosicionOrbital(0, ahora);
+    
+      pezX = posicion.x;
+      pezY = posicion.y;
+    
+      destello.style.left = pezX + "%";
+      destello.style.top = pezY + "%";
 
     // DANZA Y TRANSICIONES
     } else if (danzaActiva ||
@@ -915,15 +1005,15 @@ function moverDestelloRapido() {
 
     if (celebracionActiva) {
 
-      const angulo = ahora * 0.0015 + 2.094;
-
-      rapidoX = 50 + Math.cos(angulo) * 25;
-      rapidoY = 50 + Math.sin(angulo) * 25;
-
+      const posicion = calcularPosicionOrbital(1, ahora);
+    
+      rapidoX = posicion.x;
+      rapidoY = posicion.y;
+    
       destelloRapido.style.display = "block";
       destelloRapido.style.left = rapidoX + "%";
       destelloRapido.style.top = rapidoY + "%";
-
+    
       destelloVisible = true;
 
     } else if (danzaActiva ||
@@ -1131,37 +1221,13 @@ function moverTercero() {
 
         if (celebracionActiva) {
 
-          if (terceroCelebracionInicio === null) {
-    
-            terceroCelebracionInicio = ahora;
-    
-            terceroCelebracionDesde = {
-              x: terceroX,
-              y: terceroY
-            };
-          }
-    
-          const t = Math.min(
-            (ahora - terceroCelebracionInicio) /
-            DURACION_ENTRADA_CELEBRACION_TERCERO,
-            1
-          );
-    
-          const suavizado = t * t * (3 - 2 * t);
-    
-          const angulo = ahora * 0.0015 + 4.188;
-    
-          const objetivoX = 50 + Math.cos(angulo) * 25;
-          const objetivoY = 50 + Math.sin(angulo) * 25;
-    
-          terceroX = terceroCelebracionDesde.x +
-            (objetivoX - terceroCelebracionDesde.x) * suavizado;
-    
-          terceroY = terceroCelebracionDesde.y +
-            (objetivoY - terceroCelebracionDesde.y) * suavizado;
-    
+          const posicion = calcularPosicionOrbital(2, ahora);
+
+          terceroX = posicion.x;
+          terceroY = posicion.y;
+
         } else {
-    
+
           terceroCelebracionInicio = null;
           terceroCelebracionDesde = null;
 
@@ -1927,6 +1993,8 @@ reservar.onclick = async () => {
   }
 
   // INICIAR CELEBRACIÓN DE RESERVA
+  iniciarCelebracionOrbital();
+  
   celebracionActiva = true;
   danzaActiva = false;
 
