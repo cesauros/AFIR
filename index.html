@@ -96,6 +96,26 @@ h1, h2 {
   filter: none;
 }
 
+.grid.celebracion {
+  animation: iluminarTablero 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes iluminarTablero {
+  from {
+    box-shadow:
+      0 0 15px rgba(255,215,100,.5),
+      0 0 35px rgba(255,190,50,.3),
+      inset 0 0 25px rgba(255,210,100,.15);
+  }
+
+  to {
+    box-shadow:
+      0 0 30px rgba(255,230,140,1),
+      0 0 75px rgba(255,190,50,.85),
+      inset 0 0 45px rgba(255,220,120,.4);
+  }
+}
+
 /* NÚMEROS */
 
 button.numero {
@@ -562,6 +582,18 @@ let raffleId = null;
 let cargaNumerosId = 0;
 let enlaceNotificacion = null;
 let reservaCreada = false;
+
+// ESTADOS DE INTERACCIÓN DE LOS DESTELLOS
+
+let danzaActiva = false;
+let celebracionActiva = false;
+let notificacionEnviada = false;
+
+let anguloDanza = 0;
+let aparicionDanza = 0;
+let separacionDanza = 0;
+let tiempoColision = 0;
+  
 let telefonoPendiente = "";
 let comprobandoReserva = false;
 
@@ -677,8 +709,34 @@ function moverPez() {
         Math.cos(faseOndulacion * 0.7) * 2.5 +
         Math.sin(faseOndulacion * 0.35) * 1.5;
 
-      destello.style.left = (pezX + ondulacionX) + "%";
-      destello.style.top = (pezY + ondulacionY) + "%";
+      if (celebracionActiva) {
+
+        const angulo = performance.now() * 0.0015;
+      
+        destello.style.left =
+          (50 + Math.cos(angulo) * 25) + "%";
+      
+        destello.style.top =
+          (50 + Math.sin(angulo) * 25) + "%";
+      
+      } else if (danzaActiva) {
+      
+        anguloDanza += 0.085;
+      
+        const radio = 5 + separacionDanza;
+      
+        destello.style.left =
+          (50 + Math.cos(anguloDanza) * radio) + "%";
+      
+        destello.style.top =
+          (50 + Math.sin(anguloDanza) * radio) + "%";
+      
+      } else {
+      
+        destello.style.left = (pezX + ondulacionX) + "%";
+        destello.style.top = (pezY + ondulacionY) + "%";
+      
+      }
     }
 
     // LUMINOSIDAD CONSTANTE
@@ -749,41 +807,69 @@ function moverDestelloRapido() {
 
   const ahora = performance.now();
 
-  if (!tablero.classList.contains("oculto") &&
-      !grid.classList.contains("cargando")) {
+  if (
+    !tablero.classList.contains("oculto") &&
+    !grid.classList.contains("cargando")
+  ) {
 
-    if (!destelloVisible && ahora >= proximaAparicion) {
-      iniciarRecorridoRapido();
-    }
+    if (celebracionActiva) {
 
-    if (destelloVisible) {
+      const angulo = ahora * 0.0015 + 2.094;
 
-      rapidoX += (rapidoDestinoX - rapidoX) * velocidadRapida;
-      rapidoY += (rapidoDestinoY - rapidoY) * velocidadRapida;
+      rapidoX = 50 + Math.cos(angulo) * 25;
+      rapidoY = 50 + Math.sin(angulo) * 25;
 
+      destelloRapido.style.display = "block";
       destelloRapido.style.left = rapidoX + "%";
       destelloRapido.style.top = rapidoY + "%";
 
-      const distancia = Math.hypot(
-        rapidoDestinoX - rapidoX,
-        rapidoDestinoY - rapidoY
-      );
+      destelloVisible = true;
 
-      if (distancia < 1) {
+    } else if (danzaActiva) {
 
-        destelloRapido.style.display = "none";
+      const angulo = anguloDanza + Math.PI;
+      const radio = 5 + separacionDanza;
 
-        destelloVisible = false;
+      rapidoX = 50 + Math.cos(angulo) * radio;
+      rapidoY = 50 + Math.sin(angulo) * radio;
 
-        proximaAparicion =
-          ahora + 5000 + Math.random() * 7000;
+      destelloRapido.style.display = "block";
+      destelloRapido.style.left = rapidoX + "%";
+      destelloRapido.style.top = rapidoY + "%";
+
+      destelloVisible = true;
+
+    } else {
+
+      if (!destelloVisible && ahora >= proximaAparicion) {
+        iniciarRecorridoRapido();
+      }
+
+      if (destelloVisible) {
+
+        rapidoX += (rapidoDestinoX - rapidoX) * velocidadRapida;
+        rapidoY += (rapidoDestinoY - rapidoY) * velocidadRapida;
+
+        destelloRapido.style.left = rapidoX + "%";
+        destelloRapido.style.top = rapidoY + "%";
+
+        const distancia = Math.hypot(
+          rapidoDestinoX - rapidoX,
+          rapidoDestinoY - rapidoY
+        );
+
+        if (distancia < 1) {
+          destelloRapido.style.display = "none";
+          destelloVisible = false;
+          proximaAparicion = ahora + 5000 + Math.random() * 7000;
+        }
       }
     }
   }
 
   requestAnimationFrame(moverDestelloRapido);
 }
-
+  
 moverDestelloRapido();
 
 
@@ -884,6 +970,7 @@ function dirigirTerceroA(boton) {
 }
 
 function moverTercero() {
+
   const ahora = performance.now();
 
   const delta = Math.min(
@@ -898,49 +985,61 @@ function moverTercero() {
     !grid.classList.contains("cargando")
   ) {
 
-    if (terceroModo === "esperando") {
+    if (celebracionActiva) {
 
-      if (ahora >= terceroPausaHasta) {
-        destinoAleatorioTercero();
-      }
+      const angulo = ahora * 0.0015 + 4.188;
+
+      terceroX = 50 + Math.cos(angulo) * 25;
+      terceroY = 50 + Math.sin(angulo) * 25;
 
     } else {
 
-      if (
-        terceroModo === "moviendo" &&
-        ahora >= terceroProximoCambio
-      ) {
-        if (Math.random() < 0.25) {
-          salirTercero();
-        } else {
-          destinoAleatorioTercero();
-        }
-      }
+      if (terceroModo === "esperando") {
 
-      const dx = terceroDestinoX - terceroX;
-      const dy = terceroDestinoY - terceroY;
-      const distancia = Math.hypot(dx, dy);
-      const paso = terceroVelocidad * delta;
-
-      if (distancia <= paso || distancia < 0.01) {
-
-        terceroX = terceroDestinoX;
-        terceroY = terceroDestinoY;
-
-        if (terceroModo === "saliendo") {
-          entrarTercero();
-
-        } else if (terceroModo === "persiguiendo") {
-          terceroModo = "esperando";
-          terceroPausaHasta = ahora + 500;
-
-        } else {
+        if (ahora >= terceroPausaHasta) {
           destinoAleatorioTercero();
         }
 
       } else {
-        terceroX += (dx / distancia) * paso;
-        terceroY += (dy / distancia) * paso;
+
+        if (
+          terceroModo === "moviendo" &&
+          ahora >= terceroProximoCambio
+        ) {
+          if (Math.random() < 0.25) {
+            salirTercero();
+          } else {
+            destinoAleatorioTercero();
+          }
+        }
+
+        const dx = terceroDestinoX - terceroX;
+        const dy = terceroDestinoY - terceroY;
+        const distancia = Math.hypot(dx, dy);
+        const paso = terceroVelocidad * delta;
+
+        if (distancia <= paso || distancia < 0.01) {
+
+          terceroX = terceroDestinoX;
+          terceroY = terceroDestinoY;
+
+          if (terceroModo === "saliendo") {
+            entrarTercero();
+
+          } else if (terceroModo === "persiguiendo") {
+            terceroModo = "esperando";
+            terceroPausaHasta = ahora + 500;
+
+          } else {
+            destinoAleatorioTercero();
+          }
+
+        } else {
+
+          terceroX += (dx / distancia) * paso;
+          terceroY += (dy / distancia) * paso;
+
+        }
       }
     }
 
@@ -958,7 +1057,7 @@ requestAnimationFrame(moverTercero);
 // SISTEMA DE COLISIONES ENTRE DESTELLOS
 // =================================
 
-const distanciaColision = 1.0;
+const distanciaColision = 0.65;
 const colisionesActivas = new Set();
 
 function cambiarDireccionPorColision(destello, x, y) {
@@ -994,6 +1093,13 @@ function cambiarDireccionPorColision(destello, x, y) {
     terceroModo = "moviendo";
     terceroProximoCambio = performance.now() + 3000;
   }
+
+  // RECUPERAR LA DANZA DESPUÉS DEL IMPACTO
+
+  if (danzaActiva && !celebracionActiva) {
+    separacionDanza = 35;
+    tiempoColision = performance.now();
+  }
 }
 
 function detectarColisiones() {
@@ -1013,12 +1119,12 @@ function detectarColisiones() {
 
       const visible =
         id !== 1 || destelloVisible;
-
+    
       if (!visible) return null;
-
+    
       const rect = elemento.getBoundingClientRect();
       const gridRect = grid.getBoundingClientRect();
-
+    
       return {
         id,
         elemento,
@@ -1028,6 +1134,25 @@ function detectarColisiones() {
       };
     });
 
+    // DETECTAR DANZA ENTRE LOS DESTELLOS 1 Y 2
+
+    if (danzaActiva && !celebracionActiva) {
+      const a = posiciones[0];
+      const b = posiciones[1];
+    
+      if (a && b) {
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const distancia = Math.hypot(dx, dy);
+    
+        if (distancia < 100) {
+          separacionDanza = Math.min(35, separacionDanza + 1);
+        } else {
+          separacionDanza = Math.max(0, separacionDanza - 0.5);
+        }
+      }
+    }
+    
     const colisionados = new Set();
 
     const paresDetectados = new Set();
@@ -1082,6 +1207,16 @@ function detectarColisiones() {
 
     if (colisionados.size > 0) {
 
+    // SEPARACIÓN TEMPORAL DE LOS PUNTOS 1 Y 2
+
+    if (danzaActiva && (colisionados.has(0) || colisionados.has(1))) {
+    
+      separacionDanza = 5;
+    
+      tiempoColision = performance.now();
+    
+    }
+
       let centroX = 0;
       let centroY = 0;
 
@@ -1111,6 +1246,15 @@ function detectarColisiones() {
         );
       });
     }
+  }
+
+  // RECUPERAR LA DANZA DESPUÉS DEL IMPACTO
+
+  if (
+    separacionDanza > 0 &&
+    performance.now() - tiempoColision > 900
+  ) {
+    separacionDanza = 0;
   }
 
   requestAnimationFrame(detectarColisiones);
@@ -1497,6 +1641,18 @@ function dibujarTablero() {
         seleccionados.push(n);
       }
 
+      // ACTIVAR DANZA DE LOS DOS PRIMEROS DESTELLOS
+
+      if (seleccionados.length > 0 && !danzaActiva) {
+        aparicionDanza = performance.now();
+      }
+      
+      danzaActiva = seleccionados.length > 0;
+      
+      if (!danzaActiva) {
+        separacionDanza = 0;
+      }
+
       dibujarTablero();
       const botonRipple = [...grid.querySelectorAll("button.numero")]
       .find(b => b.textContent === n);
@@ -1559,6 +1715,13 @@ reservar.onclick = async () => {
   // SEGUNDO CLIC: ABRIR WHATSAPP
   if (enlaceNotificacion) {
     window.open(enlaceNotificacion, "_blank");
+  
+    celebracionActiva = false;
+    danzaActiva = false;
+    notificacionEnviada = true;
+
+    grid.classList.remove("celebracion");
+  
     enlaceNotificacion = null;
     reservar.textContent = "Confirmar reserva";
     return;
@@ -1590,6 +1753,12 @@ reservar.onclick = async () => {
     mensaje.textContent = "Completa tu nombre y WhatsApp.";
     return;
   }
+
+  // INICIAR CELEBRACIÓN DE RESERVA
+  celebracionActiva = true;
+  danzaActiva = false;
+
+  grid.classList.add("celebracion");
 
   reservar.disabled = true;
   reservar.textContent = "Procesando reserva...";
