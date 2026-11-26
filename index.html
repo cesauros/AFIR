@@ -592,37 +592,8 @@ let notificacionEnviada = false;
 let anguloDanza = 0;
 let ultimoFrameDanza = performance.now();
 let aparicionDanza = 0;
-const desviosDanza = [
-  { x: 0, y: 0, vx: 0, vy: 0 },
-  { x: 0, y: 0, vx: 0, vy: 0 }
-];
-
-function actualizarDesvioDanza(id, delta) {
-  const d = desviosDanza[id];
-
-  const k = 24;
-  const amortiguacion = 9;
-
-  d.vx += (-k * d.x - amortiguacion * d.vx) * delta;
-  d.vy += (-k * d.y - amortiguacion * d.vy) * delta;
-
-  d.x += d.vx * delta;
-  d.y += d.vy * delta;
-
-  if (
-    Math.abs(d.x) < 0.001 &&
-    Math.abs(d.y) < 0.001 &&
-    Math.abs(d.vx) < 0.001 &&
-    Math.abs(d.vy) < 0.001
-  ) {
-    d.x = 0;
-    d.y = 0;
-    d.vx = 0;
-    d.vy = 0;
-  }
-
-  return d;
-}
+let separacionDanza = 0;
+let tiempoColision = 0;
 
 let transicionDestellos = null;
 let radioOrbitalInicial = 40;
@@ -796,6 +767,11 @@ function moverPez() {
 
       const t = progresoTransicion();
 
+      const delta = Math.min(
+        (ahora - ultimoFrameDanza) / 1000,
+        0.05
+      );
+
       ultimoFrameDanza = ahora;
 
       const radio = transicionDestellos.radio +
@@ -803,13 +779,11 @@ function moverPez() {
 
       anguloDanza += delta * 9;
 
-      const desvio = actualizarDesvioDanza(0, delta);
-
       const objetivoX =
-        50 + Math.cos(anguloDanza) * radio + desvio.x;
-      
+        50 + Math.cos(anguloDanza) * (radio + separacionDanza);
+
       const objetivoY =
-        50 + Math.sin(anguloDanza) * radio + desvio.y;
+        50 + Math.sin(anguloDanza) * (radio + separacionDanza);
 
       let x, y;
 
@@ -886,8 +860,6 @@ let rapidoDestinoX = 0;
 let rapidoDestinoY = 0;
 
 let velocidadRapida = 0.04;
-let ultimoFrameRapido = performance.now();
-
 let proximaAparicion = performance.now() + 2000;
 let destelloVisible = false;
 
@@ -932,17 +904,10 @@ function iniciarRecorridoRapido() {
 
   destelloVisible = true;
 }
-  
+
 function moverDestelloRapido() {
 
   const ahora = performance.now();
-
-  const delta = Math.min(
-    (ahora - ultimoFrameRapido) / 1000,
-    0.05
-  );
-
-  ultimoFrameRapido = ahora;
 
   if (
     !tablero.classList.contains("oculto") &&
@@ -978,13 +943,11 @@ function moverDestelloRapido() {
 
         const angulo = anguloDanza + Math.PI;
 
-        const desvio = actualizarDesvioDanza(1, delta);
-
         const objetivoX =
-          50 + Math.cos(angulo) * radio + desvio.x;
-        
+          50 + Math.cos(angulo) * (radio + separacionDanza);
+
         const objetivoY =
-          50 + Math.sin(angulo) * radio + desvio.y;
+          50 + Math.sin(angulo) * (radio + separacionDanza);
 
         x = transicionDestellos.desde2.x +
           (objetivoX - transicionDestellos.desde2.x) * t;
@@ -1281,19 +1244,6 @@ function cambiarDireccionPorColision(destello, x, y) {
   const vx = dx / distancia;
   const vy = dy / distancia;
 
-  if (
-    danzaActiva &&
-    !celebracionActiva &&
-    (destello.id === 0 || destello.id === 1)
-  ) {
-    const d = desviosDanza[destello.id];
-  
-    d.vx += vx * 90;
-    d.vy += vy * 90;
-  
-    return;
-  }
-
   if (destello.id === 0) {
 
     destinoX = Math.max(-10, Math.min(110, pezX + vx * 65));
@@ -1358,6 +1308,25 @@ function detectarColisiones() {
         radio: Math.max(rect.width, rect.height) / 2
       };
     });
+
+    // DETECTAR DANZA ENTRE LOS DESTELLOS 1 Y 2
+
+    if (danzaActiva && !celebracionActiva) {
+      const a = posiciones[0];
+      const b = posiciones[1];
+    
+      if (a && b) {
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const distancia = Math.hypot(dx, dy);
+    
+        if (distancia < 100) {
+          separacionDanza = Math.min(35, separacionDanza + 1);
+        } else {
+          separacionDanza = Math.max(0, separacionDanza - 0.5);
+        }
+      }
+    }
     
     const colisionados = new Set();
 
@@ -1413,6 +1382,16 @@ function detectarColisiones() {
 
     if (colisionados.size > 0) {
 
+    // SEPARACIÓN TEMPORAL DE LOS PUNTOS 1 Y 2
+
+    if (danzaActiva && (colisionados.has(0) || colisionados.has(1))) {
+    
+      separacionDanza = 5;
+    
+      tiempoColision = performance.now();
+    
+    }
+
       let centroX = 0;
       let centroY = 0;
 
@@ -1442,6 +1421,15 @@ function detectarColisiones() {
         );
       });
     }
+  }
+
+  // RECUPERAR LA DANZA DESPUÉS DEL IMPACTO
+
+  if (
+    separacionDanza > 0 &&
+    performance.now() - tiempoColision > 900
+  ) {
+    separacionDanza = 0;
   }
 
   requestAnimationFrame(detectarColisiones);
