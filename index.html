@@ -1685,6 +1685,10 @@ async function cargarRifa() {
 
 document.getElementById("volver").onclick = () => {
 
+  celebracionActiva = false;
+  danzaActiva = false;
+  grid.classList.remove("celebracion");
+  
   tablero.classList.add("oculto");
   portada.classList.remove("oculto");
 
