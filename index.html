@@ -746,100 +746,104 @@ function moverPez() {
   if (!tablero.classList.contains("oculto") &&
       !grid.classList.contains("cargando")) {
 
-    if (performance.now() > ultimoMovimiento) {
-      nuevoDestino();
-    }
+    const ahora = performance.now();
 
-    if (!pausaPez) {
+    // CELEBRACIÓN
+    if (celebracionActiva) {
 
-      faseOndulacion += 0.055;
+      const angulo = ahora * 0.0015;
 
-      const distanciaX = destinoX - pezX;
-      const distanciaY = destinoY - pezY;
+      destello.style.left =
+        (50 + Math.cos(angulo) * 25) + "%";
 
-      pezX += distanciaX * velocidadPez;
-      pezY += distanciaY * velocidadPez;
+      destello.style.top =
+        (50 + Math.sin(angulo) * 25) + "%";
+
+    // DANZA Y TRANSICIONES
+    } else if (danzaActiva ||
+      (transicionDestellos?.tipo === "salida" &&
+       progresoTransicion() < 1)) {
+
+      const t = progresoTransicion();
+
+      const delta = Math.min(
+        (ahora - ultimoFrameDanza) / 1000,
+        0.05
+      );
+
+      ultimoFrameDanza = ahora;
+
+      const radio = transicionDestellos.radio +
+        (RADIO_ORBITAL_MINIMO - transicionDestellos.radio) * t;
+
+      anguloDanza += delta * 9;
+
+      const objetivoX =
+        50 + Math.cos(anguloDanza) * (radio + separacionDanza);
+
+      const objetivoY =
+        50 + Math.sin(anguloDanza) * (radio + separacionDanza);
+
+      let x, y;
+
+      if (transicionDestellos.tipo === "entrada") {
+
+        x = transicionDestellos.desde1.x +
+          (objetivoX - transicionDestellos.desde1.x) * t;
+
+        y = transicionDestellos.desde1.y +
+          (objetivoY - transicionDestellos.desde1.y) * t;
+
+      } else {
+
+        const normalX = pezX;
+        const normalY = pezY;
+
+        x = transicionDestellos.desde1.x +
+          (normalX - transicionDestellos.desde1.x) * t;
+
+        y = transicionDestellos.desde1.y +
+          (normalY - transicionDestellos.desde1.y) * t;
+      }
+
+      destello.style.left = x + "%";
+      destello.style.top = y + "%";
+
+    // MOVIMIENTO NORMAL
+    } else {
+
+      if (ahora > ultimoMovimiento) {
+        nuevoDestino();
+      }
+
+      if (!pausaPez) {
+
+        faseOndulacion += 0.055;
+
+        const distanciaX = destinoX - pezX;
+        const distanciaY = destinoY - pezY;
+
+        pezX += distanciaX * velocidadPez;
+        pezY += distanciaY * velocidadPez;
+      }
 
       const ondulacionX =
         Math.sin(faseOndulacion) * 2.5 +
         Math.sin(faseOndulacion * 0.45) * 1.5;
-      
+
       const ondulacionY =
         Math.cos(faseOndulacion * 0.7) * 2.5 +
         Math.sin(faseOndulacion * 0.35) * 1.5;
 
-      if (celebracionActiva) {
+      destello.style.left =
+        (pezX + ondulacionX) + "%";
 
-        const angulo = performance.now() * 0.0015;
-      
-        destello.style.left =
-          (50 + Math.cos(angulo) * 25) + "%";
-      
-        destello.style.top =
-          (50 + Math.sin(angulo) * 25) + "%";
-      
-            } else if (danzaActiva ||
-              (transicionDestellos?.tipo === "salida" &&
-               progresoTransicion() < 1)) {
-      
-              const t = progresoTransicion();
-      
-              const ahora = performance.now();
-              const delta = Math.min(
-                (ahora - ultimoFrameDanza) / 1000,
-                0.05
-              );
-      
-              ultimoFrameDanza = ahora;
-      
-              const radio = transicionDestellos.radio +
-                (RADIO_ORBITAL_MINIMO - transicionDestellos.radio) * t;
-      
-              anguloDanza += delta * 9;
-      
-              const objetivoX =
-                50 + Math.cos(anguloDanza) * (radio + separacionDanza);
-      
-              const objetivoY =
-                50 + Math.sin(anguloDanza) * (radio + separacionDanza);
-      
-              let x, y;
-      
-              if (transicionDestellos.tipo === "entrada") {
-      
-                x = transicionDestellos.desde1.x +
-                  (objetivoX - transicionDestellos.desde1.x) * t;
-      
-                y = transicionDestellos.desde1.y +
-                  (objetivoY - transicionDestellos.desde1.y) * t;
-      
-              } else {
-      
-                const normalX = pezX + ondulacionX;
-                const normalY = pezY + ondulacionY;
-      
-                x = transicionDestellos.desde1.x +
-                  (normalX - transicionDestellos.desde1.x) * t;
-      
-                y = transicionDestellos.desde1.y +
-                  (normalY - transicionDestellos.desde1.y) * t;
-              }
-      
-              destello.style.left = x + "%";
-              destello.style.top = y + "%";
-      
-            } else {
-      
-              destello.style.left = (pezX + ondulacionX) + "%";
-              destello.style.top = (pezY + ondulacionY) + "%";
-      
-            }
+      destello.style.top =
+        (pezY + ondulacionY) + "%";
     }
 
-    // LUMINOSIDAD CONSTANTE
-    
     destello.style.opacity = 1;
-    
+
     destello.style.filter =
       "brightness(1.2) drop-shadow(0 0 7px white) drop-shadow(0 0 16px #38d9a9)";
   }
