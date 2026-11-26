@@ -796,11 +796,6 @@ function moverPez() {
 
       const t = progresoTransicion();
 
-      const delta = Math.min(
-        (ahora - ultimoFrameDanza) / 1000,
-        0.05
-      );
-
       ultimoFrameDanza = ahora;
 
       const radio = transicionDestellos.radio +
@@ -941,17 +936,13 @@ function iniciarRecorridoRapido() {
 function moverDestelloRapido() {
 
   const ahora = performance.now();
+
   const delta = Math.min(
     (ahora - ultimoFrameRapido) / 1000,
     0.05
   );
 
   ultimoFrameRapido = ahora;
-
-  const delta = Math.min(
-    (ahora - ultimoFrameDanza) / 1000,
-    0.05
-  );
 
   if (
     !tablero.classList.contains("oculto") &&
