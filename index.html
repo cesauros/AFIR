@@ -1137,6 +1137,25 @@ function detectarColisiones() {
         radio: Math.max(rect.width, rect.height) / 2
       };
     });
+
+    // DETECTAR DANZA ENTRE LOS DESTELLOS 1 Y 2
+
+    if (danzaActiva && !celebracionActiva) {
+      const a = posiciones[0];
+      const b = posiciones[1];
+    
+      if (a && b) {
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const distancia = Math.hypot(dx, dy);
+    
+        if (distancia < 100) {
+          separacionDanza = Math.min(35, separacionDanza + 1);
+        } else {
+          separacionDanza = Math.max(0, separacionDanza - 0.5);
+        }
+      }
+    }
     
     const colisionados = new Set();
 
@@ -1194,8 +1213,7 @@ function detectarColisiones() {
 
     // SEPARACIÓN TEMPORAL DE LOS PUNTOS 1 Y 2
 
-    if (danzaActiva && colisionados.has(2) &&
-    (colisionados.has(0) || colisionados.has(1))) {
+    if (danzaActiva && (colisionados.has(0) || colisionados.has(1))) {
     
       separacionDanza = 5;
     
