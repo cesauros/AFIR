@@ -594,6 +594,15 @@ let ultimoFrameDanza = performance.now();
 let aparicionDanza = 0;
 let separacionDanza = 0;
 let tiempoColision = 0;
+
+let transicionDanza = 0;
+let inicioTransicion = 0;
+let duracionTransicion = 700;
+
+let inicioAngulo = 0;
+let inicioRadio = 0;
+let anguloInicial = 0;
+let radioMinimo = 40;
   
 let telefonoPendiente = "";
 let comprobandoReserva = false;
@@ -720,21 +729,35 @@ function moverPez() {
         destello.style.top =
           (50 + Math.sin(angulo) * 25) + "%";
       
-      } else if (danzaActiva) {
-      
-        const ahoraDanza = performance.now();
-        const deltaDanza = Math.min((ahoraDanza - ultimoFrameDanza) / 1000, 0.05);
-        ultimoFrameDanza = ahoraDanza;
-        anguloDanza += deltaDanza * 9;
-      
-        const radio = 5 + separacionDanza;
-      
+      } else if (danzaActiva || transicionDanza > 0) {
+
+        const ahora = performance.now();
+
+        const progreso = Math.min(
+          (ahora - inicioTransicion) / duracionTransicion,
+          1
+        );
+
+        const suavizado = progreso * progreso * (3 - 2 * progreso);
+
+        const radio = inicioRadio +
+          (radioMinimo - inicioRadio) * suavizado;
+
+        anguloDanza = anguloInicial +
+          (ahora - inicioAngulo) / 1000 * 9;
+
+        const radioActual = radio + separacionDanza;
+
         destello.style.left =
-          (50 + Math.cos(anguloDanza) * radio) + "%";
-      
+          (50 + Math.cos(anguloDanza) * radioActual) + "%";
+
         destello.style.top =
-          (50 + Math.sin(anguloDanza) * radio) + "%";
-      
+          (50 + Math.sin(anguloDanza) * radioActual) + "%";
+
+        if (progreso >= 1) {
+          transicionDanza = 0;
+        }
+
       } else {
       
         destello.style.left = (pezX + ondulacionX) + "%";
@@ -829,19 +852,30 @@ function moverDestelloRapido() {
 
       destelloVisible = true;
 
-    } else if (danzaActiva) {
+        } else if (danzaActiva || transicionDanza > 0) {
 
-      const angulo = anguloDanza + Math.PI;
-      const radio = 5 + separacionDanza;
-
-      rapidoX = 50 + Math.cos(angulo) * radio;
-      rapidoY = 50 + Math.sin(angulo) * radio;
-
-      destelloRapido.style.display = "block";
-      destelloRapido.style.left = rapidoX + "%";
-      destelloRapido.style.top = rapidoY + "%";
-
-      destelloVisible = true;
+          const ahora = performance.now();
+    
+          const progreso = Math.min(
+            (ahora - inicioTransicion) / duracionTransicion,
+            1
+          );
+    
+          const suavizado = progreso * progreso * (3 - 2 * progreso);
+    
+          const radio = inicioRadio +
+            (radioMinimo - inicioRadio) * suavizado;
+    
+          const angulo = anguloDanza + Math.PI;
+    
+          rapidoX = 50 + Math.cos(angulo) * (radio + separacionDanza);
+          rapidoY = 50 + Math.sin(angulo) * (radio + separacionDanza);
+    
+          destelloRapido.style.display = "block";
+          destelloRapido.style.left = rapidoX + "%";
+          destelloRapido.style.top = rapidoY + "%";
+    
+          destelloVisible = true;
 
     } else {
 
@@ -1645,17 +1679,50 @@ function dibujarTablero() {
         seleccionados.push(n);
       }
 
-      // ACTIVAR DANZA DE LOS DOS PRIMEROS DESTELLOS
+            // TRANSICIÓN DE LOS DESTELLOS 1 Y 2
 
       if (seleccionados.length > 0 && !danzaActiva) {
-        aparicionDanza = performance.now();
+
+        const rect = grid.getBoundingClientRect();
+
+        const x = pezX;
+        const y = pezY;
+
+        const dx = x - 50;
+        const dy = y - 50;
+
+        inicioRadio = Math.min(
+          Math.hypot(dx, dy),
+          70
+        );
+
+        anguloInicial = Math.atan2(dy, dx);
+
+        inicioAngulo = performance.now();
+        inicioTransicion = performance.now();
+
+        transicionDanza = 1;
+
+        ultimoFrameDanza = performance.now();
+
+        anguloDanza = anguloInicial;
       }
-      
-      danzaActiva = seleccionados.length > 0;
-      
-      if (!danzaActiva) {
+
+      if (seleccionados.length === 0 && danzaActiva) {
+
+        const rect = grid.getBoundingClientRect();
+
+        const dx = pezX - 50;
+        const dy = pezY - 50;
+
+        destinoX = pezX;
+        destinoY = pezY;
+
+        transicionDanza = 0;
         separacionDanza = 0;
       }
+
+      danzaActiva = seleccionados.length > 0;
 
       dibujarTablero();
       const botonRipple = [...grid.querySelectorAll("button.numero")]
