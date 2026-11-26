@@ -727,7 +727,7 @@ function moverPez() {
         ultimoFrameDanza = ahoraDanza;
         anguloDanza += deltaDanza * 9;
       
-        const radio = 20 + separacionDanza;
+        const radio = 5 + separacionDanza;
       
         destello.style.left =
           (50 + Math.cos(anguloDanza) * radio) + "%";
@@ -832,7 +832,7 @@ function moverDestelloRapido() {
     } else if (danzaActiva) {
 
       const angulo = anguloDanza + Math.PI;
-      const radio = 20 + separacionDanza;
+      const radio = 5 + separacionDanza;
 
       rapidoX = 50 + Math.cos(angulo) * radio;
       rapidoY = 50 + Math.sin(angulo) * radio;
