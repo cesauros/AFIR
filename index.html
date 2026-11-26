@@ -590,17 +590,9 @@ let celebracionActiva = false;
 let notificacionEnviada = false;
 
 let anguloDanza = 0;
-let ultimoFrameDanza = performance.now();
 let aparicionDanza = 0;
 let separacionDanza = 0;
 let tiempoColision = 0;
-
-let acercamientoActivo = false;
-let progresoAcercamiento = 0;
-let inicioAcercamiento = 0;
-
-let origenDestello1 = { x: 50, y: 50 };
-let origenDestello2 = { x: 50, y: 50 };
   
 let telefonoPendiente = "";
 let comprobandoReserva = false;
@@ -690,32 +682,6 @@ function nuevoDestino() {
     performance.now() + 1500 + Math.random() * 3000;
 }
 
-function iniciarAcercamiento() {
-
-  if (acercamientoActivo) return;
-
-  const gridRect = grid.getBoundingClientRect();
-
-  const rect1 = destello.getBoundingClientRect();
-  const rect2 = destelloRapido.getBoundingClientRect();
-
-  origenDestello1 = {
-    x: ((rect1.left + rect1.width / 2 - gridRect.left) / gridRect.width) * 100,
-    y: ((rect1.top + rect1.height / 2 - gridRect.top) / gridRect.height) * 100
-  };
-
-  origenDestello2 = {
-    x: destelloVisible ? rapidoX : origenDestello1.x,
-    y: destelloVisible ? rapidoY : origenDestello1.y
-  };
-
-  inicioAcercamiento = performance.now();
-  progresoAcercamiento = 0;
-  acercamientoActivo = true;
-
-  danzaActiva = false;
-}
-
 function moverPez() {
 
   if (!tablero.classList.contains("oculto") &&
@@ -753,50 +719,22 @@ function moverPez() {
         destello.style.top =
           (50 + Math.sin(angulo) * 25) + "%";
       
-      } else if (acercamientoActivo) {
-
-        const t = Math.min(
-          (performance.now() - inicioAcercamiento) / 1800,
-          1
-        );
-      
-        const suavizado = t * t * (3 - 2 * t);
-      
-        const angulo = Math.atan2(
-          origenDestello1.y - 50,
-          origenDestello1.x - 50
-        );
-      
-        const radioInicial = Math.hypot(
-          origenDestello1.x - 50,
-          origenDestello1.y - 50
-        );
-      
-        const radio = radioInicial * (1 - suavizado);
-      
-        destello.style.left =
-          (origenDestello1.x +
-          (50 + Math.cos(angulo + t * 2) * radio - origenDestello1.x) * suavizado) + "%";
-      
-        destello.style.top =
-          (origenDestello1.y +
-          (50 + Math.sin(angulo + t * 2) * radio - origenDestello1.y) * suavizado) + "%";
-      
-        progresoAcercamiento = t;
-      
-        if (t >= 1) {
-          acercamientoActivo = false;
-          danzaActiva = true;
-          ultimoFrameDanza = performance.now();
-        }
-      
       } else if (danzaActiva) {
-      anguloDanza += 0.025;
-      if (anguloDanza >= Math.PI * 2) anguloDanza -= Math.PI * 2;
+      
+        anguloDanza += 0.085;
       
         const radio = 5 + separacionDanza;
-        destello.style.left = (50 + Math.cos(anguloDanza) * radio) + "%";
-        destello.style.top = (50 + Math.sin(anguloDanza) * radio) + "%";
+      
+        destello.style.left =
+          (50 + Math.cos(anguloDanza) * radio) + "%";
+      
+        destello.style.top =
+          (50 + Math.sin(anguloDanza) * radio) + "%";
+      
+      } else {
+      
+        destello.style.left = (pezX + ondulacionX) + "%";
+        destello.style.top = (pezY + ondulacionY) + "%";
       
       }
     }
@@ -885,27 +823,6 @@ function moverDestelloRapido() {
       destelloRapido.style.left = rapidoX + "%";
       destelloRapido.style.top = rapidoY + "%";
 
-      destelloVisible = true;
-
-    } else if (acercamientoActivo) {
-
-      const t = Math.min(
-        (performance.now() - inicioAcercamiento) / 1800,
-        1
-      );
-    
-      const suavizado = t * t * (3 - 2 * t);
-    
-      rapidoX = origenDestello2.x +
-        (50 - origenDestello2.x) * suavizado;
-    
-      rapidoY = origenDestello2.y +
-        (50 - origenDestello2.y) * suavizado;
-    
-      destelloRapido.style.display = "block";
-      destelloRapido.style.left = rapidoX + "%";
-      destelloRapido.style.top = rapidoY + "%";
-    
       destelloVisible = true;
 
     } else if (danzaActiva) {
@@ -1726,15 +1643,11 @@ function dibujarTablero() {
 
       // ACTIVAR DANZA DE LOS DOS PRIMEROS DESTELLOS
 
-      if (seleccionados.length > 0 && !danzaActiva && !acercamientoActivo) {
-        iniciarAcercamiento();
+      if (seleccionados.length > 0 && !danzaActiva) {
+        aparicionDanza = performance.now();
       }
       
-      if (seleccionados.length === 0) {
-        acercamientoActivo = false;
-        danzaActiva = false;
-        separacionDanza = 0;
-      }
+      danzaActiva = seleccionados.length > 0;
       
       if (!danzaActiva) {
         separacionDanza = 0;
