@@ -573,12 +573,14 @@ input,
     autocomplete="name"
   >
 
-  <input
-    id="telefono"
-    type="text"
-    placeholder="Teléfono o usuario de WhatsApp"
-    autocomplete="off"
-  >
+ <input
+  id="telefono"
+  type="tel"
+  inputmode="numeric"
+  pattern="[0-9]{7,}"
+  placeholder="Teléfono (mínimo 7 dígitos)"
+  autocomplete="tel"
+>
 
   <button id="reservar" hidden>
     confirmar reserva
@@ -1467,7 +1469,9 @@ function actualizarBotonReserva() {
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
 
-  reservar.hidden = !(nombre && telefono);
+  const telefonoValido = /^[0-9]{7,}$/.test(telefono);
+
+  reservar.hidden = !(nombre && telefonoValido);
 }
 
 document.getElementById("nombre").addEventListener(
@@ -1957,9 +1961,7 @@ reservar.onclick = async () => {
   const telefono =
     document.getElementById("telefono").value.trim();
 
-  const contactType = /[a-zA-Z@_]/.test(telefono)
-    ? "username"
-    : "phone";
+  const contactType = "phone";
 
   mensaje.textContent = "";
 
@@ -1975,6 +1977,11 @@ reservar.onclick = async () => {
 
   if (!nombre || !telefono) {
     mensaje.textContent = "Completa tu nombre y WhatsApp.";
+    return;
+  }
+
+  if (!/^[0-9]{7,}$/.test(telefono)) {
+    mensaje.textContent = "Ingresa un teléfono válido de al menos 7 dígitos.";
     return;
   }
 
