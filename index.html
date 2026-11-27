@@ -580,7 +580,7 @@ input,
     autocomplete="off"
   >
 
-  <button id="reservar">
+  <button id="reservar" hidden>
     confirmar reserva
   </button>
 
@@ -1463,6 +1463,23 @@ moverPez();
 const mensaje = document.getElementById("mensaje");
 const reservar = document.getElementById("reservar");
 
+function actualizarBotonReserva() {
+  const nombre = document.getElementById("nombre").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
+
+  reservar.hidden = !(nombre && telefono);
+}
+
+document.getElementById("nombre").addEventListener(
+  "input",
+  actualizarBotonReserva
+);
+
+document.getElementById("telefono").addEventListener(
+  "input",
+  actualizarBotonReserva
+);
+
 const portada = document.getElementById("portada");
   
 // NORMALIZAR IMÁGENES
@@ -1651,6 +1668,10 @@ async function abrirRifa(id) {
   cargaNumerosId++;
   seleccionados = [];
   numeros = [];
+  document.getElementById("nombre").value = "";
+  document.getElementById("telefono").value = "";
+  reservar.hidden = true;
+actualizarBotonReserva();
 
   mensaje.textContent = "";
 
