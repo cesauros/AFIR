@@ -514,9 +514,78 @@ input,
   .grid { gap: 3px; padding: 5px; }
 }
 
-/* HALO DE LOS NÚMEROS RECIÉN RESERVADOS */
+/* HALO DORADO ESPECTACULAR */
 
 .halo-reserva {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.halo-reserva .relleno-grupo {
+  fill: rgba(255, 190, 55, .32);
+  filter: url(#brillo-reserva);
+  animation: luzGrupo 1.5s ease-in-out infinite alternate;
+}
+
+.halo-reserva .borde-brillante {
+  fill: none;
+  stroke: #ffd66e;
+  stroke-width: 3;
+  stroke-linejoin: round;
+  filter: url(#brillo-reserva);
+  animation: bordeGrupo 1.5s ease-in-out infinite alternate;
+}
+
+.halo-reserva .borde-suave {
+  fill: none;
+  stroke: rgba(255, 194, 65, .85);
+  stroke-width: 11;
+  stroke-linejoin: round;
+  filter: url(#brillo-reserva-intenso);
+  animation: bordeGrupo 1.5s ease-in-out infinite alternate;
+}
+
+.halo-reserva .chispa {
+  fill: #fff4c0;
+  filter: url(#brillo-reserva);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: chispaDorada var(--duracion) ease-in-out infinite alternate;
+}
+
+@keyframes luzGrupo {
+  from { opacity: .45; }
+  to { opacity: 1; }
+}
+
+@keyframes bordeGrupo {
+  from {
+    opacity: .65;
+    stroke-width: 2;
+  }
+  to {
+    opacity: 1;
+    stroke-width: 4;
+  }
+}
+
+@keyframes chispaDorada {
+  from {
+    opacity: .15;
+    transform: scale(.35);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.8);
+  }
+}
+
+.halo-reserva-frente {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -524,33 +593,6 @@ input,
   z-index: 5;
   pointer-events: none;
   overflow: visible;
-}
-
-.halo-reserva path {
-  fill: none;
-  stroke: #ffe5a0;
-  stroke-width: 3;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-
-  filter:
-    drop-shadow(0 0 4px white)
-    drop-shadow(0 0 9px #ffd45c)
-    drop-shadow(0 0 17px #e8bd58);
-
-  animation: pulsoHaloReserva 1.2s ease-in-out infinite alternate;
-}
-
-@keyframes pulsoHaloReserva {
-  from {
-    opacity: .55;
-    stroke-width: 2.5;
-  }
-
-  to {
-    opacity: 1;
-    stroke-width: 4;
-  }
 }
   
 </style>
@@ -1829,6 +1871,7 @@ function dibujarHalosReserva() {
   const svg = document.createElementNS(NS, "svg");
 
   svg.setAttribute("class", "halo-reserva");
+
   svg.setAttribute(
     "viewBox",
     `0 0 ${grid.clientWidth} ${grid.clientHeight}`
@@ -1837,6 +1880,7 @@ function dibujarHalosReserva() {
   const gridRect = grid.getBoundingClientRect();
 
   const estilo = getComputedStyle(grid);
+
   const gapX = parseFloat(estilo.columnGap) || 0;
   const gapY = parseFloat(estilo.rowGap) || 0;
 
@@ -1847,6 +1891,44 @@ function dibujarHalosReserva() {
     ])
   );
 
+  // FILTROS DE ILUMINACIÓN
+
+  const defs = document.createElementNS(NS, "defs");
+
+  function crearFiltro(id, desviacion) {
+
+    const filtro = document.createElementNS(NS, "filter");
+
+    filtro.setAttribute("id", id);
+    filtro.setAttribute("x", "-100%");
+    filtro.setAttribute("y", "-100%");
+    filtro.setAttribute("width", "300%");
+    filtro.setAttribute("height", "300%");
+
+    const blur = document.createElementNS(NS, "feGaussianBlur");
+
+    blur.setAttribute("stdDeviation", desviacion);
+    blur.setAttribute("result", "desenfoque");
+
+    const merge = document.createElementNS(NS, "feMerge");
+
+    const a = document.createElementNS(NS, "feMergeNode");
+    a.setAttribute("in", "desenfoque");
+
+    const b = document.createElementNS(NS, "feMergeNode");
+    b.setAttribute("in", "SourceGraphic");
+
+    merge.append(a, b);
+    filtro.append(blur, merge);
+
+    defs.appendChild(filtro);
+  }
+
+  crearFiltro("brillo-reserva", "5");
+  crearFiltro("brillo-reserva-intenso", "10");
+
+  svg.appendChild(defs);
+
   const pendientes = new Set(
     numerosConHalo.map(Number)
   );
@@ -1854,14 +1936,18 @@ function dibujarHalosReserva() {
   while (pendientes.size) {
 
     const inicio = pendientes.values().next().value;
+
     const grupo = [];
     const pila = [inicio];
 
     pendientes.delete(inicio);
 
+    // DETECTAR TODAS LAS CASILLAS CONTIGUAS
+
     while (pila.length) {
 
       const n = pila.pop();
+
       grupo.push(n);
 
       const vecinos = [
@@ -1882,48 +1968,156 @@ function dibujarHalosReserva() {
     }
 
     const conjunto = new Set(grupo);
-    let pathData = "";
+
+    let contorno = "";
+
+    // RELLENAR LAS CASILLAS Y SUS ESPACIOS INTERIORES
 
     grupo.forEach(n => {
 
       const boton = botones.get(n);
+
       if (!boton) return;
 
       const rect = boton.getBoundingClientRect();
 
       const x1 = rect.left - gridRect.left - gapX / 2;
       const x2 = rect.right - gridRect.left + gapX / 2;
+
       const y1 = rect.top - gridRect.top - gapY / 2;
       const y2 = rect.bottom - gridRect.top + gapY / 2;
 
+      const relleno = document.createElementNS(NS, "rect");
+
+      relleno.setAttribute("x", x1);
+      relleno.setAttribute("y", y1);
+      relleno.setAttribute("width", x2 - x1);
+      relleno.setAttribute("height", y2 - y1);
+      relleno.setAttribute("rx", "3");
+      relleno.setAttribute("class", "relleno-grupo");
+
+      svg.appendChild(relleno);
+
+      // DIBUJAR SOLO LOS BORDES EXTERIORES DEL GRUPO
+
       if (!conjunto.has(n - 10)) {
-        pathData += `M ${x1} ${y1} L ${x2} ${y1} `;
+        contorno += `M ${x1} ${y1} L ${x2} ${y1} `;
       }
 
       if (!conjunto.has(n + 10)) {
-        pathData += `M ${x1} ${y2} L ${x2} ${y2} `;
+        contorno += `M ${x1} ${y2} L ${x2} ${y2} `;
       }
 
       if (n % 10 === 0 || !conjunto.has(n - 1)) {
-        pathData += `M ${x1} ${y1} L ${x1} ${y2} `;
+        contorno += `M ${x1} ${y1} L ${x1} ${y2} `;
       }
 
       if (n % 10 === 9 || !conjunto.has(n + 1)) {
-        pathData += `M ${x2} ${y1} L ${x2} ${y2} `;
+        contorno += `M ${x2} ${y1} L ${x2} ${y2} `;
       }
 
     });
 
-    const path = document.createElementNS(NS, "path");
+    // HALO EXTERIOR
 
-    path.setAttribute("d", pathData);
+    const haloSuave = document.createElementNS(NS, "path");
 
-    svg.appendChild(path);
+    haloSuave.setAttribute("d", contorno);
+    haloSuave.setAttribute("class", "borde-suave");
+
+    svg.appendChild(haloSuave);
+
+    const halo = document.createElementNS(NS, "path");
+
+    halo.setAttribute("d", contorno);
+    halo.setAttribute("class", "borde-brillante");
+
+    svg.appendChild(halo);
+
+    // CHISPAS DORADAS ALREDEDOR DEL GRUPO
+
+    const rects = grupo
+      .map(n => botones.get(n))
+      .filter(Boolean)
+      .map(b => b.getBoundingClientRect());
+
+    const minX = Math.min(...rects.map(r =>
+      r.left - gridRect.left - gapX / 2
+    ));
+
+    const maxX = Math.max(...rects.map(r =>
+      r.right - gridRect.left + gapX / 2
+    ));
+
+    const minY = Math.min(...rects.map(r =>
+      r.top - gridRect.top - gapY / 2
+    ));
+
+    const maxY = Math.max(...rects.map(r =>
+      r.bottom - gridRect.top + gapY / 2
+    ));
+
+    for (let i = 0; i < 16; i++) {
+
+      const chispa = document.createElementNS(NS, "circle");
+
+      let x, y;
+
+      // DISTRIBUIR CHISPAS POR EL CONTORNO
+
+      const lado = i % 4;
+
+      if (lado === 0) {
+        x = minX + Math.random() * (maxX - minX);
+        y = minY;
+      } else if (lado === 1) {
+        x = maxX;
+        y = minY + Math.random() * (maxY - minY);
+      } else if (lado === 2) {
+        x = minX + Math.random() * (maxX - minX);
+        y = maxY;
+      } else {
+        x = minX;
+        y = minY + Math.random() * (maxY - minY);
+      }
+
+      chispa.setAttribute("cx", x);
+      chispa.setAttribute("cy", y);
+      chispa.setAttribute("r", 1.5 + Math.random() * 2);
+
+      chispa.setAttribute("class", "chispa");
+
+      chispa.style.setProperty(
+        "--duracion",
+        (0.5 + Math.random() * 1.3) + "s"
+      );
+
+      chispa.style.animationDelay =
+        (-Math.random() * 1.5) + "s";
+
+      svg.appendChild(chispa);
+    }
   }
 
+  // CAPA DE ILUMINACIÓN DETRÁS DE LAS TECLAS
   grid.appendChild(svg);
+  
+  // CAPA DE RESPLANDORES Y CHISPAS POR ENCIMA DE LAS TECLAS
+  const frente = svg.cloneNode(true);
+  
+  frente.classList.replace(
+    "halo-reserva",
+    "halo-reserva-frente"
+  );
+  
+  // El relleno queda exclusivamente detrás de las teclas
+  frente.querySelectorAll(".relleno-grupo").forEach(
+    elemento => elemento.remove()
+  );
+  
+  grid.appendChild(frente);
 }
-
+  
 // DIBUJAR TABLERO
 
 function dibujarTablero() {
