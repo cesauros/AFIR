@@ -577,8 +577,8 @@ input,
   id="telefono"
   type="tel"
   inputmode="numeric"
-  pattern="[0-9]{7,}"
-  placeholder="Teléfono (mínimo 7 dígitos)"
+  pattern="[0-9]{10,}"
+  placeholder="Teléfono (mínimo 10 dígitos)"
   autocomplete="tel"
 >
 
@@ -1469,7 +1469,7 @@ function actualizarBotonReserva() {
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
 
-  const telefonoValido = /^[0-9]{7,}$/.test(telefono);
+  const telefonoValido = /^[0-9]{10,}$/.test(telefono);
 
   reservar.hidden = !(nombre && telefonoValido);
 }
@@ -1980,8 +1980,8 @@ reservar.onclick = async () => {
     return;
   }
 
-  if (!/^[0-9]{7,}$/.test(telefono)) {
-    mensaje.textContent = "Ingresa un teléfono válido de al menos 7 dígitos.";
+  if (!/^[0-9]{10,}$/.test(telefono)) {
+    mensaje.textContent = "Ingresa un teléfono válido de al menos 10 dígitos.";
     return;
   }
 
