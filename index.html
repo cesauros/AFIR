@@ -513,6 +513,45 @@ input,
   body { padding: 12px; }
   .grid { gap: 3px; padding: 5px; }
 }
+
+/* HALO DE LOS NÚMEROS RECIÉN RESERVADOS */
+
+.halo-reserva {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.halo-reserva path {
+  fill: none;
+  stroke: #ffe5a0;
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+
+  filter:
+    drop-shadow(0 0 4px white)
+    drop-shadow(0 0 9px #ffd45c)
+    drop-shadow(0 0 17px #e8bd58);
+
+  animation: pulsoHaloReserva 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes pulsoHaloReserva {
+  from {
+    opacity: .55;
+    stroke-width: 2.5;
+  }
+
+  to {
+    opacity: 1;
+    stroke-width: 4;
+  }
+}
   
 </style>
   
@@ -574,6 +613,7 @@ const API = "https://blue-poetry-7c73.cesauro.workers.dev";
 
 let seleccionados = [];
 let numeros = [];
+let numerosConHalo = [];
 let imagenPuzzle = "";
 let raffleId = null;
 
@@ -1628,6 +1668,8 @@ async function abrirRifa(id) {
 
   raffleId = nuevoId;
 
+  numerosConHalo = [];
+
   cargaNumerosId++;
   seleccionados = [];
   numeros = [];
@@ -1684,6 +1726,9 @@ async function cargarRifa() {
 }
 
 document.getElementById("volver").onclick = () => {
+
+  numerosConHalo = [];
+  grid.querySelector(".halo-reserva")?.remove();
 
   celebracionActiva = false;
   danzaActiva = false;
@@ -1771,6 +1816,112 @@ async function cargarNumeros() {
     
     console.error(error);
   }
+}
+
+function dibujarHalosReserva() {
+
+  grid.querySelector(".halo-reserva")?.remove();
+
+  if (!numerosConHalo.length) return;
+
+  const NS = "http://www.w3.org/2000/svg";
+
+  const svg = document.createElementNS(NS, "svg");
+
+  svg.setAttribute("class", "halo-reserva");
+  svg.setAttribute(
+    "viewBox",
+    `0 0 ${grid.clientWidth} ${grid.clientHeight}`
+  );
+
+  const gridRect = grid.getBoundingClientRect();
+
+  const estilo = getComputedStyle(grid);
+  const gapX = parseFloat(estilo.columnGap) || 0;
+  const gapY = parseFloat(estilo.rowGap) || 0;
+
+  const botones = new Map(
+    [...grid.querySelectorAll("button.numero")].map(b => [
+      Number(b.textContent),
+      b
+    ])
+  );
+
+  const pendientes = new Set(
+    numerosConHalo.map(Number)
+  );
+
+  while (pendientes.size) {
+
+    const inicio = pendientes.values().next().value;
+    const grupo = [];
+    const pila = [inicio];
+
+    pendientes.delete(inicio);
+
+    while (pila.length) {
+
+      const n = pila.pop();
+      grupo.push(n);
+
+      const vecinos = [
+        n - 10,
+        n + 10,
+        n % 10 !== 0 ? n - 1 : -1,
+        n % 10 !== 9 ? n + 1 : -1
+      ];
+
+      vecinos.forEach(v => {
+
+        if (pendientes.has(v)) {
+          pendientes.delete(v);
+          pila.push(v);
+        }
+
+      });
+    }
+
+    const conjunto = new Set(grupo);
+    let pathData = "";
+
+    grupo.forEach(n => {
+
+      const boton = botones.get(n);
+      if (!boton) return;
+
+      const rect = boton.getBoundingClientRect();
+
+      const x1 = rect.left - gridRect.left - gapX / 2;
+      const x2 = rect.right - gridRect.left + gapX / 2;
+      const y1 = rect.top - gridRect.top - gapY / 2;
+      const y2 = rect.bottom - gridRect.top + gapY / 2;
+
+      if (!conjunto.has(n - 10)) {
+        pathData += `M ${x1} ${y1} L ${x2} ${y1} `;
+      }
+
+      if (!conjunto.has(n + 10)) {
+        pathData += `M ${x1} ${y2} L ${x2} ${y2} `;
+      }
+
+      if (n % 10 === 0 || !conjunto.has(n - 1)) {
+        pathData += `M ${x1} ${y1} L ${x1} ${y2} `;
+      }
+
+      if (n % 10 === 9 || !conjunto.has(n + 1)) {
+        pathData += `M ${x2} ${y1} L ${x2} ${y2} `;
+      }
+
+    });
+
+    const path = document.createElementNS(NS, "path");
+
+    path.setAttribute("d", pathData);
+
+    svg.appendChild(path);
+  }
+
+  grid.appendChild(svg);
 }
 
 // DIBUJAR TABLERO
@@ -1862,6 +2013,7 @@ function dibujarTablero() {
     "completado",
     vendidos === 100
   );
+  dibujarHalosReserva();
 }
 
 function crearRipple(boton) {
@@ -1906,6 +2058,10 @@ reservar.onclick = async () => {
     grid.classList.remove("celebracion");
   
     enlaceNotificacion = null;
+
+    numerosConHalo = [];
+    grid.querySelector(".halo-reserva")?.remove();
+    
     reservar.textContent = "Confirmar reserva";
     return;
   }
@@ -1982,10 +2138,12 @@ reservar.onclick = async () => {
     enlaceNotificacion = resultado.admin_whatsapp_url;
     reservar.hidden = false;
 
-    const numerosComprados = [...seleccionados];
+    // CONSERVAR LOS NÚMEROS RECIÉN RESERVADOS PARA EL HALO
 
+    numerosConHalo = [...seleccionados];
+    
     seleccionados = [];
-
+    
     await cargarNumeros();
 
     if (enlaceNotificacion) {
